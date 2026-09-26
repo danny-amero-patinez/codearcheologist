@@ -1,0 +1,8 @@
+{
+  "_comment": "Fixture: Error response envelope. This shape applies to ALL error responses (4xx and 5xx). 'details' is optional.",
+  "error": {
+    "code": "NOT_FOUND",
+    "message": "Analysis 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' not found",
+    "details": null
+  }
+}

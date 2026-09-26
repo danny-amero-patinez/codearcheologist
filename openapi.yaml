@@ -1,0 +1,1098 @@
+openapi: "3.0.3"
+info:
+  title: Code Archaeologist API
+  description: |
+    Static analysis service for Windows PE binaries.
+
+    The uploaded binary is **never executed**. All analysis is purely static.
+    This service cannot determine whether a binary is safe or malicious.
+  version: "1.0.0"
+  contact:
+    name: Code Archaeologist
+
+servers:
+  - url: http://127.0.0.1:3000/api/v1
+    description: Local development server
+
+tags:
+  - name: health
+    description: Liveness, diagnostics, and tool availability
+  - name: analyses
+    description: Binary upload, status polling, results, evidence, and reports
+
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      tags: [health]
+      summary: Liveness check
+      description: Returns 200 OK if the server is running.
+      responses:
+        "200":
+          description: Server is alive
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+              example:
+                status: ok
+                timestamp: "2024-11-15T14:22:00.000Z"
+
+  /diagnostics:
+    get:
+      operationId: getDiagnostics
+      tags: [health]
+      summary: Environment and tool diagnostics
+      description: Returns Node.js version, OS platform, and Ghidra/Java availability.
+      responses:
+        "200":
+          description: Diagnostic information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DiagnosticsResponse"
+              example:
+                status: ok
+                node: "v20.11.0"
+                platform: linux
+                ghidra:
+                  status: available
+                  version: "11.0"
+                  home: /opt/ghidra
+                java:
+                  status: available
+                  version: "17.0.9"
+
+  /tools:
+    get:
+      operationId: getTools
+      tags: [health]
+      summary: Tool availability
+      description: Returns availability status for each analysis tool.
+      responses:
+        "200":
+          description: Tool availability list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ToolsResponse"
+              example:
+                tools:
+                  - name: pe-parser
+                    available: true
+                  - name: strings
+                    available: true
+                  - name: ghidra
+                    available: false
+                    reason: "GHIDRA_HOME not configured"
+
+  /analyses/binary:
+    post:
+      operationId: uploadBinary
+      tags: [analyses]
+      summary: Submit a PE binary for analysis
+      description: |
+        Accepts a Windows PE binary uploaded as `multipart/form-data`.
+        The form field name **must** be `file`.
+
+        Returns 202 Accepted immediately. The analysis runs asynchronously.
+        Poll `GET /analyses/{id}` until status is a terminal value
+        (`completed`, `partial`, or `failed`).
+
+        The binary is never executed. Analysis is purely static.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The Windows PE binary to analyse
+      responses:
+        "202":
+          description: Analysis accepted and queued
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisMeta"
+              example:
+                $ref: "#/components/examples/AnalysisCreated/value"
+        "400":
+          description: Missing or invalid `file` field
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: VALIDATION_ERROR
+                  message: "Multipart field 'file' is required"
+        "413":
+          description: File exceeds MAX_BINARY_BYTES limit
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: FILE_TOO_LARGE
+                  message: "File size 150MB exceeds the maximum of 100MB"
+        "422":
+          description: File is not a valid PE binary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: UNPROCESSABLE_BINARY
+                  message: "File does not have a valid PE (MZ) signature"
+
+  /analyses/{id}:
+    get:
+      operationId: getAnalysis
+      tags: [analyses]
+      summary: Poll analysis status
+      description: |
+        Returns the current `AnalysisMeta` for the analysis. Poll until
+        `status` is `completed`, `partial`, or `failed`.
+      parameters:
+        - $ref: "#/components/parameters/analysisId"
+      responses:
+        "200":
+          description: Analysis metadata
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisMeta"
+        "404":
+          description: Analysis not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: NOT_FOUND
+                  message: "Analysis 'a1b2c3d4-e5f6-7890-abcd-ef1234567890' not found"
+
+  /analyses/{id}/result:
+    get:
+      operationId: getAnalysisResult
+      tags: [analyses]
+      summary: Retrieve the canonical result
+      description: |
+        Returns the full `CanonicalResult` for the analysis.
+        The analysis must be in `completed` or `partial` status.
+
+        Returns 409 if still processing, 410 if the analysis failed.
+      parameters:
+        - $ref: "#/components/parameters/analysisId"
+      responses:
+        "200":
+          description: Canonical analysis result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CanonicalResult"
+        "404":
+          description: Analysis not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Analysis is still in progress
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: ANALYSIS_NOT_READY
+                  message: "Analysis is still in progress (status: decompiling)"
+        "410":
+          description: Analysis failed; no result available
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: ANALYSIS_FAILED
+                  message: "Analysis failed and no result is available"
+
+  /analyses/{id}/evidence/{evidenceId}:
+    get:
+      operationId: getEvidenceItem
+      tags: [analyses]
+      summary: Retrieve a single evidence item
+      description: |
+        Returns one evidence record by its stable `evidenceId`.
+        Evidence IDs are found in `CanonicalResult.evidence[].id`.
+      parameters:
+        - $ref: "#/components/parameters/analysisId"
+        - name: evidenceId
+          in: path
+          required: true
+          description: Stable evidence ID (e.g. `evd-001`)
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Evidence item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Evidence"
+        "404":
+          description: Analysis or evidence not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Analysis is still in progress
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /analyses/{id}/report:
+    get:
+      operationId: getReport
+      tags: [analyses]
+      summary: Retrieve a formatted report
+      description: |
+        Returns the analysis report in the requested format.
+        `json` returns the same body as `/result`.
+        `markdown` returns a human-readable text report.
+        `html` returns an HTML report.
+      parameters:
+        - $ref: "#/components/parameters/analysisId"
+        - name: format
+          in: query
+          required: false
+          description: Report format (defaults to `json`)
+          schema:
+            type: string
+            enum: [json, markdown, html]
+            default: json
+      responses:
+        "200":
+          description: Report in requested format
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CanonicalResult"
+            text/markdown:
+              schema:
+                type: string
+            text/html:
+              schema:
+                type: string
+        "400":
+          description: Unknown format value
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error:
+                  code: VALIDATION_ERROR
+                  message: "Unknown format 'pdf'. Valid values: json, markdown, html"
+        "404":
+          description: Analysis not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Analysis is still in progress
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "410":
+          description: Analysis failed; no report available
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  parameters:
+    analysisId:
+      name: id
+      in: path
+      required: true
+      description: Analysis UUID v4
+      schema:
+        type: string
+        format: uuid
+
+  schemas:
+
+    # ── Enumerations ────────────────────────────────────────────────────────────
+
+    AnalysisStatus:
+      type: string
+      enum:
+        - queued
+        - preparing
+        - extracting
+        - decompiling
+        - correlating
+        - reporting
+        - completed
+        - partial
+        - failed
+      description: |
+        Lifecycle status of an analysis.
+        Terminal values: `completed`, `partial`, `failed`.
+
+    AnalysisPhase:
+      type: string
+      enum:
+        - intake
+        - profiling
+        - extracting
+        - ghidra-analysis
+        - correlating
+        - inferring
+        - reconstructing
+        - reporting
+
+    PhaseStatus:
+      type: string
+      enum:
+        - pending
+        - running
+        - completed
+        - failed
+        - skipped
+
+    ConfidenceLevel:
+      type: string
+      enum:
+        - low
+        - medium
+        - high
+        - not-applicable
+
+    InferenceClassification:
+      type: string
+      enum:
+        - observed
+        - inferred
+        - unknown
+
+    EvidenceKind:
+      type: string
+      enum:
+        - binary-metadata
+        - pe-section
+        - import
+        - export
+        - string
+        - function
+        - function-call
+        - reference
+        - decompilation
+        - metadata
+
+    EvidenceSource:
+      type: string
+      enum:
+        - pe-parser
+        - strings
+        - ghidra
+
+    PeType:
+      type: string
+      enum: [PE32, PE32+, unknown]
+
+    Architecture:
+      type: string
+      enum: [x86, x86-64, ARM, ARM64, unknown]
+
+    Subsystem:
+      type: string
+      enum:
+        - WINDOWS_GUI
+        - WINDOWS_CUI
+        - NATIVE
+        - WINDOWS_CE_GUI
+        - EFI_APPLICATION
+        - unknown
+
+    StringCategory:
+      type: string
+      enum:
+        - url
+        - hostname
+        - ip
+        - file-path
+        - registry-path
+        - sql
+        - protocol
+        - authentication
+        - error-message
+        - service-name
+        - dll-name
+        - installer-metadata
+        - config-filename
+        - other
+
+    ExternalInteractionKind:
+      type: string
+      enum:
+        - filesystem
+        - registry
+        - process
+        - service
+        - network
+        - database
+
+    ModernizationPriority:
+      type: string
+      enum: [high, medium, low]
+
+    # ── Sub-objects ─────────────────────────────────────────────────────────────
+
+    PhaseRecord:
+      type: object
+      required: [phase, status]
+      properties:
+        phase:
+          $ref: "#/components/schemas/AnalysisPhase"
+        status:
+          $ref: "#/components/schemas/PhaseStatus"
+        startedAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+        durationMs:
+          type: integer
+          minimum: 0
+        error:
+          type: string
+
+    PeSection:
+      type: object
+      required: [name, virtualAddress, virtualSize, rawSize, characteristics]
+      properties:
+        name:
+          type: string
+        virtualAddress:
+          type: string
+        virtualSize:
+          type: integer
+        rawSize:
+          type: integer
+        characteristics:
+          type: array
+          items:
+            type: string
+        entropy:
+          type: number
+          format: float
+
+    ImportEntry:
+      type: object
+      required: [dll, functions]
+      properties:
+        dll:
+          type: string
+        functions:
+          type: array
+          items:
+            type: string
+
+    ExportEntry:
+      type: object
+      required: [ordinal, address]
+      properties:
+        ordinal:
+          type: integer
+        name:
+          type: string
+        address:
+          type: string
+
+    VersionInfo:
+      type: object
+      properties:
+        fileVersion:
+          type: string
+        productVersion:
+          type: string
+        companyName:
+          type: string
+        productName:
+          type: string
+        description:
+          type: string
+        originalFilename:
+          type: string
+        legalCopyright:
+          type: string
+        internalName:
+          type: string
+
+    ToolCoverage:
+      type: object
+      required: [peParser, strings, ghidra]
+      properties:
+        peParser:
+          type: boolean
+        strings:
+          type: boolean
+        ghidra:
+          type: boolean
+        ghidraError:
+          type: string
+
+    EvidenceLocation:
+      type: object
+      properties:
+        address:
+          type: string
+          nullable: true
+        offset:
+          type: integer
+          nullable: true
+        functionAddress:
+          type: string
+          nullable: true
+
+    RationaleEntry:
+      type: object
+      required: [classification, text]
+      properties:
+        classification:
+          $ref: "#/components/schemas/InferenceClassification"
+        text:
+          type: string
+
+    FunctionRef:
+      type: object
+      required: [address, name, autoGenerated]
+      properties:
+        address:
+          type: string
+        name:
+          type: string
+        autoGenerated:
+          type: boolean
+
+    # ── Top-level domain objects ────────────────────────────────────────────────
+
+    AnalysisMeta:
+      type: object
+      required:
+        - id
+        - status
+        - createdAt
+        - updatedAt
+        - originalFilename
+        - storedFilename
+        - fileSizeBytes
+        - sha256
+        - phases
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Canonical analysis identifier. Immutable after creation.
+        status:
+          $ref: "#/components/schemas/AnalysisStatus"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        originalFilename:
+          type: string
+        storedFilename:
+          type: string
+        fileSizeBytes:
+          type: integer
+          minimum: 0
+        sha256:
+          type: string
+          pattern: "^[0-9a-f]{64}$"
+        phases:
+          type: array
+          items:
+            $ref: "#/components/schemas/PhaseRecord"
+          minItems: 8
+          maxItems: 8
+        errorMessage:
+          type: string
+          nullable: true
+
+    BinaryProfile:
+      type: object
+      required:
+        - originalFilename
+        - storedFilename
+        - fileSizeBytes
+        - sha256
+        - peType
+        - architecture
+        - subsystem
+        - entryPoint
+        - sections
+        - imports
+        - exports
+        - hasSignature
+      properties:
+        originalFilename:
+          type: string
+        storedFilename:
+          type: string
+        fileSizeBytes:
+          type: integer
+        sha256:
+          type: string
+        peType:
+          $ref: "#/components/schemas/PeType"
+        architecture:
+          $ref: "#/components/schemas/Architecture"
+        subsystem:
+          $ref: "#/components/schemas/Subsystem"
+        entryPoint:
+          type: string
+        sections:
+          type: array
+          items:
+            $ref: "#/components/schemas/PeSection"
+        imports:
+          type: array
+          items:
+            $ref: "#/components/schemas/ImportEntry"
+        exports:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExportEntry"
+        versionInfo:
+          $ref: "#/components/schemas/VersionInfo"
+          nullable: true
+        hasSignature:
+          type: boolean
+          description: "Presence of Authenticode signature. Does NOT imply safety."
+        overallEntropy:
+          type: number
+          format: float
+          description: "Shannon entropy of the whole file. High entropy is a clue, not proof of packing or malice."
+          nullable: true
+
+    Evidence:
+      type: object
+      required: [id, kind, sourceTool, classification, summary, data]
+      properties:
+        id:
+          type: string
+          description: Stable evidence ID within this analysis (e.g. evd-001)
+        kind:
+          $ref: "#/components/schemas/EvidenceKind"
+        sourceTool:
+          $ref: "#/components/schemas/EvidenceSource"
+        classification:
+          type: string
+          enum: [observed]
+          description: Always "observed". Evidence is never inferred.
+        summary:
+          type: string
+        location:
+          $ref: "#/components/schemas/EvidenceLocation"
+          nullable: true
+        data:
+          description: Raw evidence payload; schema varies by kind
+
+    FunctionProfile:
+      type: object
+      required:
+        - address
+        - name
+        - autoGenerated
+        - callers
+        - callees
+        - apiReferences
+        - stringReferences
+        - evidenceIds
+        - decompilationEvidenceIds
+        - selectionScore
+        - selectionReasons
+      properties:
+        address:
+          type: string
+        name:
+          type: string
+        autoGenerated:
+          type: boolean
+          description: "true when Ghidra auto-named the function (FUN_* pattern)"
+        callers:
+          type: array
+          items:
+            type: string
+        callees:
+          type: array
+          items:
+            type: string
+        apiReferences:
+          type: array
+          items:
+            type: string
+        stringReferences:
+          type: array
+          items:
+            type: string
+        evidenceIds:
+          type: array
+          items:
+            type: string
+        decompilationEvidenceIds:
+          type: array
+          items:
+            type: string
+        selectionScore:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+        selectionReasons:
+          type: array
+          items:
+            type: string
+
+    Inference:
+      type: object
+      required:
+        - id
+        - ruleId
+        - category
+        - statement
+        - classification
+        - confidence
+        - evidenceIds
+        - rationale
+        - limitations
+      properties:
+        id:
+          type: string
+        ruleId:
+          type: string
+        category:
+          type: string
+        statement:
+          type: string
+        classification:
+          type: string
+          enum: [inferred]
+          description: Always "inferred"
+        confidence:
+          $ref: "#/components/schemas/ConfidenceLevel"
+        evidenceIds:
+          type: array
+          items:
+            type: string
+          minItems: 1
+        rationale:
+          type: array
+          items:
+            type: string
+        limitations:
+          type: array
+          items:
+            type: string
+        counterEvidence:
+          type: array
+          items:
+            type: string
+
+    CandidateResponsibility:
+      type: object
+      required:
+        - id
+        - name
+        - kind
+        - confidence
+        - summary
+        - functions
+        - evidenceIds
+        - rationale
+        - limitations
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        kind:
+          type: string
+          enum: [candidate-responsibility]
+        confidence:
+          $ref: "#/components/schemas/ConfidenceLevel"
+        summary:
+          type: string
+        functions:
+          type: array
+          items:
+            $ref: "#/components/schemas/FunctionRef"
+        evidenceIds:
+          type: array
+          items:
+            type: string
+          minItems: 1
+        rationale:
+          type: array
+          items:
+            $ref: "#/components/schemas/RationaleEntry"
+        externalInteractions:
+          type: array
+          items:
+            type: string
+        limitations:
+          type: array
+          items:
+            type: string
+
+    ExternalInteraction:
+      type: object
+      required: [id, kind, description, confidence, evidenceIds, limitations]
+      properties:
+        id:
+          type: string
+        kind:
+          $ref: "#/components/schemas/ExternalInteractionKind"
+        description:
+          type: string
+        confidence:
+          $ref: "#/components/schemas/ConfidenceLevel"
+        evidenceIds:
+          type: array
+          items:
+            type: string
+          minItems: 1
+        limitations:
+          type: array
+          items:
+            type: string
+
+    Unknown:
+      type: object
+      required: [id, question, whyItMatters, missingEvidence, howToResolve]
+      properties:
+        id:
+          type: string
+        question:
+          type: string
+        whyItMatters:
+          type: string
+        missingEvidence:
+          type: string
+        howToResolve:
+          type: array
+          items:
+            type: string
+
+    ModernizationRecommendation:
+      type: object
+      required: [id, priority, title, description, evidenceIds, relatedResponsibilityIds]
+      properties:
+        id:
+          type: string
+        priority:
+          $ref: "#/components/schemas/ModernizationPriority"
+        title:
+          type: string
+        description:
+          type: string
+        evidenceIds:
+          type: array
+          items:
+            type: string
+        relatedResponsibilityIds:
+          type: array
+          items:
+            type: string
+
+    CanonicalResult:
+      type: object
+      required:
+        - analysis
+        - binary
+        - coverage
+        - evidence
+        - capabilities
+        - candidateComponents
+        - externalInteractions
+        - dependencies
+        - interestingFunctions
+        - unknowns
+        - risks
+        - modernization
+        - limitations
+      properties:
+        analysis:
+          $ref: "#/components/schemas/AnalysisMeta"
+        binary:
+          $ref: "#/components/schemas/BinaryProfile"
+        coverage:
+          $ref: "#/components/schemas/ToolCoverage"
+        evidence:
+          type: array
+          items:
+            $ref: "#/components/schemas/Evidence"
+        capabilities:
+          type: array
+          items:
+            $ref: "#/components/schemas/Inference"
+        candidateComponents:
+          type: array
+          items:
+            $ref: "#/components/schemas/CandidateResponsibility"
+          description: API field name for CandidateResponsibility objects
+        externalInteractions:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExternalInteraction"
+        dependencies:
+          type: array
+          items:
+            type: string
+          description: DLL dependency names
+        interestingFunctions:
+          type: array
+          items:
+            $ref: "#/components/schemas/FunctionProfile"
+        unknowns:
+          type: array
+          items:
+            $ref: "#/components/schemas/Unknown"
+        risks:
+          type: array
+          items:
+            type: string
+        modernization:
+          type: array
+          items:
+            $ref: "#/components/schemas/ModernizationRecommendation"
+        limitations:
+          type: array
+          items:
+            type: string
+
+    # ── Utility responses ───────────────────────────────────────────────────────
+
+    HealthResponse:
+      type: object
+      required: [status, timestamp]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        timestamp:
+          type: string
+          format: date-time
+
+    ToolAvailabilityStatus:
+      type: string
+      enum: [available, unavailable, unchecked]
+
+    DiagnosticsResponse:
+      type: object
+      required: [status, node, platform, ghidra, java]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        node:
+          type: string
+        platform:
+          type: string
+        ghidra:
+          type: object
+          required: [status]
+          properties:
+            status:
+              $ref: "#/components/schemas/ToolAvailabilityStatus"
+            version:
+              type: string
+            home:
+              type: string
+        java:
+          type: object
+          required: [status]
+          properties:
+            status:
+              $ref: "#/components/schemas/ToolAvailabilityStatus"
+            version:
+              type: string
+
+    ToolEntry:
+      type: object
+      required: [name, available]
+      properties:
+        name:
+          type: string
+          enum: [pe-parser, strings, ghidra]
+        available:
+          type: boolean
+        reason:
+          type: string
+
+    ToolsResponse:
+      type: object
+      required: [tools]
+      properties:
+        tools:
+          type: array
+          items:
+            $ref: "#/components/schemas/ToolEntry"
+
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details:
+              nullable: true
+
+  examples:
+    AnalysisCreated:
+      summary: Analysis just accepted (202 response from POST)
+      value:
+        id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+        status: queued
+        createdAt: "2024-11-15T14:22:00.000Z"
+        updatedAt: "2024-11-15T14:22:00.000Z"
+        originalFilename: "LegacySalesApp.exe"
+        storedFilename: "a1b2c3d4-e5f6-7890-abcd-ef1234567890.bin"
+        fileSizeBytes: 2097152
+        sha256: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        phases:
+          - { phase: intake,          status: completed }
+          - { phase: profiling,       status: pending }
+          - { phase: extracting,      status: pending }
+          - { phase: ghidra-analysis, status: pending }
+          - { phase: correlating,     status: pending }
+          - { phase: inferring,       status: pending }
+          - { phase: reconstructing,  status: pending }
+          - { phase: reporting,       status: pending }
+        errorMessage: null

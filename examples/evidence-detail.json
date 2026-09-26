@@ -1,0 +1,17 @@
+{
+  "_comment": "Fixture: GET /api/v1/analyses/{id}/evidence/{evidenceId} — single evidence item. This is evd-022, the decompilation evidence for SaveOrderRecord. It matches the corresponding entry in analysis-result.json evidence array.",
+  "id": "evd-022",
+  "kind": "decompilation",
+  "sourceTool": "ghidra",
+  "classification": "observed",
+  "summary": "Decompilation snippet for SaveOrderRecord (0x00406A00)",
+  "location": {
+    "address": "0x00406A00",
+    "offset": null,
+    "functionAddress": "0x00406A00"
+  },
+  "data": {
+    "address": "0x00406A00",
+    "pseudoC": "int SaveOrderRecord(int customerId, double amount, int status) {\n  SQLHSTMT hStmt;\n  SQLAllocHandle(SQL_HANDLE_STMT, hConn, &hStmt);\n  SQLExecDirectW(hStmt, L\"INSERT INTO Orders ...\", SQL_NTS);\n  SQLFreeHandle(SQL_HANDLE_STMT, hStmt);\n  return 0;\n}"
+  }
+}

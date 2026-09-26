@@ -1,0 +1,22 @@
+{
+  "_comment": "Fixture: GET /api/v1/analyses/{id} response for a fully completed analysis. All phases succeeded including Ghidra.",
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "status": "completed",
+  "createdAt": "2024-11-15T14:22:00.000Z",
+  "updatedAt": "2024-11-15T14:25:12.800Z",
+  "originalFilename": "LegacySalesApp.exe",
+  "storedFilename": "a1b2c3d4-e5f6-7890-abcd-ef1234567890.bin",
+  "fileSizeBytes": 2097152,
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "phases": [
+    { "phase": "intake",          "status": "completed", "startedAt": "2024-11-15T14:22:00.000Z", "completedAt": "2024-11-15T14:22:00.120Z", "durationMs": 120 },
+    { "phase": "profiling",       "status": "completed", "startedAt": "2024-11-15T14:22:00.130Z", "completedAt": "2024-11-15T14:22:01.020Z", "durationMs": 890 },
+    { "phase": "extracting",      "status": "completed", "startedAt": "2024-11-15T14:22:01.030Z", "completedAt": "2024-11-15T14:22:04.230Z", "durationMs": 3200 },
+    { "phase": "ghidra-analysis", "status": "completed", "startedAt": "2024-11-15T14:22:04.250Z", "completedAt": "2024-11-15T14:24:52.400Z", "durationMs": 168150 },
+    { "phase": "correlating",     "status": "completed", "startedAt": "2024-11-15T14:24:52.500Z", "completedAt": "2024-11-15T14:24:53.100Z", "durationMs": 600 },
+    { "phase": "inferring",       "status": "completed", "startedAt": "2024-11-15T14:24:53.200Z", "completedAt": "2024-11-15T14:24:54.500Z", "durationMs": 1300 },
+    { "phase": "reconstructing",  "status": "completed", "startedAt": "2024-11-15T14:24:54.600Z", "completedAt": "2024-11-15T14:24:56.100Z", "durationMs": 1500 },
+    { "phase": "reporting",       "status": "completed", "startedAt": "2024-11-15T14:24:56.200Z", "completedAt": "2024-11-15T14:25:12.800Z", "durationMs": 16600 }
+  ],
+  "errorMessage": null
+}

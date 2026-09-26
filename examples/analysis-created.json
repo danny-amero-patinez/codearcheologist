@@ -1,0 +1,22 @@
+{
+  "_comment": "Fixture: POST /api/v1/analyses/binary response (202 Accepted). Analysis just accepted and queued.",
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "status": "queued",
+  "createdAt": "2024-11-15T14:22:00.000Z",
+  "updatedAt": "2024-11-15T14:22:00.000Z",
+  "originalFilename": "LegacySalesApp.exe",
+  "storedFilename": "a1b2c3d4-e5f6-7890-abcd-ef1234567890.bin",
+  "fileSizeBytes": 2097152,
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "phases": [
+    { "phase": "intake",          "status": "completed", "startedAt": "2024-11-15T14:22:00.000Z", "completedAt": "2024-11-15T14:22:00.120Z", "durationMs": 120 },
+    { "phase": "profiling",       "status": "pending" },
+    { "phase": "extracting",      "status": "pending" },
+    { "phase": "ghidra-analysis", "status": "pending" },
+    { "phase": "correlating",     "status": "pending" },
+    { "phase": "inferring",       "status": "pending" },
+    { "phase": "reconstructing",  "status": "pending" },
+    { "phase": "reporting",       "status": "pending" }
+  ],
+  "errorMessage": null
+}

@@ -1,0 +1,590 @@
+{
+  "_comment": "Fixture: GET /api/v1/analyses/{id}/result — full canonical result for a completed analysis of LegacySalesApp.exe. All evidenceId references in capabilities, candidateComponents, externalInteractions, modernization, and interestingFunctions resolve to entries in the evidence array.",
+  "analysis": {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "status": "completed",
+    "createdAt": "2024-11-15T14:22:00.000Z",
+    "updatedAt": "2024-11-15T14:25:12.800Z",
+    "originalFilename": "LegacySalesApp.exe",
+    "storedFilename": "a1b2c3d4-e5f6-7890-abcd-ef1234567890.bin",
+    "fileSizeBytes": 2097152,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "phases": [
+      { "phase": "intake",          "status": "completed", "startedAt": "2024-11-15T14:22:00.000Z", "completedAt": "2024-11-15T14:22:00.120Z", "durationMs": 120 },
+      { "phase": "profiling",       "status": "completed", "startedAt": "2024-11-15T14:22:00.130Z", "completedAt": "2024-11-15T14:22:01.020Z", "durationMs": 890 },
+      { "phase": "extracting",      "status": "completed", "startedAt": "2024-11-15T14:22:01.030Z", "completedAt": "2024-11-15T14:22:04.230Z", "durationMs": 3200 },
+      { "phase": "ghidra-analysis", "status": "completed", "startedAt": "2024-11-15T14:22:04.250Z", "completedAt": "2024-11-15T14:24:52.400Z", "durationMs": 168150 },
+      { "phase": "correlating",     "status": "completed", "startedAt": "2024-11-15T14:24:52.500Z", "completedAt": "2024-11-15T14:24:53.100Z", "durationMs": 600 },
+      { "phase": "inferring",       "status": "completed", "startedAt": "2024-11-15T14:24:53.200Z", "completedAt": "2024-11-15T14:24:54.500Z", "durationMs": 1300 },
+      { "phase": "reconstructing",  "status": "completed", "startedAt": "2024-11-15T14:24:54.600Z", "completedAt": "2024-11-15T14:24:56.100Z", "durationMs": 1500 },
+      { "phase": "reporting",       "status": "completed", "startedAt": "2024-11-15T14:24:56.200Z", "completedAt": "2024-11-15T14:25:12.800Z", "durationMs": 16600 }
+    ],
+    "errorMessage": null
+  },
+
+  "binary": {
+    "originalFilename": "LegacySalesApp.exe",
+    "storedFilename": "a1b2c3d4-e5f6-7890-abcd-ef1234567890.bin",
+    "fileSizeBytes": 2097152,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "peType": "PE32",
+    "architecture": "x86",
+    "subsystem": "WINDOWS_GUI",
+    "entryPoint": "0x00401000",
+    "sections": [
+      { "name": ".text",  "virtualAddress": "0x00401000", "virtualSize": 614400, "rawSize": 614912, "characteristics": ["IMAGE_SCN_CNT_CODE", "IMAGE_SCN_MEM_EXECUTE", "IMAGE_SCN_MEM_READ"], "entropy": 5.92 },
+      { "name": ".rdata", "virtualAddress": "0x00497000", "virtualSize": 204800, "rawSize": 205312, "characteristics": ["IMAGE_SCN_CNT_INITIALIZED_DATA", "IMAGE_SCN_MEM_READ"], "entropy": 4.71 },
+      { "name": ".data",  "virtualAddress": "0x004CA000", "virtualSize": 81920,  "rawSize": 32768,  "characteristics": ["IMAGE_SCN_CNT_INITIALIZED_DATA", "IMAGE_SCN_MEM_READ", "IMAGE_SCN_MEM_WRITE"], "entropy": 3.18 },
+      { "name": ".rsrc",  "virtualAddress": "0x004DC000", "virtualSize": 40960,  "rawSize": 40960,  "characteristics": ["IMAGE_SCN_CNT_INITIALIZED_DATA", "IMAGE_SCN_MEM_READ"], "entropy": 2.55 }
+    ],
+    "imports": [
+      { "dll": "KERNEL32.dll",  "functions": ["CreateFileW", "ReadFile", "WriteFile", "CloseHandle", "GetLastError", "DeleteFileW", "GetTempPathW", "CreateDirectoryW", "FindFirstFileW", "FindNextFileW", "FindClose"] },
+      { "dll": "USER32.dll",    "functions": ["MessageBoxW", "CreateWindowExW", "ShowWindow", "UpdateWindow", "GetMessageW", "TranslateMessage", "DispatchMessageW", "SendMessageW", "PostMessageW", "LoadIconW", "LoadCursorW", "RegisterClassExW", "DestroyWindow", "EndDialog"] },
+      { "dll": "ADVAPI32.dll",  "functions": ["RegOpenKeyExW", "RegQueryValueExW", "RegSetValueExW", "RegCloseKey", "RegCreateKeyExW"] },
+      { "dll": "ODBC32.dll",    "functions": ["SQLAllocHandle", "SQLConnect", "SQLExecDirectW", "SQLFetch", "SQLGetData", "SQLDisconnect", "SQLFreeHandle"] },
+      { "dll": "COMCTL32.dll",  "functions": ["InitCommonControlsEx"] },
+      { "dll": "COMDLG32.dll",  "functions": ["GetOpenFileNameW", "GetSaveFileNameW"] },
+      { "dll": "msvcrt.dll",    "functions": ["malloc", "free", "memcpy", "memset", "strlen", "wcscpy", "wcslen", "sprintf", "sscanf"] }
+    ],
+    "exports": [],
+    "versionInfo": {
+      "fileVersion": "3.2.1.0",
+      "productVersion": "3.2.1",
+      "companyName": "Acme Corporation",
+      "productName": "Legacy Sales Application",
+      "description": "Sales Order Management System",
+      "originalFilename": "LegacySalesApp.exe",
+      "legalCopyright": "Copyright \u00a9 2008 Acme Corporation",
+      "internalName": "SalesApp"
+    },
+    "hasSignature": false,
+    "overallEntropy": 5.24
+  },
+
+  "coverage": {
+    "peParser": true,
+    "strings": true,
+    "ghidra": true
+  },
+
+  "evidence": [
+    {
+      "id": "evd-001",
+      "kind": "binary-metadata",
+      "sourceTool": "pe-parser",
+      "classification": "observed",
+      "summary": "PE32 x86 WINDOWS_GUI binary, entry point 0x00401000",
+      "location": null,
+      "data": { "peType": "PE32", "architecture": "x86", "subsystem": "WINDOWS_GUI", "entryPoint": "0x00401000" }
+    },
+    {
+      "id": "evd-002",
+      "kind": "metadata",
+      "sourceTool": "pe-parser",
+      "classification": "observed",
+      "summary": "Version resource: 'Legacy Sales Application' v3.2.1 by Acme Corporation",
+      "location": null,
+      "data": { "productName": "Legacy Sales Application", "fileVersion": "3.2.1.0", "companyName": "Acme Corporation" }
+    },
+    {
+      "id": "evd-003",
+      "kind": "import",
+      "sourceTool": "pe-parser",
+      "classification": "observed",
+      "summary": "Imports CreateFileW from KERNEL32.dll",
+      "location": { "address": null, "offset": null, "functionAddress": null },
+      "data": { "dll": "KERNEL32.dll", "function": "CreateFileW" }
+    },
+    {
+      "id": "evd-004",
+      "kind": "import",
+      "sourceTool": "pe-parser",
+      "classification": "observed",
+      "summary": "Imports ReadFile from KERNEL32.dll",
+      "location": null,
+      "data": { "dll": "KERNEL32.dll", "function": "ReadFile" }
+    },
+    {
+      "id": "evd-005",
+      "kind": "import",
+      "sourceTool": "pe-parser",
+      "classification": "observed",
+      "summary": "Imports WriteFile from KERNEL32.dll",
+      "location": null,
+      "data": { "dll": "KERNEL32.dll", "function": "WriteFile" }
+    },
+    {
+      "id": "evd-006",
+      "kind": "import",
+      "sourceTool": "pe-parser",
+      "classification": "observed",
+      "summary": "Imports SendMessageW from USER32.dll",
+      "location": null,
+      "data": { "dll": "USER32.dll", "function": "SendMessageW" }
+    },
+    {
+      "id": "evd-007",
+      "kind": "import",
+      "sourceTool": "pe-parser",
+      "classification": "observed",
+      "summary": "Imports RegOpenKeyExW from ADVAPI32.dll",
+      "location": null,
+      "data": { "dll": "ADVAPI32.dll", "function": "RegOpenKeyExW" }
+    },
+    {
+      "id": "evd-008",
+      "kind": "import",
+      "sourceTool": "pe-parser",
+      "classification": "observed",
+      "summary": "Imports RegSetValueExW from ADVAPI32.dll",
+      "location": null,
+      "data": { "dll": "ADVAPI32.dll", "function": "RegSetValueExW" }
+    },
+    {
+      "id": "evd-009",
+      "kind": "import",
+      "sourceTool": "pe-parser",
+      "classification": "observed",
+      "summary": "Imports SQLConnect from ODBC32.dll",
+      "location": null,
+      "data": { "dll": "ODBC32.dll", "function": "SQLConnect" }
+    },
+    {
+      "id": "evd-010",
+      "kind": "import",
+      "sourceTool": "pe-parser",
+      "classification": "observed",
+      "summary": "Imports SQLExecDirectW from ODBC32.dll",
+      "location": null,
+      "data": { "dll": "ODBC32.dll", "function": "SQLExecDirectW" }
+    },
+    {
+      "id": "evd-011",
+      "kind": "import",
+      "sourceTool": "pe-parser",
+      "classification": "observed",
+      "summary": "Imports SQLFetch from ODBC32.dll",
+      "location": null,
+      "data": { "dll": "ODBC32.dll", "function": "SQLFetch" }
+    },
+    {
+      "id": "evd-012",
+      "kind": "import",
+      "sourceTool": "pe-parser",
+      "classification": "observed",
+      "summary": "Imports GetOpenFileNameW from COMDLG32.dll",
+      "location": null,
+      "data": { "dll": "COMDLG32.dll", "function": "GetOpenFileNameW" }
+    },
+    {
+      "id": "evd-013",
+      "kind": "string",
+      "sourceTool": "strings",
+      "classification": "observed",
+      "summary": "String 'orders.dat' found in .rdata (category: config-filename)",
+      "location": { "address": null, "offset": 209920, "functionAddress": null },
+      "data": { "value": "orders.dat", "encoding": "ascii", "offset": 209920, "section": ".rdata", "category": "config-filename" }
+    },
+    {
+      "id": "evd-014",
+      "kind": "string",
+      "sourceTool": "strings",
+      "classification": "observed",
+      "summary": "String 'Software\\\\Acme\\\\LegacySalesApp' found in .rdata (category: registry-path)",
+      "location": { "address": null, "offset": 210048, "functionAddress": null },
+      "data": { "value": "Software\\Acme\\LegacySalesApp", "encoding": "utf-16le", "offset": 210048, "section": ".rdata", "category": "registry-path" }
+    },
+    {
+      "id": "evd-015",
+      "kind": "string",
+      "sourceTool": "strings",
+      "classification": "observed",
+      "summary": "SQL string 'SELECT OrderId, CustomerId, TotalAmount FROM Orders WHERE Status = ?' found in .rdata",
+      "location": { "address": null, "offset": 212000, "functionAddress": null },
+      "data": { "value": "SELECT OrderId, CustomerId, TotalAmount FROM Orders WHERE Status = ?", "encoding": "ascii", "offset": 212000, "section": ".rdata", "category": "sql" }
+    },
+    {
+      "id": "evd-016",
+      "kind": "string",
+      "sourceTool": "strings",
+      "classification": "observed",
+      "summary": "SQL string 'INSERT INTO Orders (CustomerId, TotalAmount, Status) VALUES (?, ?, ?)' found in .rdata",
+      "location": { "address": null, "offset": 212100, "functionAddress": null },
+      "data": { "value": "INSERT INTO Orders (CustomerId, TotalAmount, Status) VALUES (?, ?, ?)", "encoding": "ascii", "offset": 212100, "section": ".rdata", "category": "sql" }
+    },
+    {
+      "id": "evd-017",
+      "kind": "string",
+      "sourceTool": "strings",
+      "classification": "observed",
+      "summary": "String 'DSN=AcmeSales;UID=salesuser;' found in .rdata (category: sql)",
+      "location": { "address": null, "offset": 212200, "functionAddress": null },
+      "data": { "value": "DSN=AcmeSales;UID=salesuser;", "encoding": "ascii", "offset": 212200, "section": ".rdata", "category": "sql" }
+    },
+    {
+      "id": "evd-018",
+      "kind": "string",
+      "sourceTool": "strings",
+      "classification": "observed",
+      "summary": "String 'Failed to connect to database. Check DSN configuration.' found in .rdata (category: error-message)",
+      "location": { "address": null, "offset": 212400, "functionAddress": null },
+      "data": { "value": "Failed to connect to database. Check DSN configuration.", "encoding": "utf-16le", "offset": 212400, "section": ".rdata", "category": "error-message" }
+    },
+    {
+      "id": "evd-019",
+      "kind": "function",
+      "sourceTool": "ghidra",
+      "classification": "observed",
+      "summary": "Function at 0x00404200 (auto-named FUN_00404200); calls CreateFileW, ReadFile, WriteFile",
+      "location": { "address": "0x00404200", "offset": null, "functionAddress": null },
+      "data": { "address": "0x00404200", "name": "FUN_00404200", "autoGenerated": true }
+    },
+    {
+      "id": "evd-020",
+      "kind": "function",
+      "sourceTool": "ghidra",
+      "classification": "observed",
+      "summary": "Function at 0x00406A00 (named SaveOrderRecord); calls SQLExecDirectW, SQLFetch",
+      "location": { "address": "0x00406A00", "offset": null, "functionAddress": null },
+      "data": { "address": "0x00406A00", "name": "SaveOrderRecord", "autoGenerated": false }
+    },
+    {
+      "id": "evd-021",
+      "kind": "function-call",
+      "sourceTool": "ghidra",
+      "classification": "observed",
+      "summary": "Call from SaveOrderRecord (0x00406A00) to SQLExecDirectW",
+      "location": { "address": "0x00406A48", "offset": null, "functionAddress": "0x00406A00" },
+      "data": { "callerAddress": "0x00406A00", "callerName": "SaveOrderRecord", "calleeAddress": null, "calleeName": "SQLExecDirectW", "callSiteAddress": "0x00406A48" }
+    },
+    {
+      "id": "evd-022",
+      "kind": "decompilation",
+      "sourceTool": "ghidra",
+      "classification": "observed",
+      "summary": "Decompilation snippet for SaveOrderRecord (0x00406A00)",
+      "location": { "address": "0x00406A00", "offset": null, "functionAddress": "0x00406A00" },
+      "data": { "address": "0x00406A00", "pseudoC": "int SaveOrderRecord(int customerId, double amount, int status) {\n  SQLHSTMT hStmt;\n  SQLAllocHandle(SQL_HANDLE_STMT, hConn, &hStmt);\n  SQLExecDirectW(hStmt, L\"INSERT INTO Orders ...\", SQL_NTS);\n  SQLFreeHandle(SQL_HANDLE_STMT, hStmt);\n  return 0;\n}" }
+    },
+    {
+      "id": "evd-023",
+      "kind": "pe-section",
+      "sourceTool": "pe-parser",
+      "classification": "observed",
+      "summary": "PE section .text: executable code, entropy 5.92",
+      "location": { "address": "0x00401000", "offset": null, "functionAddress": null },
+      "data": { "name": ".text", "virtualAddress": "0x00401000", "virtualSize": 614400, "characteristics": ["IMAGE_SCN_CNT_CODE", "IMAGE_SCN_MEM_EXECUTE", "IMAGE_SCN_MEM_READ"], "entropy": 5.92 }
+    }
+  ],
+
+  "capabilities": [
+    {
+      "id": "inf-001",
+      "ruleId": "RULE_DATABASE_ODBC",
+      "category": "database",
+      "statement": "The binary communicates with a database using ODBC, executing parameterised SQL queries to read and write order records.",
+      "classification": "inferred",
+      "confidence": "high",
+      "evidenceIds": ["evd-009", "evd-010", "evd-011", "evd-015", "evd-016", "evd-017", "evd-021", "evd-022"],
+      "rationale": [
+        "Imports SQLConnect, SQLExecDirectW, SQLFetch from ODBC32.dll (pe-parser)",
+        "SQL strings 'SELECT OrderId ...' and 'INSERT INTO Orders ...' found in .rdata (strings)",
+        "DSN connection string 'DSN=AcmeSales' found in .rdata (strings)",
+        "Ghidra decompilation confirms SQLExecDirectW call in SaveOrderRecord (ghidra)"
+      ],
+      "limitations": [
+        "The specific database vendor (SQL Server, MySQL, Access, etc.) cannot be determined from the DSN name alone.",
+        "ODBC driver configuration is outside this binary.",
+        "The binary is never executed; query results and runtime data are not observable."
+      ],
+      "counterEvidence": []
+    },
+    {
+      "id": "inf-002",
+      "ruleId": "RULE_FILE_IO",
+      "category": "filesystem",
+      "statement": "The binary performs file I/O, reading and writing a file named 'orders.dat', likely for local data persistence.",
+      "classification": "inferred",
+      "confidence": "medium",
+      "evidenceIds": ["evd-003", "evd-004", "evd-005", "evd-013"],
+      "rationale": [
+        "Imports CreateFileW, ReadFile, WriteFile from KERNEL32.dll (pe-parser)",
+        "String 'orders.dat' found in .rdata section (strings)"
+      ],
+      "limitations": [
+        "The format and content of 'orders.dat' cannot be determined statically.",
+        "It is unknown whether this file is used in addition to or instead of the database."
+      ],
+      "counterEvidence": []
+    },
+    {
+      "id": "inf-003",
+      "ruleId": "RULE_REGISTRY_CONFIG",
+      "category": "registry",
+      "statement": "The binary reads and writes settings in the Windows registry under 'Software\\\\Acme\\\\LegacySalesApp', consistent with persisting user preferences or application configuration.",
+      "classification": "inferred",
+      "confidence": "medium",
+      "evidenceIds": ["evd-007", "evd-008", "evd-014"],
+      "rationale": [
+        "Imports RegOpenKeyExW, RegSetValueExW from ADVAPI32.dll (pe-parser)",
+        "Registry path 'Software\\\\Acme\\\\LegacySalesApp' found in .rdata (strings)"
+      ],
+      "limitations": [
+        "The specific settings read or written cannot be determined without runtime observation.",
+        "Registry APIs alone do not indicate installer behavior."
+      ],
+      "counterEvidence": []
+    },
+    {
+      "id": "inf-004",
+      "ruleId": "RULE_GUI_APP",
+      "category": "ui",
+      "statement": "The binary is a Windows GUI application that creates and manages windows using the Win32 API.",
+      "classification": "inferred",
+      "confidence": "high",
+      "evidenceIds": ["evd-001", "evd-006"],
+      "rationale": [
+        "PE subsystem is WINDOWS_GUI (pe-parser)",
+        "Imports CreateWindowExW, ShowWindow, GetMessageW, DispatchMessageW from USER32.dll (pe-parser)",
+        "SendMessageW is a window messaging API — it sends messages to window handles, not network destinations"
+      ],
+      "limitations": [
+        "The specific window layout and UI design cannot be determined statically."
+      ],
+      "counterEvidence": []
+    }
+  ],
+
+  "candidateComponents": [
+    {
+      "id": "comp-001",
+      "name": "Database Order Management",
+      "kind": "candidate-responsibility",
+      "confidence": "high",
+      "summary": "A cluster of functions that reads and writes order records to a database via ODBC. The function SaveOrderRecord at 0x00406A00 is directly identifiable. This component is the most strongly evidenced responsibility in the binary.",
+      "functions": [
+        { "address": "0x00406A00", "name": "SaveOrderRecord", "autoGenerated": false }
+      ],
+      "evidenceIds": ["evd-009", "evd-010", "evd-011", "evd-015", "evd-016", "evd-017", "evd-020", "evd-021", "evd-022"],
+      "rationale": [
+        { "classification": "observed",  "text": "Imports SQLConnect, SQLExecDirectW, SQLFetch, SQLAllocHandle from ODBC32.dll" },
+        { "classification": "observed",  "text": "SQL strings SELECT and INSERT for an 'Orders' table found in .rdata" },
+        { "classification": "observed",  "text": "DSN connection string 'DSN=AcmeSales' found in .rdata" },
+        { "classification": "observed",  "text": "Ghidra identifies function 'SaveOrderRecord' (non-auto-generated name) calling SQLExecDirectW" },
+        { "classification": "inferred",  "text": "The combination of ODBC imports, parameterised SQL strings, and a named function indicates a structured data access layer" },
+        { "classification": "unknown",   "text": "The database vendor, schema version, and full set of queries cannot be determined statically" }
+      ],
+      "externalInteractions": ["ext-001"],
+      "limitations": [
+        "Other functions calling ODBC APIs may exist but were not selected as interesting functions.",
+        "The exact query parameter types are not determinable without runtime observation.",
+        "This grouping is heuristic; the actual module boundary in source code may differ."
+      ]
+    },
+    {
+      "id": "comp-002",
+      "name": "Local File Persistence",
+      "kind": "candidate-responsibility",
+      "confidence": "medium",
+      "summary": "A candidate responsibility for reading and writing 'orders.dat', likely used for local flat-file storage. The function at 0x00404200 (auto-named by Ghidra) uses CreateFileW, ReadFile, and WriteFile.",
+      "functions": [
+        { "address": "0x00404200", "name": "FUN_00404200", "autoGenerated": true }
+      ],
+      "evidenceIds": ["evd-003", "evd-004", "evd-005", "evd-013", "evd-019"],
+      "rationale": [
+        { "classification": "observed",  "text": "Imports CreateFileW, ReadFile, WriteFile from KERNEL32.dll" },
+        { "classification": "observed",  "text": "String 'orders.dat' found in .rdata" },
+        { "classification": "observed",  "text": "Function at 0x00404200 (auto-named FUN_00404200) calls CreateFileW, ReadFile, WriteFile" },
+        { "classification": "inferred",  "text": "Proximity of file I/O calls and the 'orders.dat' string suggests this function manages order file access" },
+        { "classification": "unknown",   "text": "Whether 'orders.dat' and the ODBC database serve the same data or different data is unknown" }
+      ],
+      "externalInteractions": ["ext-002"],
+      "limitations": [
+        "FUN_00404200 is an auto-generated Ghidra name and does not reflect the original source symbol.",
+        "The file format of 'orders.dat' cannot be determined without the file or runtime observation.",
+        "CreateFileW alone is insufficient to characterise this as a config-file reader; the 'orders.dat' string provides additional context."
+      ]
+    },
+    {
+      "id": "comp-003",
+      "name": "Application Configuration (Registry)",
+      "kind": "candidate-responsibility",
+      "confidence": "medium",
+      "summary": "A candidate responsibility for reading and writing application settings from the Windows registry under 'Software\\\\Acme\\\\LegacySalesApp'.",
+      "functions": [],
+      "evidenceIds": ["evd-007", "evd-008", "evd-014"],
+      "rationale": [
+        { "classification": "observed",  "text": "Imports RegOpenKeyExW, RegQueryValueExW, RegSetValueExW, RegCreateKeyExW from ADVAPI32.dll" },
+        { "classification": "observed",  "text": "Registry path 'Software\\\\Acme\\\\LegacySalesApp' found in .rdata" },
+        { "classification": "inferred",  "text": "The combination of registry write APIs and an application-specific registry path is consistent with persisting user or application configuration" },
+        { "classification": "unknown",   "text": "The specific settings read or written are not observable statically" }
+      ],
+      "limitations": [
+        "Registry APIs alone do not indicate installer behavior. No installer metadata strings were found.",
+        "No specific Ghidra functions were associated with this responsibility in the current analysis."
+      ]
+    }
+  ],
+
+  "externalInteractions": [
+    {
+      "id": "ext-001",
+      "kind": "database",
+      "description": "Connects to an ODBC data source named 'AcmeSales' and executes parameterised SELECT and INSERT queries against an 'Orders' table.",
+      "confidence": "high",
+      "evidenceIds": ["evd-009", "evd-010", "evd-011", "evd-015", "evd-016", "evd-017"],
+      "limitations": [
+        "The database vendor cannot be determined from the DSN name alone.",
+        "Whether the connection string includes a password cannot be determined (only a partial DSN string was found)."
+      ]
+    },
+    {
+      "id": "ext-002",
+      "kind": "filesystem",
+      "description": "Reads from and writes to a file named 'orders.dat', likely in the application's working directory.",
+      "confidence": "medium",
+      "evidenceIds": ["evd-003", "evd-004", "evd-005", "evd-013"],
+      "limitations": [
+        "The full file path cannot be determined statically.",
+        "The file format is unknown."
+      ]
+    },
+    {
+      "id": "ext-003",
+      "kind": "registry",
+      "description": "Reads and writes to the registry key 'HKEY_CURRENT_USER\\\\Software\\\\Acme\\\\LegacySalesApp' for configuration persistence.",
+      "confidence": "medium",
+      "evidenceIds": ["evd-007", "evd-008", "evd-014"],
+      "limitations": [
+        "The specific values stored are not observable without runtime execution.",
+        "The HKEY root (HKCU vs HKLM) is inferred from the key path pattern but cannot be confirmed without runtime observation."
+      ]
+    }
+  ],
+
+  "dependencies": [
+    "KERNEL32.dll",
+    "USER32.dll",
+    "ADVAPI32.dll",
+    "ODBC32.dll",
+    "COMCTL32.dll",
+    "COMDLG32.dll",
+    "msvcrt.dll"
+  ],
+
+  "interestingFunctions": [
+    {
+      "address": "0x00406A00",
+      "name": "SaveOrderRecord",
+      "autoGenerated": false,
+      "callers": ["0x00408100", "0x00408300"],
+      "callees": ["0x00406B00"],
+      "apiReferences": ["SQLAllocHandle", "SQLExecDirectW", "SQLFreeHandle"],
+      "stringReferences": ["INSERT INTO Orders (CustomerId, TotalAmount, Status) VALUES (?, ?, ?)"],
+      "evidenceIds": ["evd-020", "evd-021"],
+      "decompilationEvidenceIds": ["evd-022"],
+      "selectionScore": 0.91,
+      "selectionReasons": ["non-auto-generated name", "calls high-value ODBC API", "references SQL insert string"]
+    },
+    {
+      "address": "0x00404200",
+      "name": "FUN_00404200",
+      "autoGenerated": true,
+      "callers": ["0x00403100"],
+      "callees": [],
+      "apiReferences": ["CreateFileW", "ReadFile", "WriteFile", "CloseHandle"],
+      "stringReferences": ["orders.dat"],
+      "evidenceIds": ["evd-019"],
+      "decompilationEvidenceIds": [],
+      "selectionScore": 0.72,
+      "selectionReasons": ["calls multiple file I/O APIs", "references config-filename string 'orders.dat'"]
+    }
+  ],
+
+  "unknowns": [
+    {
+      "id": "unk-001",
+      "question": "What database system does this binary communicate with via ODBC?",
+      "whyItMatters": "Understanding the database vendor is essential for migration planning. The ODBC abstraction layer hides vendor-specific details from static analysis.",
+      "missingEvidence": "The DSN 'AcmeSales' does not reveal the vendor. No vendor-specific driver DLL is imported (e.g. sqlncli.dll, libmysql.dll). No connection string with a SERVER= or Provider= clause was found.",
+      "howToResolve": [
+        "Inspect the ODBC Data Source Administrator on the original deployment machine.",
+        "Check the registry under HKCU/HKLM ODBC.INI for the 'AcmeSales' DSN entry.",
+        "Monitor network connections when the application runs against a test database."
+      ]
+    },
+    {
+      "id": "unk-002",
+      "question": "Is 'orders.dat' used for the same data as the ODBC database, or for different data?",
+      "whyItMatters": "If both flat-file and database storage are used for orders, migration must handle both paths. If they serve different concerns, the migration strategy differs.",
+      "missingEvidence": "No runtime data flow between the file I/O functions and the ODBC functions is observable via static analysis.",
+      "howToResolve": [
+        "Run the application in a monitored environment and observe which operations write to 'orders.dat' vs. the database.",
+        "Inspect the 'orders.dat' file format from an existing installation."
+      ]
+    },
+    {
+      "id": "unk-003",
+      "question": "Does the application handle user authentication, or does it rely on the operating system session?",
+      "whyItMatters": "If the application has its own credential management, that logic must be replaced during modernization. If it delegates to OS authentication, no custom auth logic needs migrating.",
+      "missingEvidence": "No credential API imports (CredReadW, LsaLogonUser, etc.) were found. The ODBC DSN contains a UID= clause but no PWD= clause in the observed string. Generic strings 'Password' and 'Username' were found but are insufficient to conclude authentication handling.",
+      "howToResolve": [
+        "Search for login dialog resources in the .rsrc section.",
+        "Run the application and observe if a login prompt appears before the main window.",
+        "Inspect the full ODBC connection string at runtime."
+      ]
+    }
+  ],
+
+  "risks": [
+    "Binary is unsigned — Authenticode signature is absent. Provenance cannot be confirmed from the binary alone.",
+    "ODBC DSN connection string found in plaintext in .rdata — credentials may be partially exposed.",
+    "Application is compiled for x86 (32-bit); may require WoW64 layer on modern 64-bit Windows.",
+    "Uses msvcrt.dll (Microsoft C runtime) from Visual C++ circa 2005-2008; this runtime is not shipped with modern Windows by default."
+  ],
+
+  "modernization": [
+    {
+      "id": "mod-001",
+      "priority": "high",
+      "title": "Replace ODBC with a modern database abstraction layer",
+      "description": "The binary uses raw ODBC calls with hardcoded SQL strings. Migrating to an ORM or modern database client library (e.g. Entity Framework, SQLAlchemy, or a typed query builder) would improve maintainability, security (parameterised queries are used, but the DSN is hardcoded in .rdata), and portability.",
+      "evidenceIds": ["evd-009", "evd-010", "evd-011", "evd-015", "evd-016", "evd-017"],
+      "relatedResponsibilityIds": ["comp-001"]
+    },
+    {
+      "id": "mod-002",
+      "priority": "high",
+      "title": "Eliminate plaintext credentials in the binary",
+      "description": "A partial ODBC connection string (DSN=AcmeSales;UID=salesuser;) is embedded in the binary's .rdata section. Connection string secrets must be externalized to a configuration file, secrets manager, or environment variable in the replacement system.",
+      "evidenceIds": ["evd-017"],
+      "relatedResponsibilityIds": ["comp-001"]
+    },
+    {
+      "id": "mod-003",
+      "priority": "medium",
+      "title": "Replace flat-file order storage with structured persistence",
+      "description": "The binary appears to maintain a flat file 'orders.dat' alongside the database. Modern systems should consolidate persistence to a single, well-structured data store.",
+      "evidenceIds": ["evd-003", "evd-004", "evd-005", "evd-013"],
+      "relatedResponsibilityIds": ["comp-002"]
+    },
+    {
+      "id": "mod-004",
+      "priority": "low",
+      "title": "Migrate from Win32 GUI to a modern UI framework",
+      "description": "The binary implements a Win32 GUI using raw CreateWindowExW, RegisterClassExW, and message loop APIs. Migrating to a modern desktop (WPF, WinUI 3) or web-based frontend would improve accessibility, testability, and future extensibility.",
+      "evidenceIds": ["evd-001", "evd-006"],
+      "relatedResponsibilityIds": ["comp-001", "comp-002", "comp-003"]
+    }
+  ],
+
+  "limitations": [
+    "Static analysis cannot observe runtime behavior. Data flows, user inputs, and network connections are not observable.",
+    "The binary is never executed. All conclusions are inferred from static artifacts.",
+    "Function groupings in candidateComponents are heuristic. Actual source module boundaries may differ.",
+    "FUN_* function names are Ghidra auto-generated placeholders and do not reflect original source symbol names.",
+    "The presence of a digital signature (hasSignature: false in this case) or its absence does not establish whether the binary is safe or malicious.",
+    "High binary entropy sections may indicate compression, encryption, or legitimate packed resources — not necessarily malice.",
+    "ODBC vendor cannot be determined without the deployment machine's DSN configuration."
+  ]
+}

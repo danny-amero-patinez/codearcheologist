@@ -1,0 +1,22 @@
+{
+  "_comment": "Fixture: GET /api/v1/analyses/{id} response for a FAILED analysis. PE parser crashed — fatal failure. No result is available.",
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "status": "failed",
+  "createdAt": "2024-11-15T14:22:00.000Z",
+  "updatedAt": "2024-11-15T14:22:03.400Z",
+  "originalFilename": "LegacySalesApp.exe",
+  "storedFilename": "a1b2c3d4-e5f6-7890-abcd-ef1234567890.bin",
+  "fileSizeBytes": 2097152,
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "phases": [
+    { "phase": "intake",          "status": "completed", "startedAt": "2024-11-15T14:22:00.000Z", "completedAt": "2024-11-15T14:22:00.120Z", "durationMs": 120 },
+    { "phase": "profiling",       "status": "failed",    "startedAt": "2024-11-15T14:22:00.130Z", "completedAt": "2024-11-15T14:22:03.400Z", "durationMs": 3270, "error": "PE parser: invalid PE optional header magic at offset 0x00E8" },
+    { "phase": "extracting",      "status": "skipped" },
+    { "phase": "ghidra-analysis", "status": "skipped" },
+    { "phase": "correlating",     "status": "skipped" },
+    { "phase": "inferring",       "status": "skipped" },
+    { "phase": "reconstructing",  "status": "skipped" },
+    { "phase": "reporting",       "status": "skipped" }
+  ],
+  "errorMessage": "Analysis failed during phase 'profiling': PE parser: invalid PE optional header magic at offset 0x00E8"
+}
