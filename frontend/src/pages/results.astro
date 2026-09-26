@@ -646,6 +646,13 @@ import Background3D from '../components/Background3D.astro';
   } else {
     fetch(`/api/v1/analyses/${id}/result`)
       .then(async res => {
+        // 202 means the analysis is still running — backend returns
+        // { analysis: {...}, result: null, message: "Analysis in progress" }
+        if (res.status === 202) {
+          const body = await res.json().catch(() => ({}));
+          const status = body.analysis?.status ?? 'running';
+          throw new Error(`ANALYSIS_IN_PROGRESS:${status}`);
+        }
         if (!res.ok) {
           const body = await res.json().catch(() => ({}));
           const msg = body.error?.message || `HTTP ${res.status}`;
@@ -654,11 +661,27 @@ import Background3D from '../components/Background3D.astro';
         return res.json();
       })
       .then(result => {
+        // When complete, backend returns the CanonicalResult directly (res.json(result))
         const frag = renderDashboard(result);
         container.innerHTML = '';
         container.appendChild(frag);
       })
       .catch(err => {
+        // Special case: analysis still running — show a polling state instead of an error
+        if (err.message.startsWith('ANALYSIS_IN_PROGRESS:')) {
+          const status = err.message.split(':')[1];
+          container.innerHTML = `
+            <div class="loading-state">
+              <div class="neon-spinner"></div>
+              <p>Analysis is still running — status: <strong style="color:#00d8ff">${status.toUpperCase()}</strong></p>
+              <p style="font-size:0.85rem;color:#666;margin-top:0.5rem">
+                This page will not auto-refresh.
+                <a href="/results?id=${id}" style="color:#00d8ff">Reload</a> to check again,
+                or <a href="/" style="color:#00d8ff">go back</a> to the upload page.
+              </p>
+            </div>`;
+          return;
+        }
         container.innerHTML = `
           <div class="error-state">
             <h2>FAILED TO LOAD RESULTS</h2>

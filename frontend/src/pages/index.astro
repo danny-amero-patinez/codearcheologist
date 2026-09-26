@@ -363,9 +363,9 @@ import Background3D from '../components/Background3D.astro';
           throw new Error(data.error?.message || data.message || 'Upload failed');
         }
 
-        // Backend returns AnalysisMeta: { id, status, ... }
-        // Begin polling until a terminal status is reached.
-        pollStatus(data.id);
+        // Backend returns { analysis: { id, status, ... } }
+        // The analysis object is nested under the "analysis" key.
+        pollStatus(data.analysis.id);
 
       } catch (err: any) {
         setStatus(`Error: ${err.message}`);
@@ -386,13 +386,16 @@ import Background3D from '../components/Background3D.astro';
         const res  = await fetch(`/api/v1/analyses/${id}`);
         if (!res.ok) throw new Error('Failed to fetch status');
 
+        // Backend returns { analysis: { id, status, phases, ... } }
         const data = await res.json();
-        setStatus(`Status: ${data.status.toUpperCase()}`, true);
+        const status = data.analysis?.status ?? data.status; // defensive fallback
 
-        if (['completed', 'partial', 'failed'].includes(data.status)) {
-          setStatus(`Analysis finished with status: ${data.status}`);
+        setStatus(`Status: ${status.toUpperCase()}`, true);
 
-          if (data.status === 'failed') {
+        if (['completed', 'partial', 'failed'].includes(status)) {
+          setStatus(`Analysis finished with status: ${status}`);
+
+          if (status === 'failed') {
             // Allow the user to try a different binary
             uploadLabel.style.display = 'inline-flex';
             uploadLabel.textContent   = 'Try Another Binary';

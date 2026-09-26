@@ -4,6 +4,7 @@
  * Wires together middleware, routers, and error handling.
  */
 import express, { type Express } from 'express';
+import cors from 'cors';
 import { type AppConfig } from '../config/config.js';
 import { healthRouter } from './routes/health.js';
 import { analysesRouter } from './routes/analyses.js';
@@ -12,6 +13,18 @@ import { requestLogger } from './middleware/requestLogger.js';
 
 export function createApp(config: AppConfig): Express {
   const app = express();
+
+  // Allow requests from the Astro frontend on any localhost port (dev + preview).
+  // In production, replace the origin list with your actual deployed domain(s).
+  app.use(cors({
+    origin: [
+      'http://localhost:4321',
+      'http://localhost:4322',
+      'http://127.0.0.1:4321',
+      'http://127.0.0.1:4322',
+    ],
+    methods: ['GET', 'POST'],
+  }));
 
   app.use(express.json());
   app.use(requestLogger);
