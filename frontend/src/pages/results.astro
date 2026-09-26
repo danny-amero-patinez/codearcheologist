@@ -47,18 +47,17 @@ import Background3D from '../components/Background3D.astro';
       font-size: 0.85rem;
       letter-spacing: 1px;
     }
+    .badge.partial  { border-color: #ffa502; color: #ffa502; background: rgba(255,165,2,0.1); }
+    .badge.failed   { border-color: #ff4757; color: #ff4757; background: rgba(255,71,87,0.1); }
+    .badge.loading  { border-color: #888;    color: #888;    background: rgba(136,136,136,0.1); }
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 1.5rem;
     }
-    .span-2 {
-      grid-column: span 2;
-    }
+    .span-2 { grid-column: span 2; }
     @media (max-width: 900px) {
-      .span-2 {
-        grid-column: span 1;
-      }
+      .span-2 { grid-column: span 1; }
     }
     .card {
       background: rgba(10, 10, 10, 0.85);
@@ -93,13 +92,15 @@ import Background3D from '../components/Background3D.astro';
     .data-list li {
       display: flex;
       justify-content: space-between;
+      align-items: flex-start;
       padding: 0.5rem 0;
       border-bottom: 1px dashed rgba(255,255,255,0.05);
       font-size: 0.95rem;
+      gap: 1rem;
     }
     .data-list li:last-child { border: none; }
-    .data-label { color: #888; }
-    .data-value { color: #eee; font-family: monospace; }
+    .data-label { color: #888; white-space: nowrap; }
+    .data-value { color: #eee; font-family: monospace; text-align: right; word-break: break-all; }
     .tags {
       display: flex;
       flex-wrap: wrap;
@@ -113,11 +114,9 @@ import Background3D from '../components/Background3D.astro';
       font-size: 0.85rem;
       color: #ccc;
     }
-    .tag.high-risk {
-      border-color: #ff4757;
-      color: #ff4757;
-      background: rgba(255, 71, 87, 0.1);
-    }
+    .tag.high-risk  { border-color: #ff4757; color: #ff4757; background: rgba(255,71,87,0.1); }
+    .tag.medium-risk { border-color: #ffa502; color: #ffa502; background: rgba(255,165,2,0.1); }
+    .tag.low-risk   { border-color: #00d8ff; color: #00d8ff; background: rgba(0,216,255,0.05); }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -134,24 +133,28 @@ import Background3D from '../components/Background3D.astro';
       padding: 0.75rem 0;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       color: #ccc;
+      vertical-align: top;
     }
     td.func-name {
       font-family: monospace;
       color: #00d8ff;
-      cursor: pointer;
+      white-space: nowrap;
     }
-    td.func-name:hover { text-decoration: underline; }
+    td.apis {
+      font-family: monospace;
+      font-size: 0.82rem;
+      color: #aaa;
+      max-width: 260px;
+    }
     .score-bar {
       width: 100%;
       height: 4px;
       background: #222;
       border-radius: 2px;
       overflow: hidden;
+      min-width: 80px;
     }
-    .score-fill {
-      height: 100%;
-      background: #ff4757;
-    }
+    .score-fill { height: 100%; background: #ff4757; border-radius: 2px; }
     .coverage-item { margin-bottom: 1rem; }
     .coverage-header {
       display: flex;
@@ -167,11 +170,7 @@ import Background3D from '../components/Background3D.astro';
       border-radius: 3px;
       overflow: hidden;
     }
-    .progress-fill {
-      height: 100%;
-      background: #00d8ff;
-      border-radius: 3px;
-    }
+    .progress-fill { height: 100%; background: #00d8ff; border-radius: 3px; }
     .nav-back {
       display: inline-flex;
       align-items: center;
@@ -184,190 +183,487 @@ import Background3D from '../components/Background3D.astro';
       pointer-events: auto;
     }
     .nav-back:hover { opacity: 0.7; }
+    .error-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #ff4757;
+    }
+    .error-state h2 { font-weight: 300; letter-spacing: 2px; }
+    .error-state p  { color: #888; }
+    .loading-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #888;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    .neon-spinner {
+      width: 32px; height: 32px;
+      border: 3px solid rgba(0,216,255,0.1);
+      border-top-color: #00d8ff;
+      border-radius: 50%;
+      animation: spin 1.5s linear infinite;
+      box-shadow: 0 0 12px rgba(0,216,255,0.5);
+      margin: 0 auto 1.5rem;
+    }
+    .confidence-badge {
+      display: inline-block;
+      padding: 0.1rem 0.5rem;
+      border-radius: 3px;
+      font-size: 0.78rem;
+      font-family: monospace;
+    }
+    .confidence-high   { color: #00d8ff; border: 1px solid rgba(0,216,255,0.4); }
+    .confidence-medium { color: #ffa502; border: 1px solid rgba(255,165,2,0.4); }
+    .confidence-low    { color: #888;    border: 1px solid rgba(136,136,136,0.3); }
+    .section-empty { color: #555; font-size: 0.9rem; font-style: italic; padding: 0.5rem 0; }
+    .risk-item {
+      padding: 0.5rem 0;
+      border-bottom: 1px dashed rgba(255,255,255,0.05);
+      font-size: 0.9rem;
+      color: #ff4757;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    .risk-item:last-child { border: none; }
+    .risk-item::before { content: "⚠"; font-size: 0.8rem; margin-top: 0.05rem; }
+    .modernization-item {
+      padding: 0.75rem 0;
+      border-bottom: 1px dashed rgba(255,255,255,0.05);
+    }
+    .modernization-item:last-child { border: none; }
+    .modernization-title {
+      font-size: 0.95rem;
+      color: #eee;
+      margin-bottom: 0.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .modernization-desc { font-size: 0.85rem; color: #888; line-height: 1.5; }
+    .limitation-item {
+      padding: 0.4rem 0;
+      font-size: 0.85rem;
+      color: #888;
+      border-bottom: 1px dashed rgba(255,255,255,0.04);
+      display: flex; gap: 0.5rem;
+    }
+    .limitation-item:last-child { border: none; }
+    .limitation-item::before { content: "·"; color: #444; }
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: transparent;
+      color: #00d8ff;
+      border: 1px solid rgba(0,216,255,0.4);
+      padding: 0.5rem 1.2rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-family: inherit;
+      transition: all 0.2s;
+      margin-top: 0.5rem;
+    }
+    .download-btn:hover {
+      background: rgba(0,216,255,0.08);
+      border-color: #00d8ff;
+      box-shadow: 0 0 12px rgba(0,216,255,0.3);
+    }
   </style>
 </head>
 <body>
 <Background3D />
 <div class="dashboard-container">
-<a href="/" class="nav-back">
-<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-<line x1="19" y1="12" x2="5" y2="12">
-</line>
-<polyline points="12 19 5 12 12 5">
-</polyline>
-</svg>
-      Back to Upload
-    </a>
-<div class="dashboard-content">
-<header>
-<h1>ANALYSIS RESULTS</h1>
-<div class="badge">STATUS: COMPLETED</div>
-</header>
-<div class="grid">
-<!-- Binary Summary -->
-<div class="card">
-<h2>
-<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z">
-</path>
-<polyline points="14 2 14 8 20 8">
-</polyline>
-<line x1="16" y1="13" x2="8" y2="13">
-</line>
-<line x1="16" y1="17" x2="8" y2="17">
-</line>
-<polyline points="10 9 9 9 8 9">
-</polyline>
-</svg>
-            Binary Summary
-          </h2>
-<ul class="data-list">
-<li>
-<span class="data-label">Filename</span>
-<span class="data-value">legacy_app.exe</span>
-</li>
-<li>
-<span class="data-label">Architecture</span>
-<span class="data-value">x86 (32-bit)</span>
-</li>
-<li>
-<span class="data-label">Compiler</span>
-<span class="data-value">MSVC 2010</span>
-</li>
-<li>
-<span class="data-label">MD5</span>
-<span class="data-value">a1b2c3d4e5f6...</span>
-</li>
-<li>
-<span class="data-label">Size</span>
-<span class="data-value">2.4 MB</span>
-</li>
-</ul>
+  <a href="/" class="nav-back">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="19" y1="12" x2="5" y2="12"></line>
+      <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    Back to Upload
+  </a>
+
+  <div class="dashboard-content" id="dashboard-content">
+    <!-- Filled by JS -->
+    <div class="loading-state">
+      <div class="neon-spinner"></div>
+      <p>Loading analysis results…</p>
+    </div>
+  </div>
 </div>
-<!-- Engine Coverage -->
-<div class="card">
-<h2>
-<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-<circle cx="12" cy="12" r="10">
-</circle>
-<line x1="2" y1="12" x2="22" y2="12">
-</line>
-<path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
-</path>
-</svg>
-            Engine Coverage
-          </h2>
-<div class="coverage-item">
-<div class="coverage-header">
-<span>PE Parser</span>
-<span>100%</span>
-</div>
-<div class="progress-track">
-<div class="progress-fill" style="width: 100%">
-</div>
-</div>
-</div>
-<div class="coverage-item">
-<div class="coverage-header">
-<span>String Extraction</span>
-<span>100%</span>
-</div>
-<div class="progress-track">
-<div class="progress-fill" style="width: 100%">
-</div>
-</div>
-</div>
-<div class="coverage-item">
-<div class="coverage-header">
-<span>Ghidra Decompilation</span>
-<span>85% (Partial)</span>
-</div>
-<div class="progress-track">
-<div class="progress-fill" style="width: 85%; background: #ffa502;">
-</div>
-</div>
-</div>
-</div>
-<!-- Reconstructed Capabilities -->
-<div class="card span-2">
-<h2>
-<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-<polygon points="12 2 2 7 12 12 22 7 12 2">
-</polygon>
-<polyline points="2 17 12 22 22 17">
-</polyline>
-<polyline points="2 12 12 17 22 12">
-</polyline>
-</svg>
-            Reconstructed Capabilities
-          </h2>
-<div class="tags">
-<span class="tag high-risk">Cryptographic Operations</span>
-<span class="tag">Registry-backed Config</span>
-<span class="tag">Network Sockets</span>
-<span class="tag high-risk">Process Execution</span>
-<span class="tag">Filesystem Access</span>
-</div>
-</div>
-<!-- Interesting Functions -->
-<div class="card span-2">
-<h2>
-<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-<polyline points="16 18 22 12 16 6">
-</polyline>
-<polyline points="8 6 2 12 8 18">
-</polyline>
-</svg>
-            Interesting Functions
-          </h2>
-<table>
-<thead>
-<tr>
-<th>Address / Name</th>
-<th>Confidence</th>
-<th>APIs Referenced</th>
-<th style="width: 100px;">Threat Score</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="func-name">FUN_00409140</td>
-<td>High (Observed)</td>
-<td>CreateProcessA, WriteFile</td>
-<td>
-<div class="score-bar">
-<div class="score-fill" style="width: 90%;">
-</div>
-</div>
-</td>
-</tr>
-<tr>
-<td class="func-name">FUN_0040A220</td>
-<td>Medium (Inferred)</td>
-<td>RegOpenKeyExA, CryptAcquireContextA</td>
-<td>
-<div class="score-bar">
-<div class="score-fill" style="width: 70%; background: #ffa502;">
-</div>
-</div>
-</td>
-</tr>
-<tr>
-<td class="func-name">FUN_0041C010</td>
-<td>High (Observed)</td>
-<td>WSASocketA, connect</td>
-<td>
-<div class="score-bar">
-<div class="score-fill" style="width: 60%; background: #ffa502;">
-</div>
-</div>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-</div>
+
+<script>
+  // ── Helpers ───────────────────────────────────────────────────────────────────
+  const el = (tag, cls, html) => {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (html !== undefined) e.innerHTML = html;
+    return e;
+  };
+
+  const confidenceCls = (c) =>
+    c === 'high' ? 'confidence-high' : c === 'medium' ? 'confidence-medium' : 'confidence-low';
+
+  const tagCls = (c) =>
+    c === 'high' ? 'tag high-risk' : c === 'medium' ? 'tag medium-risk' : 'tag low-risk';
+
+  const scoreColor = (s) =>
+    s >= 0.7 ? '#ff4757' : s >= 0.4 ? '#ffa502' : '#00d8ff';
+
+  const fmt = (v) => (v === null || v === undefined ? '—' : String(v));
+  const fmtBytes = (b) => {
+    if (!b) return '—';
+    if (b >= 1_048_576) return (b / 1_048_576).toFixed(1) + ' MB';
+    if (b >= 1024)      return (b / 1024).toFixed(1) + ' KB';
+    return b + ' B';
+  };
+
+  // ── Render ────────────────────────────────────────────────────────────────────
+  function renderDashboard(r) {
+    const a = r.analysis;
+    const b = r.binary;
+    const cov = r.coverage;
+
+    const statusCls = a.status === 'partial' ? 'partial' : a.status === 'failed' ? 'failed' : '';
+
+    const frag = document.createDocumentFragment();
+
+    // Header
+    const hdr = el('header');
+    hdr.innerHTML = `
+      <h1>ANALYSIS RESULTS</h1>
+      <div class="badge ${statusCls}">STATUS: ${a.status.toUpperCase()}</div>
+    `;
+    frag.appendChild(hdr);
+
+    const grid = el('div', 'grid');
+
+    // ── Card: Binary Summary ─────────────────────────────────────────────────
+    const cardBin = makeCard(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+        <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+      </svg> Binary Summary`
+    );
+    const binRows = [
+      ['Filename',     b.originalFilename],
+      ['PE Type',      b.peType],
+      ['Architecture', b.architecture],
+      ['Subsystem',    b.subsystem],
+      ['Entry Point',  b.entryPoint],
+      ['Size',         fmtBytes(b.fileSizeBytes)],
+      ['SHA-256',      b.sha256 ? b.sha256.slice(0, 16) + '…' : '—'],
+      ['Signed',       b.hasSignature ? 'Yes' : 'No'],
+      ['Entropy',      b.overallEntropy != null ? b.overallEntropy.toFixed(3) : '—'],
+    ];
+    if (b.versionInfo?.companyName)  binRows.push(['Company',  b.versionInfo.companyName]);
+    if (b.versionInfo?.productName)  binRows.push(['Product',  b.versionInfo.productName]);
+    if (b.versionInfo?.fileVersion)  binRows.push(['Version',  b.versionInfo.fileVersion]);
+    const binList = el('ul', 'data-list');
+    binRows.forEach(([label, value]) => {
+      binList.innerHTML += `<li><span class="data-label">${label}</span><span class="data-value">${fmt(value)}</span></li>`;
+    });
+    cardBin.appendChild(binList);
+
+    // Download report button
+    const dlBtn = el('button', 'download-btn');
+    dlBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+      <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+    </svg> Download HTML Report`;
+    dlBtn.onclick = () => {
+      const id = new URLSearchParams(window.location.search).get('id');
+      let count = parseInt(localStorage.getItem('reportCounter') || '0', 10) + 1;
+      localStorage.setItem('reportCounter', String(count));
+      const anchor = document.createElement('a');
+      anchor.href = `/api/v1/analyses/${id}/report?format=html`;
+      anchor.download = `Reporte_Analisis_${count}.html`;
+      anchor.style.display = 'none';
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+    };
+    cardBin.appendChild(dlBtn);
+    grid.appendChild(cardBin);
+
+    // ── Card: Engine Coverage ────────────────────────────────────────────────
+    const cardCov = makeCard(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg> Engine Coverage`
+    );
+    const engines = [
+      { label: 'PE Parser',            ok: cov.peParser,  width: '100%',  color: '#00d8ff' },
+      { label: 'String Extraction',    ok: cov.strings,   width: '100%',  color: '#00d8ff' },
+      { label: 'Ghidra Decompilation', ok: cov.ghidra,    width: cov.ghidra ? '100%' : '0%', color: cov.ghidra ? '#00d8ff' : '#ffa502' },
+    ];
+    engines.forEach(({ label, ok, width, color }) => {
+      const pct = ok ? '100%' : (label === 'Ghidra Decompilation' && cov.ghidraError ? 'Unavailable' : '0%');
+      cardCov.innerHTML += `
+        <div class="coverage-item">
+          <div class="coverage-header">
+            <span>${label}</span>
+            <span style="color:${ok ? '#00d8ff' : '#ffa502'}">${pct}</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" style="width:${width};background:${color}"></div>
+          </div>
+          ${cov.ghidraError && label === 'Ghidra Decompilation' ? `<div style="font-size:0.78rem;color:#888;margin-top:0.3rem">${cov.ghidraError}</div>` : ''}
+        </div>`;
+    });
+    // Phase timeline
+    if (a.phases?.length) {
+      const phaseColors = { completed: '#00d8ff', failed: '#ff4757', running: '#ffa502', pending: '#444', skipped: '#555' };
+      cardCov.innerHTML += `<div style="margin-top:1.2rem;border-top:1px solid rgba(255,255,255,0.06);padding-top:1rem">
+        ${a.phases.map(p => `
+          <div style="display:flex;justify-content:space-between;font-size:0.78rem;padding:0.25rem 0;color:#888">
+            <span style="text-transform:capitalize">${p.phase}</span>
+            <span style="color:${phaseColors[p.status] || '#888'}">${p.status}</span>
+          </div>`).join('')}
+      </div>`;
+    }
+    grid.appendChild(cardCov);
+
+    // ── Card: Capabilities (span-2) ──────────────────────────────────────────
+    const cardCap = makeCard(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+        <polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>
+      </svg> Capabilities`,
+      'card span-2'
+    );
+    if (r.capabilities?.length) {
+      const tagsDiv = el('div', 'tags');
+      r.capabilities.forEach(cap => {
+        const span = el('span', tagCls(cap.confidence));
+        span.title = cap.statement;
+        span.textContent = cap.category;
+        tagsDiv.appendChild(span);
+      });
+      cardCap.appendChild(tagsDiv);
+      // Expanded detail rows
+      const detail = el('div');
+      detail.style.cssText = 'margin-top:1rem;display:flex;flex-direction:column;gap:0.6rem';
+      r.capabilities.forEach(cap => {
+        const row = el('div');
+        row.style.cssText = 'font-size:0.87rem;border-bottom:1px dashed rgba(255,255,255,0.05);padding-bottom:0.5rem';
+        row.innerHTML = `
+          <span class="confidence-badge ${confidenceCls(cap.confidence)}">${cap.confidence}</span>
+          <span style="color:#ccc;margin-left:0.5rem">${cap.statement}</span>`;
+        detail.appendChild(row);
+      });
+      cardCap.appendChild(detail);
+    } else {
+      cardCap.innerHTML += `<p class="section-empty">No capabilities detected.</p>`;
+    }
+    grid.appendChild(cardCap);
+
+    // ── Card: External Interactions ──────────────────────────────────────────
+    if (r.externalInteractions?.length) {
+      const cardExt = makeCard(
+        `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
+        </svg> External Interactions`,
+        'card span-2'
+      );
+      const tagsDiv = el('div', 'tags');
+      r.externalInteractions.forEach(xi => {
+        const span = el('span', tagCls(xi.confidence));
+        span.title = xi.description;
+        span.textContent = xi.kind.charAt(0).toUpperCase() + xi.kind.slice(1);
+        tagsDiv.appendChild(span);
+      });
+      cardExt.appendChild(tagsDiv);
+      const detail = el('div');
+      detail.style.cssText = 'margin-top:1rem;display:flex;flex-direction:column;gap:0.5rem';
+      r.externalInteractions.forEach(xi => {
+        const row = el('div');
+        row.style.cssText = 'font-size:0.87rem;border-bottom:1px dashed rgba(255,255,255,0.05);padding-bottom:0.4rem';
+        row.innerHTML = `
+          <span class="confidence-badge ${confidenceCls(xi.confidence)}">${xi.confidence}</span>
+          <span style="color:#888;margin-left:0.3rem;font-family:monospace">${xi.kind}</span>
+          <span style="color:#ccc;margin-left:0.5rem">${xi.description}</span>`;
+        detail.appendChild(row);
+      });
+      cardExt.appendChild(detail);
+      grid.appendChild(cardExt);
+    }
+
+    // ── Card: Interesting Functions (span-2) ─────────────────────────────────
+    const cardFn = makeCard(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+      </svg> Interesting Functions`,
+      'card span-2'
+    );
+    if (r.interestingFunctions?.length) {
+      const tbl = el('table');
+      tbl.innerHTML = `<thead><tr>
+        <th>Address / Name</th>
+        <th>APIs Referenced</th>
+        <th style="width:110px">Selection Score</th>
+      </tr></thead>`;
+      const tbody = el('tbody');
+      r.interestingFunctions.forEach(fn => {
+        const score = fn.selectionScore ?? 0;
+        const apis = fn.apiReferences?.slice(0, 4).join(', ') || '—';
+        const apiExtra = (fn.apiReferences?.length ?? 0) > 4 ? ` +${fn.apiReferences.length - 4} more` : '';
+        const tr = el('tr');
+        tr.innerHTML = `
+          <td class="func-name">${fn.name || fn.address}</td>
+          <td class="apis">${apis}<span style="color:#555">${apiExtra}</span></td>
+          <td>
+            <div class="score-bar">
+              <div class="score-fill" style="width:${(score*100).toFixed(0)}%;background:${scoreColor(score)}"></div>
+            </div>
+            <div style="font-size:0.75rem;color:#666;margin-top:0.2rem">${(score*100).toFixed(0)}%</div>
+          </td>`;
+        tbody.appendChild(tr);
+      });
+      tbl.appendChild(tbody);
+      cardFn.appendChild(tbl);
+    } else {
+      cardFn.innerHTML += `<p class="section-empty">No interesting functions identified.</p>`;
+    }
+    grid.appendChild(cardFn);
+
+    // ── Card: Candidate Components ───────────────────────────────────────────
+    if (r.candidateComponents?.length) {
+      const cardComp = makeCard(
+        `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+        </svg> Candidate Components`,
+        'card span-2'
+      );
+      r.candidateComponents.forEach(comp => {
+        const item = el('div');
+        item.style.cssText = 'padding:0.75rem 0;border-bottom:1px dashed rgba(255,255,255,0.06)';
+        item.innerHTML = `
+          <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.3rem">
+            <span style="color:#eee;font-size:0.95rem">${comp.name}</span>
+            <span class="confidence-badge ${confidenceCls(comp.confidence)}">${comp.confidence}</span>
+          </div>
+          <div style="font-size:0.85rem;color:#888;line-height:1.5">${comp.summary}</div>`;
+        cardComp.appendChild(item);
+      });
+      grid.appendChild(cardComp);
+    }
+
+    // ── Card: Dependencies ───────────────────────────────────────────────────
+    if (r.dependencies?.length) {
+      const cardDeps = makeCard(
+        `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/>
+        </svg> DLL Dependencies`
+      );
+      const tagsDiv = el('div', 'tags');
+      r.dependencies.forEach(dll => {
+        tagsDiv.appendChild(el('span', 'tag', dll));
+      });
+      cardDeps.appendChild(tagsDiv);
+      grid.appendChild(cardDeps);
+    }
+
+    // ── Card: Risks ──────────────────────────────────────────────────────────
+    if (r.risks?.length) {
+      const cardRisk = makeCard(
+        `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg> Risks`
+      );
+      r.risks.forEach(risk => {
+        cardRisk.appendChild(el('div', 'risk-item', risk));
+      });
+      grid.appendChild(cardRisk);
+    }
+
+    // ── Card: Modernization Recommendations ──────────────────────────────────
+    if (r.modernization?.length) {
+      const cardMod = makeCard(
+        `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+        </svg> Modernization Recommendations`,
+        'card span-2'
+      );
+      r.modernization.forEach(rec => {
+        const item = el('div', 'modernization-item');
+        const priorityColor = rec.priority === 'high' ? '#ff4757' : rec.priority === 'medium' ? '#ffa502' : '#00d8ff';
+        item.innerHTML = `
+          <div class="modernization-title">
+            <span style="color:${priorityColor};font-family:monospace;font-size:0.8rem;text-transform:uppercase">${rec.priority}</span>
+            <span>${rec.title}</span>
+          </div>
+          <div class="modernization-desc">${rec.description}</div>`;
+        cardMod.appendChild(item);
+      });
+      grid.appendChild(cardMod);
+    }
+
+    // ── Card: Limitations ────────────────────────────────────────────────────
+    if (r.limitations?.length) {
+      const cardLim = makeCard(
+        `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg> Analysis Limitations`,
+        'card span-2'
+      );
+      r.limitations.forEach(lim => {
+        cardLim.appendChild(el('div', 'limitation-item', lim));
+      });
+      grid.appendChild(cardLim);
+    }
+
+    frag.appendChild(grid);
+    return frag;
+  }
+
+  function makeCard(titleHTML, cls = 'card') {
+    const card = el('div', cls);
+    const h2 = el('h2');
+    h2.innerHTML = titleHTML;
+    card.appendChild(h2);
+    return card;
+  }
+
+  // ── Entry point ───────────────────────────────────────────────────────────────
+  const container = document.getElementById('dashboard-content');
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+
+  if (!id) {
+    container.innerHTML = `
+      <div class="error-state">
+        <h2>NO ANALYSIS ID</h2>
+        <p>Navigate here from the upload page after submitting a binary.</p>
+        <a href="/" style="color:#00d8ff;font-size:0.9rem">← Back to Upload</a>
+      </div>`;
+  } else {
+    fetch(`/api/v1/analyses/${id}/result`)
+      .then(async res => {
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          const msg = body.error?.message || `HTTP ${res.status}`;
+          throw new Error(msg);
+        }
+        return res.json();
+      })
+      .then(result => {
+        const frag = renderDashboard(result);
+        container.innerHTML = '';
+        container.appendChild(frag);
+      })
+      .catch(err => {
+        container.innerHTML = `
+          <div class="error-state">
+            <h2>FAILED TO LOAD RESULTS</h2>
+            <p>${err.message}</p>
+            <a href="/" style="color:#00d8ff;font-size:0.9rem">← Back to Upload</a>
+          </div>`;
+      });
+  }
+</script>
 </body>
 </html>

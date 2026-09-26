@@ -175,9 +175,6 @@ import Background3D from '../components/Background3D.astro';
         </button>
 <div class="status-text" id="status-display">Ready for upload.</div>
 </div>
-<a href="/results" style="display: block; text-align: center; margin-top: 1rem; color: #00d8ff; font-size: 0.9rem; text-decoration: none; opacity: 0.7;">
-        👉 Preview Results Dashboard Mockup
-      </a>
 </div>
 </main>
 <script>
@@ -249,10 +246,10 @@ import Background3D from '../components/Background3D.astro';
         const data = await res.json();
 
         if (!res.ok) {
-          throw new Error(data.message || "Upload failed");
+          throw new Error(data.error?.message || data.message || "Upload failed");
         }
 
-        pollStatus(data.analysisId);
+        pollStatus(data.id);
       } catch (err) {
         setStatus(`Error: ${err.message}`);
         uploadLabel.style.display = 'inline-flex';
@@ -276,17 +273,7 @@ import Background3D from '../components/Background3D.astro';
           } else {
             resultsBtn.style.display = 'inline-flex';
             resultsBtn.onclick = () => {
-              let count = parseInt(localStorage.getItem('reportCounter') || '0', 10);
-              count += 1;
-              localStorage.setItem('reportCounter', count.toString());
-
-              const a = document.createElement('a');
-              a.href = `/api/v1/analyses/${id}/report?format=html`;
-              a.download = `Reporte_Analisis_${count}.html`;
-              a.style.display = 'none';
-              document.body.appendChild(a);
-              a.click();
-              document.body.removeChild(a);
+              window.location.href = `/results?id=${id}`;
             };
           }
           return;
