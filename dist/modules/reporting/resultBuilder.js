@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.buildCanonicalResult = buildCanonicalResult;
+const modernizationBuilder_js_1 = require("./modernizationBuilder.js");
 const STANDARD_LIMITATIONS = [
     'The uploaded binary was NEVER executed. All conclusions are from static analysis only.',
     'Static analysis cannot establish the runtime behavior, safety, or trustworthiness of this binary.',
@@ -22,6 +23,7 @@ function extractDependencies(profile) {
 }
 function buildCanonicalResult(params) {
     const { meta, profile, coverage, evidence, functionProfiles, inferences, candidates, externals, unknowns, modernization, } = params;
+    const modernizationPlan = (0, modernizationBuilder_js_1.buildModernizationPlan)(modernization);
     return {
         analysis: meta,
         binary: profile,
@@ -36,6 +38,7 @@ function buildCanonicalResult(params) {
         unknowns,
         risks: [SAFETY_RISK],
         modernization,
+        ...(modernizationPlan !== undefined ? { modernizationPlan } : {}),
         limitations: STANDARD_LIMITATIONS,
     };
 }

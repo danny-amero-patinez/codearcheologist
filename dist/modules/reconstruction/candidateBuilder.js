@@ -62,6 +62,9 @@ const CATEGORY_LIMITATIONS = {
         'Cryptographic algorithm and mode cannot always be inferred from API names alone.',
     ],
 };
+const MAX_KEY_APIS = 15;
+const MAX_KEY_STRINGS = 12;
+const MAX_STRING_DISPLAY_LEN = 120;
 /**
  * Build a set of evidence IDs from the provided evidence array, for fast lookup.
  */
@@ -69,12 +72,105 @@ function validEvidenceIdSet(evidence) {
     return new Set(evidence.map(e => e.id));
 }
 /**
- * Find function profiles that share evidence IDs with the given inference.
+ * Extract the API names referenced by the import/function-call evidence items
+ * that are included in the inference's evidenceIds.
+ * Evidence summaries have the form "Import: <ApiName> from <dll>" or
+ * "Function call: <ApiName>".
  */
-function correlatedFunctions(inference, functionProfiles) {
+function apisFromInferenceEvidence(inference, evidence) {
     const inferenceEvSet = new Set(inference.evidenceIds);
-    return functionProfiles.filter(fp => fp.evidenceIds.some(eid => inferenceEvSet.has(eid)) ||
-        fp.decompilationEvidenceIds.some(eid => inferenceEvSet.has(eid)));
+    const apis = new Set();
+    for (const ev of evidence) {
+        if (!inferenceEvSet.has(ev.id))
+            continue;
+        if (ev.kind !== 'import' && ev.kind !== 'function-call')
+            continue;
+        // Summary format: "Import: <ApiName> from <dll>" or "Function call: <ApiName> at <addr>"
+        const match = ev.summary.match(/^(?:Import|Function call):\s*([^\s@(]+)/i);
+        if (match && match[1]) {
+            apis.add(match[1].toLowerCase());
+        }
+    }
+    return apis;
+}
+/**
+ * Find function profiles correlated with the given inference.
+ *
+ * Primary: evidence-ID overlap (function/decompilation evidence IDs vs. inference evidenceIds).
+ * Secondary: API-reference overlap — if the inference is based on import evidence that
+ *   names specific APIs, associate function profiles that call those same APIs.
+ *   This bridges the gap where inference evidenceIds only contain import-kind evidence
+ *   while function evidenceIds contain function-kind evidence.
+ */
+function correlatedFunctions(inference, functionProfiles, evidence) {
+    const inferenceEvSet = new Set(inference.evidenceIds);
+    // Primary: direct evidence-ID overlap
+    const primary = new Set(); // addresses already matched
+    const result = [];
+    for (const fp of functionProfiles) {
+        if (fp.evidenceIds.some(eid => inferenceEvSet.has(eid)) ||
+            fp.decompilationEvidenceIds.some(eid => inferenceEvSet.has(eid))) {
+            primary.add(fp.address);
+            result.push(fp);
+        }
+    }
+    // Secondary: API-reference overlap via import evidence names
+    const inferenceApis = apisFromInferenceEvidence(inference, evidence);
+    if (inferenceApis.size > 0) {
+        for (const fp of functionProfiles) {
+            if (primary.has(fp.address))
+                continue; // already included
+            if (fp.apiReferences.some(api => inferenceApis.has(api.toLowerCase()))) {
+                result.push(fp);
+            }
+        }
+    }
+    return result;
+}
+/**
+ * Derive bounded deduplicated API list from correlated function profiles.
+ * Preserves original casing but deduplicates case-insensitively.
+ */
+function deriveKeyApis(related) {
+    const seen = new Set();
+    const result = [];
+    for (const fp of related) {
+        for (const api of fp.apiReferences) {
+            const key = api.toLowerCase();
+            if (!seen.has(key)) {
+                seen.add(key);
+                result.push(api);
+                if (result.length >= MAX_KEY_APIS)
+                    return result;
+            }
+        }
+    }
+    return result;
+}
+/**
+ * Derive bounded unique string list from correlated function profiles.
+ * Skips clearly unusable strings (empty or too short after trimming).
+ */
+function deriveKeyStrings(related) {
+    const seen = new Set();
+    const result = [];
+    for (const fp of related) {
+        for (const s of fp.stringReferences) {
+            const trimmed = s.trim();
+            if (trimmed.length < 4)
+                continue;
+            const display = trimmed.length > MAX_STRING_DISPLAY_LEN
+                ? trimmed.slice(0, MAX_STRING_DISPLAY_LEN) + '…'
+                : trimmed;
+            if (!seen.has(display)) {
+                seen.add(display);
+                result.push(display);
+                if (result.length >= MAX_KEY_STRINGS)
+                    return result;
+            }
+        }
+    }
+    return result;
 }
 function buildCandidateResponsibilities(inferences, functionProfiles, evidence) {
     const validIds = validEvidenceIdSet(evidence);
@@ -85,12 +181,17 @@ function buildCandidateResponsibilities(inferences, functionProfiles, evidence) 
         }
         // Filter evidence IDs to only those that actually exist
         const safeEvidenceIds = inference.evidenceIds.filter(id => validIds.has(id));
-        const related = correlatedFunctions(inference, functionProfiles);
+        const related = correlatedFunctions(inference, functionProfiles, evidence);
         const name = CATEGORY_NAMES[inference.category] ?? inference.category;
         const limits = CATEGORY_LIMITATIONS[inference.category] ?? [];
+        // Rationale classification:
+        // - inference.rationale entries explain WHY the rule fired; they are 'inferred'
+        //   context notes, not directly observed facts — keep them as 'inferred'.
+        // - The inference statement itself is 'inferred'.
+        // - Limitations are 'unknown'.
         const rationale = [
             ...inference.rationale.map(text => ({
-                classification: 'observed',
+                classification: 'inferred',
                 text,
             })),
             {
@@ -103,6 +204,8 @@ function buildCandidateResponsibilities(inferences, functionProfiles, evidence) 
                 rationale.push({ classification: 'unknown', text: lim });
             }
         }
+        const keyApis = deriveKeyApis(related);
+        const keyStrings = deriveKeyStrings(related);
         candidates.push({
             id: (0, uuid_1.v4)(),
             name,
@@ -117,6 +220,8 @@ function buildCandidateResponsibilities(inferences, functionProfiles, evidence) 
             evidenceIds: safeEvidenceIds,
             rationale,
             limitations: [...limits, ...inference.limitations].filter((v, i, arr) => arr.indexOf(v) === i),
+            ...(keyApis.length > 0 ? { keyApis } : {}),
+            ...(keyStrings.length > 0 ? { keyStrings } : {}),
         });
     }
     return candidates;

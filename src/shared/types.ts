@@ -222,6 +222,10 @@ export interface CandidateResponsibility {
   }>;
   externalInteractions?: string[];
   limitations: string[];
+  /** Bounded unique API names from correlated function profiles. */
+  keyApis?: string[];
+  /** Bounded unique string references from correlated function profiles. */
+  keyStrings?: string[];
 }
 
 export interface ExternalInteraction {
@@ -248,6 +252,18 @@ export interface ModernizationRecommendation {
   description: string;
   evidenceIds: string[];
   relatedResponsibilityIds: string[];
+  /** Evidence-backed rationale for why this work is needed. */
+  rationale?: string;
+  /** Ordered concrete investigation/migration steps. */
+  steps?: string[];
+  /** Artifacts to recover from a deployed installation. */
+  artifactsToRecover?: string[];
+}
+
+/** Investigation sequence and aggregated artifacts for the analysis. */
+export interface ModernizationPlan {
+  investigationSequence: string[];
+  artifactsToRecover: string[];
 }
 
 // ── Canonical result ─────────────────────────────────────────────────────────
@@ -273,6 +289,8 @@ export interface CanonicalResult {
   unknowns: Unknown[];
   risks: string[];
   modernization: ModernizationRecommendation[];
+  /** Optional plan-level investigation guidance derived from the analysis. */
+  modernizationPlan?: ModernizationPlan;
   limitations: string[];
 }
 

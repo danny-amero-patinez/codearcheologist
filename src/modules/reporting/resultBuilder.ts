@@ -19,6 +19,7 @@ import {
   type ExtractedString,
   type CanonicalResult,
 } from '../../shared/types.js';
+import { buildModernizationPlan } from './modernizationBuilder.js';
 
 const STANDARD_LIMITATIONS = [
   'The uploaded binary was NEVER executed. All conclusions are from static analysis only.',
@@ -71,6 +72,8 @@ export function buildCanonicalResult(params: BuildCanonicalResultParams): Canoni
     modernization,
   } = params;
 
+  const modernizationPlan = buildModernizationPlan(modernization);
+
   return {
     analysis: meta,
     binary: profile,
@@ -85,6 +88,7 @@ export function buildCanonicalResult(params: BuildCanonicalResultParams): Canoni
     unknowns,
     risks: [SAFETY_RISK],
     modernization,
+    ...(modernizationPlan !== undefined ? { modernizationPlan } : {}),
     limitations: STANDARD_LIMITATIONS,
   };
 }

@@ -1,0 +1,67 @@
+{
+  "id": "eeac899c-2088-4a6a-9ff6-d82f0894632a",
+  "status": "completed",
+  "createdAt": "2026-09-26T22:06:58.703Z",
+  "updatedAt": "2026-09-26T22:09:13.282Z",
+  "originalFilename": "VeraCrypt.Setup.1.26.29.exe",
+  "storedFilename": "binary.exe",
+  "fileSizeBytes": 40832408,
+  "sha256": "dca9ddec7934fc0b1c25ac8984db7d504bfe9f37c21861ac91c67a98ecd3964b",
+  "phases": [
+    {
+      "phase": "intake",
+      "status": "completed",
+      "startedAt": "2026-09-26T22:06:58.703Z",
+      "completedAt": "2026-09-26T22:06:58.830Z"
+    },
+    {
+      "phase": "profiling",
+      "status": "completed",
+      "startedAt": "2026-09-26T22:06:58.864Z",
+      "completedAt": "2026-09-26T22:07:15.839Z",
+      "durationMs": 16975
+    },
+    {
+      "phase": "extracting",
+      "status": "completed",
+      "startedAt": "2026-09-26T22:07:15.844Z",
+      "completedAt": "2026-09-26T22:07:16.055Z",
+      "durationMs": 211
+    },
+    {
+      "phase": "ghidra-analysis",
+      "status": "completed",
+      "startedAt": "2026-09-26T22:07:16.057Z",
+      "completedAt": "2026-09-26T22:09:12.992Z",
+      "durationMs": 116871
+    },
+    {
+      "phase": "correlating",
+      "status": "completed",
+      "startedAt": "2026-09-26T22:09:12.999Z",
+      "completedAt": "2026-09-26T22:09:13.135Z",
+      "durationMs": 136
+    },
+    {
+      "phase": "inferring",
+      "status": "completed",
+      "startedAt": "2026-09-26T22:09:13.144Z",
+      "completedAt": "2026-09-26T22:09:13.204Z",
+      "durationMs": 60
+    },
+    {
+      "phase": "reconstructing",
+      "status": "completed",
+      "startedAt": "2026-09-26T22:09:13.206Z",
+      "completedAt": "2026-09-26T22:09:13.245Z",
+      "durationMs": 39
+    },
+    {
+      "phase": "reporting",
+      "status": "completed",
+      "startedAt": "2026-09-26T22:09:13.249Z",
+      "completedAt": "2026-09-26T22:09:13.263Z",
+      "durationMs": 14
+    }
+  ]
+}

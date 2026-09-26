@@ -372,8 +372,27 @@ async function runPipeline(config, id) {
             ghidra: ghidraOutput !== null,
             ...(ghidraError !== undefined ? { ghidraError } : {}),
         };
+        // Mark reporting completed and set final status BEFORE building the
+        // canonical result snapshot, so that analysis.json contains terminal
+        // lifecycle metadata rather than a stale intermediate state.
+        const reportEnd = new Date().toISOString();
+        await store.updatePhase(config.WORK_DIR, id, 'reporting', {
+            status: 'completed',
+            completedAt: reportEnd,
+            durationMs: Date.parse(reportEnd) - Date.parse(reportStart),
+        });
+        if (ghidraOutput) {
+            await store.updateStatus(config.WORK_DIR, id, 'completed');
+        }
+        else {
+            await store.updateStatus(config.WORK_DIR, id, 'partial', config.GHIDRA_HOME
+                ? 'Ghidra analysis failed — partial result (PE + strings only)'
+                : 'GHIDRA_HOME not configured — partial result (PE + strings only)');
+        }
+        // Re-read the now-final metadata so the canonical result snapshot is correct.
+        const finalMeta = await store.readMeta(config.WORK_DIR, id);
         const canonicalResult = buildCanonicalResult({
-            meta: meta,
+            meta: finalMeta,
             profile,
             coverage,
             evidence,
@@ -385,27 +404,12 @@ async function runPipeline(config, id) {
             modernization,
             strings,
         });
-        // Write canonical result + reports
+        // Write canonical result + reports — all from the same final canonical object.
         await store.writeRawJson(store.canonicalResultPath(config.WORK_DIR, id), canonicalResult);
         const mdReport = generateMarkdownReport(canonicalResult);
         const htmlReport = generateHtmlReport(canonicalResult);
         await fs.writeFile(path.join(store.resultDir(config.WORK_DIR, id), 'report.md'), mdReport, 'utf8');
         await fs.writeFile(path.join(store.resultDir(config.WORK_DIR, id), 'report.html'), htmlReport, 'utf8');
-        const reportEnd = new Date().toISOString();
-        await store.updatePhase(config.WORK_DIR, id, 'reporting', {
-            status: 'completed',
-            completedAt: reportEnd,
-            durationMs: Date.parse(reportEnd) - Date.parse(reportStart),
-        });
-        // Set final status
-        if (ghidraOutput) {
-            await store.updateStatus(config.WORK_DIR, id, 'completed');
-        }
-        else {
-            await store.updateStatus(config.WORK_DIR, id, 'partial', config.GHIDRA_HOME
-                ? 'Ghidra analysis failed — partial result (PE + strings only)'
-                : 'GHIDRA_HOME not configured — partial result (PE + strings only)');
-        }
         logger.info({ id }, 'Pipeline complete');
     }
     catch (err) {
