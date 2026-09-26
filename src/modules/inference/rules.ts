@@ -46,11 +46,6 @@ function allImportedApis(imports: ImportEntry[]): Set<string> {
   return apis;
 }
 
-/** All string values from the ExtractedString list (lowercased). */
-function allStringValues(strings: ExtractedString[]): string[] {
-  return strings.map(s => s.value.toLowerCase());
-}
-
 /** Returns evidence IDs that mention any of the given API names. */
 function evidenceIdsForApis(evidence: Evidence[], apis: string[]): string[] {
   const lowerApis = apis.map(a => a.toLowerCase());
@@ -364,10 +359,6 @@ const NETWORK_APIS_WININET = ['InternetOpen', 'InternetConnect', 'HttpSendReques
 const NETWORK_APIS_WINSOCK = ['WSAStartup', 'socket', 'connect', 'send', 'recv', 'WSAConnect'];
 const ALL_NETWORK_APIS = [...NETWORK_APIS_WINHTTP, ...NETWORK_APIS_WININET, ...NETWORK_APIS_WINSOCK];
 
-const URL_STRING_PATTERNS = [
-  /^https?:\/\//i,
-  /^ftp:\/\//i,
-];
 const ENDPOINT_STRING_PATTERNS = [
   /^https?:\/\//i,
   /^ftp:\/\//i,

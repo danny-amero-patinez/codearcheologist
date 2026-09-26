@@ -1,0 +1,175 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.evidenceId = evidenceId;
+exports.normalizePeEvidence = normalizePeEvidence;
+exports.normalizeStringEvidence = normalizeStringEvidence;
+exports.normalizeGhidraEvidence = normalizeGhidraEvidence;
+exports.buildEvidenceStore = buildEvidenceStore;
+// ── ID generation ──────────────────────────────────────────────────────────────
+/**
+ * Generates a stable, human-readable evidence ID.
+ * Format: evd-<3-char-kind>-<zero-padded-index>
+ * Example: evd-bin-0000, evd-sec-0001, evd-imp-0002
+ */
+function evidenceId(kind, index) {
+    return `evd-${kind.slice(0, 3)}-${String(index).padStart(4, '0')}`;
+}
+// ── PE evidence ────────────────────────────────────────────────────────────────
+/**
+ * Normalizes a BinaryProfile into Evidence items.
+ * Returns: one binary-metadata, one pe-section per section, one import per DLL,
+ * one export per export entry.
+ */
+function normalizePeEvidence(profile) {
+    const evidence = [];
+    let idx = 0;
+    // Binary metadata
+    evidence.push({
+        id: evidenceId('binary-metadata', idx++),
+        kind: 'binary-metadata',
+        sourceTool: 'pe-parser',
+        classification: 'observed',
+        summary: `PE binary: ${profile.originalFilename} (${profile.peType}, ${profile.architecture})`,
+        data: {
+            peType: profile.peType,
+            architecture: profile.architecture,
+            subsystem: profile.subsystem,
+            entryPoint: profile.entryPoint,
+            fileSizeBytes: profile.fileSizeBytes,
+            sha256: profile.sha256,
+            hasSignature: profile.hasSignature,
+            overallEntropy: profile.overallEntropy,
+            versionInfo: profile.versionInfo,
+        },
+    });
+    // PE sections
+    for (const section of profile.sections) {
+        evidence.push({
+            id: evidenceId('pe-section', idx++),
+            kind: 'pe-section',
+            sourceTool: 'pe-parser',
+            classification: 'observed',
+            summary: `Section ${section.name}: VA=${section.virtualAddress} size=${section.virtualSize}`,
+            location: { address: section.virtualAddress },
+            data: section,
+        });
+    }
+    // Imports — one evidence per DLL
+    for (const imp of profile.imports) {
+        evidence.push({
+            id: evidenceId('import', idx++),
+            kind: 'import',
+            sourceTool: 'pe-parser',
+            classification: 'observed',
+            summary: `Import DLL: ${imp.dll} (${imp.functions.length} function(s))`,
+            data: { dll: imp.dll, functions: imp.functions },
+        });
+    }
+    // Exports — one per export entry
+    for (const exp of profile.exports) {
+        evidence.push({
+            id: evidenceId('export', idx++),
+            kind: 'export',
+            sourceTool: 'pe-parser',
+            classification: 'observed',
+            summary: `Export: ${exp.name ?? `ordinal ${exp.ordinal}`} @ ${exp.address}`,
+            location: { address: exp.address },
+            data: exp,
+        });
+    }
+    return evidence;
+}
+// ── String evidence ────────────────────────────────────────────────────────────
+/**
+ * Normalizes extracted strings into Evidence items.
+ *
+ * @param strings  - Extracted string list
+ * @param offset   - Starting index for ID generation (to avoid collisions when
+ *                   combined with PE evidence IDs)
+ */
+function normalizeStringEvidence(strings, offset) {
+    const evidence = [];
+    // Deduplicate by value — same string at different offsets is one evidence item
+    const seen = new Set();
+    for (const str of strings) {
+        if (seen.has(str.value))
+            continue;
+        seen.add(str.value);
+        const idx = offset + evidence.length;
+        evidence.push({
+            id: evidenceId('string', idx),
+            kind: 'string',
+            sourceTool: 'strings',
+            classification: 'observed',
+            summary: `String [${str.category}]: "${str.value.slice(0, 80)}"`,
+            location: { offset: str.offset },
+            data: { value: str.value, encoding: str.encoding, offset: str.offset, section: str.section, category: str.category },
+        });
+    }
+    return evidence;
+}
+// ── Ghidra evidence ────────────────────────────────────────────────────────────
+/**
+ * Normalizes Ghidra output into Evidence items.
+ *
+ * @param ghidra  - Validated Ghidra output
+ * @param offset  - Starting index for ID generation
+ */
+function normalizeGhidraEvidence(ghidra, offset) {
+    const evidence = [];
+    let localIdx = 0;
+    for (const fn of ghidra.functions) {
+        const fnIdx = offset + localIdx++;
+        evidence.push({
+            id: evidenceId('function', fnIdx),
+            kind: 'function',
+            sourceTool: 'ghidra',
+            classification: 'observed',
+            summary: `Function ${fn.name} @ ${fn.address}${fn.autoGenerated ? ' [auto]' : ''}`,
+            location: { address: fn.address },
+            data: {
+                address: fn.address,
+                name: fn.name,
+                autoGenerated: fn.autoGenerated,
+                callers: fn.callers,
+                callees: fn.callees,
+                referencedImports: fn.referencedImports,
+                referencedStrings: fn.referencedStrings,
+                selectionScore: fn.selectionScore,
+                selectionReasons: fn.selectionReasons,
+            },
+        });
+        // One decompilation evidence per function that has decompiled code
+        if (fn.decompilation !== null && fn.decompilation !== undefined) {
+            const decompIdx = offset + localIdx++;
+            evidence.push({
+                id: evidenceId('decompilation', decompIdx),
+                kind: 'decompilation',
+                sourceTool: 'ghidra',
+                classification: 'observed',
+                summary: `Decompilation of ${fn.name} @ ${fn.address}`,
+                location: { functionAddress: fn.address },
+                data: { address: fn.address, name: fn.name, decompilation: fn.decompilation },
+            });
+        }
+    }
+    return evidence;
+}
+// ── Combined store ─────────────────────────────────────────────────────────────
+/**
+ * Builds the full evidence store for an analysis.
+ *
+ * Combines PE, string, and optional Ghidra evidence into a single deduplicated
+ * array with globally unique IDs.
+ */
+function buildEvidenceStore(profile, strings, ghidra) {
+    const peEvidence = normalizePeEvidence(profile);
+    const stringEvidence = normalizeStringEvidence(strings, peEvidence.length);
+    const combined = [...peEvidence, ...stringEvidence];
+    if (ghidra) {
+        const ghidraEvidence = normalizeGhidraEvidence(ghidra, combined.length);
+        combined.push(...ghidraEvidence);
+    }
+    return combined;
+}
+//# sourceMappingURL=normalizer.js.map

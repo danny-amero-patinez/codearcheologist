@@ -408,11 +408,12 @@ export async function runPipeline(config: AppConfig, id: string): Promise<void> 
       await import('../reporting/index.js');
 
     const modernization = buildModernizationRecommendations(candidates, unknowns, inferences);
+    const ghidraError = meta ? meta.phases.find(p => p.phase === 'ghidra-analysis')?.error : undefined;
     const coverage = {
       peParser: true,
       strings: true,
       ghidra: ghidraOutput !== null,
-      ghidraError: meta ? meta.phases.find(p => p.phase === 'ghidra-analysis')?.error : undefined,
+      ...(ghidraError !== undefined ? { ghidraError } : {}),
     };
 
     const canonicalResult = buildCanonicalResult({

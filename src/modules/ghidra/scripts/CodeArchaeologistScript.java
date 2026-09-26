@@ -27,19 +27,20 @@ public class CodeArchaeologistScript extends GhidraScript {
     @Override
     public void run() throws Exception {
         // ── Validate arguments ─────────────────────────────────────────────────
-        if (args == null || args.length < 2) {
+        String[] scriptArgs = getScriptArgs();
+        if (scriptArgs == null || scriptArgs.length < 2) {
             printerr("CodeArchaeologistScript: expected args[0]=outputPath args[1]=maxFunctions");
-            printerr("  Got " + (args == null ? "null" : args.length) + " argument(s)");
+            printerr("  Got " + (scriptArgs == null ? "null" : scriptArgs.length) + " argument(s)");
             return;
         }
 
-        String outputPath = args[0];
+        String outputPath = scriptArgs[0];
         int maxFunctions;
         try {
-            maxFunctions = Integer.parseInt(args[1]);
+            maxFunctions = Integer.parseInt(scriptArgs[1]);
             if (maxFunctions <= 0) throw new NumberFormatException("must be positive");
         } catch (NumberFormatException e) {
-            printerr("CodeArchaeologistScript: args[1] must be a positive integer, got: " + args[1]);
+            printerr("CodeArchaeologistScript: args[1] must be a positive integer, got: " + scriptArgs[1]);
             return;
         }
 
@@ -162,17 +163,23 @@ public class CodeArchaeologistScript extends GhidraScript {
                 currentProgram.getListing().getInstructions(body, true);
             while (instrIter.hasNext()) {
                 ghidra.program.model.listing.Instruction instr = instrIter.next();
-                for (ghidra.program.model.scalar.Scalar scalar : instr.getScalarObjects()) {
-                    Address refAddr = toAddr(scalar.getUnsignedValue());
-                    if (refAddr == null) continue;
-                    ghidra.program.model.listing.Data data =
-                        currentProgram.getListing().getDataAt(refAddr);
-                    if (data != null && data.hasStringValue()) {
-                        Object val = data.getValue();
-                        if (val instanceof String) {
-                            String s = (String) val;
-                            if (s.length() >= 4 && !fd.referencedStrings.contains(s)) {
-                                fd.referencedStrings.add(s);
+                int numOps = instr.getNumOperands();
+                for (int op = 0; op < numOps; op++) {
+                    for (Object opObj : instr.getOpObjects(op)) {
+                        if (!(opObj instanceof ghidra.program.model.scalar.Scalar)) continue;
+                        ghidra.program.model.scalar.Scalar scalar =
+                            (ghidra.program.model.scalar.Scalar) opObj;
+                        Address refAddr = toAddr(scalar.getUnsignedValue());
+                        if (refAddr == null) continue;
+                        ghidra.program.model.listing.Data data =
+                            currentProgram.getListing().getDataAt(refAddr);
+                        if (data != null && data.hasStringValue()) {
+                            Object val = data.getValue();
+                            if (val instanceof String) {
+                                String s = (String) val;
+                                if (s.length() >= 4 && !fd.referencedStrings.contains(s)) {
+                                    fd.referencedStrings.add(s);
+                                }
                             }
                         }
                     }

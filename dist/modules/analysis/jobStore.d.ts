@@ -1,0 +1,26 @@
+import { type AnalysisMeta, type AnalysisStatus, type AnalysisPhase, type PhaseRecord } from '../../shared/types.js';
+export declare function jobDir(workDir: string, id: string): string;
+export declare function inputDir(workDir: string, id: string): string;
+export declare function rawDir(workDir: string, id: string): string;
+export declare function resultDir(workDir: string, id: string): string;
+export declare function ghidraProjectDir(workDir: string, id: string): string;
+export declare function inputBinaryPath(workDir: string, id: string): string;
+export declare function metaPath(workDir: string, id: string): string;
+export declare function rawPePath(workDir: string, id: string): string;
+export declare function rawStringsPath(workDir: string, id: string): string;
+export declare function rawGhidraPath(workDir: string, id: string): string;
+export declare function ghidraStdoutLogPath(workDir: string, id: string): string;
+export declare function ghidraStderrLogPath(workDir: string, id: string): string;
+export declare function rawEvidencePath(workDir: string, id: string): string;
+export declare function rawFunctionProfilesPath(workDir: string, id: string): string;
+export declare function canonicalResultPath(workDir: string, id: string): string;
+export declare function isValidId(id: string): boolean;
+export declare function createJob(workDir: string, meta: AnalysisMeta): Promise<void>;
+export declare function writeMeta(workDir: string, meta: AnalysisMeta): Promise<void>;
+export declare function readMeta(workDir: string, id: string): Promise<AnalysisMeta | null>;
+export declare function updateStatus(workDir: string, id: string, status: AnalysisStatus, errorMessage?: string): Promise<void>;
+export declare function updatePhase(workDir: string, id: string, phase: AnalysisPhase, update: Partial<PhaseRecord>): Promise<void>;
+export declare function writeRawJson(filePath: string, data: unknown): Promise<void>;
+export declare function readRawJson<T>(filePath: string): Promise<T | null>;
+export declare function isNodeError(err: unknown): err is NodeJS.ErrnoException;
+//# sourceMappingURL=jobStore.d.ts.map

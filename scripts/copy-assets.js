@@ -5,8 +5,14 @@
 const fs = require('fs');
 const path = require('path');
 
+// Project root is one level up from this script's own directory (scripts/)
+const PROJECT_ROOT = path.resolve(__dirname, '..');
+
 function copyDir(src, dest) {
-  if (!fs.existsSync(src)) return;
+  if (!fs.existsSync(src)) {
+    console.warn(`copy-assets: source not found, skipping: ${src}`);
+    return;
+  }
   fs.mkdirSync(dest, { recursive: true });
   for (const entry of fs.readdirSync(src)) {
     const srcPath = path.join(src, entry);
@@ -23,8 +29,8 @@ function copyDir(src, dest) {
 
 // Copy Ghidra scripts
 copyDir(
-  path.join(__dirname, 'src', 'modules', 'ghidra', 'scripts'),
-  path.join(__dirname, 'dist', 'modules', 'ghidra', 'scripts'),
+  path.join(PROJECT_ROOT, 'src', 'modules', 'ghidra', 'scripts'),
+  path.join(PROJECT_ROOT, 'dist', 'modules', 'ghidra', 'scripts'),
 );
 
 console.log('Asset copy complete.');

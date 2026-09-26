@@ -1,0 +1,69 @@
+{
+  "id": "8f5d1e39-cbbb-4e6b-ad48-9f4e70ed5418",
+  "status": "partial",
+  "createdAt": "2026-09-26T19:30:12.642Z",
+  "updatedAt": "2026-09-26T19:30:57.745Z",
+  "originalFilename": "VeraCrypt.Setup.1.26.29.exe",
+  "storedFilename": "binary.exe",
+  "fileSizeBytes": 40832408,
+  "sha256": "dca9ddec7934fc0b1c25ac8984db7d504bfe9f37c21861ac91c67a98ecd3964b",
+  "phases": [
+    {
+      "phase": "intake",
+      "status": "completed",
+      "startedAt": "2026-09-26T19:30:12.642Z",
+      "completedAt": "2026-09-26T19:30:12.707Z"
+    },
+    {
+      "phase": "profiling",
+      "status": "completed",
+      "startedAt": "2026-09-26T19:30:12.758Z",
+      "completedAt": "2026-09-26T19:30:36.457Z",
+      "durationMs": 23699
+    },
+    {
+      "phase": "extracting",
+      "status": "completed",
+      "startedAt": "2026-09-26T19:30:36.473Z",
+      "completedAt": "2026-09-26T19:30:36.793Z",
+      "durationMs": 320
+    },
+    {
+      "phase": "ghidra-analysis",
+      "status": "failed",
+      "startedAt": "2026-09-26T19:30:36.796Z",
+      "completedAt": "2026-09-26T19:30:57.534Z",
+      "durationMs": 20703,
+      "error": "Ghidra exited with code 1. stderr: "
+    },
+    {
+      "phase": "correlating",
+      "status": "completed",
+      "startedAt": "2026-09-26T19:30:57.544Z",
+      "completedAt": "2026-09-26T19:30:57.568Z",
+      "durationMs": 24
+    },
+    {
+      "phase": "inferring",
+      "status": "completed",
+      "startedAt": "2026-09-26T19:30:57.571Z",
+      "completedAt": "2026-09-26T19:30:57.614Z",
+      "durationMs": 43
+    },
+    {
+      "phase": "reconstructing",
+      "status": "completed",
+      "startedAt": "2026-09-26T19:30:57.616Z",
+      "completedAt": "2026-09-26T19:30:57.638Z",
+      "durationMs": 22
+    },
+    {
+      "phase": "reporting",
+      "status": "completed",
+      "startedAt": "2026-09-26T19:30:57.640Z",
+      "completedAt": "2026-09-26T19:30:57.732Z",
+      "durationMs": 92
+    }
+  ],
+  "errorMessage": "Ghidra analysis failed — partial result (PE + strings only)"
+}

@@ -1,0 +1,1 @@
+{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../../../src/modules/evidence/index.ts"],"names":[],"mappings":"AAAA;;;;;;;;;;;;;GAaG;AAEH,OAAO,EAAE,kBAAkB,EAAE,mBAAmB,EAAE,uBAAuB,EAAE,uBAAuB,EAAE,UAAU,EAAE,MAAM,iBAAiB,CAAC;AACxI,OAAO,EAAE,kBAAkB,EAAE,MAAM,yBAAyB,CAAC;AAC7D,OAAO,EAAE,qBAAqB,EAAE,MAAM,uBAAuB,CAAC;AAC9D,YAAY,EAAE,eAAe,EAAE,MAAM,yBAAyB,CAAC"}
