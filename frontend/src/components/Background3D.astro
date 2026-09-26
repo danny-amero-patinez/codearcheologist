@@ -1,72 +1,160 @@
 ---
-// Background3D.astro — Neon 3D text with mouse rotation + particle trail
+/**
+ * Background3D.astro
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Shared fullscreen WebGL background component used by every page.
+ * Renders behind all page content via z-index: -1.
+ *
+ * What it produces:
+ *   1. "XalapaTeam" 3D text — "Xalapa" in white, "Team" in near-black chrome,
+ *      both outlined in neon cyan (#00d8ff). The group floats and rotates
+ *      smoothly in response to mouse movement.
+ *   2. Neon cyan particle trail — 2 sphere particles spawned per mousemove,
+ *      each drifting and fading over ~66 frames (~1.1 s at 60 fps).
+ *
+ * Dependencies (installed in frontend/):
+ *   - three@0.186.1           → scene, camera, renderer, geometries, materials
+ *   - @types/three@0.186.0    → TypeScript types for Three.js
+ *   - three/examples/jsm/...  → FontLoader, TextGeometry (bundled with three)
+ *
+ * Required static asset:
+ *   public/fonts/helvetiker_bold.typeface.json
+ *   → served at runtime as: <origin>/fonts/helvetiker_bold.typeface.json
+ *   → download from: https://raw.githubusercontent.com/mrdoob/three.js/master/examples/fonts/helvetiker_bold.typeface.json
+ *
+ * Color palette:
+ *   Scene background  #0a0a0a  (0x0a0a0a)
+ *   "Xalapa" fill     #ffffff  (0xffffff)  — white, roughness 0.2, metalness 0.1
+ *   "Team" fill       #111111  (0x111111)  — near-black, roughness 0.2, metalness 0.8
+ *   Edge outlines     #00d8ff  (0x00d8ff)  — neon cyan LineSegments on both meshes
+ *   Particle trail    #00d8ff  (0x00d8ff)  — neon cyan spheres, transparent fade
+ *
+ * Mount point:
+ *   The component injects its own <div id="canvas-container"> and appends
+ *   the WebGL <canvas> inside it. The div is position:fixed, covers the
+ *   full viewport, and sits at z-index:-1 so page content renders on top.
+ */
 ---
+
+<!--
+  Canvas container — fullscreen, fixed, behind all page content.
+  pointer-events:none prevents it from blocking clicks on the UI above it.
+-->
 <div id="canvas-container" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none;">
 </div>
+
 <script>
   import * as THREE from 'three';
   import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
   import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 
+  /**
+   * init()
+   * Wrapping everything in a function and calling it after DOM readiness
+   * prevents a race condition where the script (loaded as type="module")
+   * could execute before #canvas-container exists in the DOM.
+   */
   function init() {
     const container = document.getElementById('canvas-container');
     if (!container) {
-      console.error('Background3D: #canvas-container not found');
+      console.error('Background3D: #canvas-container not found — skipping 3D init');
       return;
     }
 
-    // ── Scene setup ──────────────────────────────────────────────────────────
+    // ── Scene ────────────────────────────────────────────────────────────────
+    // Near-black background matches the page's html { background: #0a0a0a }
+    // so there is no flash of white before WebGL renders.
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0a0a0a);
 
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    // ── Camera ───────────────────────────────────────────────────────────────
+    // PerspectiveCamera(FOV°, aspect, near, far)
+    // Z distance is responsive: farther back on mobile so text fits the viewport.
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
     camera.position.z = window.innerWidth < 768 ? 40 : 25;
 
+    // ── Renderer ─────────────────────────────────────────────────────────────
+    // antialias: smoother edges on high-DPI screens.
+    // alpha: true — transparent canvas background so scene.background is visible.
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setPixelRatio(window.devicePixelRatio); // retina support
     container.appendChild(renderer.domElement);
 
     // ── Lighting ─────────────────────────────────────────────────────────────
+    // MeshStandardMaterial requires real light sources to display color.
+    // Without enough light, white (#ffffff) renders as dark grey in a dark scene.
+
+    // Ambient — fills all surfaces uniformly; intensity 2.5 ensures the white
+    // "Xalapa" mesh reads as clearly white rather than dim grey.
     const ambientLight = new THREE.AmbientLight(0xffffff, 2.5);
     scene.add(ambientLight);
+
+    // Main point light — bright white, positioned in front of and above the text
+    // to illuminate the face of both meshes.
     const pointLight = new THREE.PointLight(0xffffff, 6);
     pointLight.position.set(0, 10, 20);
     scene.add(pointLight);
+
+    // Secondary point light — neon cyan (#00d8ff), positioned to the lower-left.
+    // Adds a subtle color-gradient effect on the "Team" metallic surface.
     const pointLight2 = new THREE.PointLight(0x00d8ff, 2);
     pointLight2.position.set(-10, -5, 15);
     scene.add(pointLight2);
 
-    // ── 3D Text ───────────────────────────────────────────────────────────────
+    // ── 3D Text group ────────────────────────────────────────────────────────
+    // Both meshes ("Xalapa" and "Team") are added to this Group so they can be
+    // transformed (rotated, positioned) together as a single unit.
     const textGroup = new THREE.Group();
     scene.add(textGroup);
 
+    // Build an absolute URL so FontLoader works correctly regardless of the
+    // base path, dev port, or Astro's routing prefix.
     const fontUrl = window.location.origin + '/fonts/helvetiker_bold.typeface.json';
+
     const loader = new FontLoader();
     loader.load(
       fontUrl,
+
+      // ── onLoad callback ────────────────────────────────────────────────────
       function (font) {
+        /**
+         * Shared TextGeometry options for both words.
+         * size: 4 world units → ~half viewport width at camera z=25, FOV=75.
+         * depth: 0.5 → subtle extrusion thickness (3D look without being chunky).
+         * bevel: gives each letter a chamfered edge so the neon outline
+         *        has something visually interesting to trace.
+         */
         const opts = {
           font,
           size: 4,
           depth: 0.5,
-          curveSegments: 12,
+          curveSegments: 12,    // smoothness of curved letter outlines
           bevelEnabled: true,
-          bevelThickness: 0.05,
-          bevelSize: 0.05,
+          bevelThickness: 0.05, // depth the bevel cuts into the face
+          bevelSize: 0.05,      // width of the bevel at the edge
           bevelOffset: 0,
-          bevelSegments: 5
+          bevelSegments: 5      // smoothness of the bevel curve
         };
 
-        // "Xalapa" — white, matte
+        // ── "Xalapa" mesh — white, matte ─────────────────────────────────────
+        // roughness 0.2: slightly reflective surface (not perfectly matte).
+        // metalness 0.1: mostly diffuse, so ambient light reads as white.
         const geo1 = new TextGeometry('Xalapa', opts);
-        geo1.computeBoundingBox();
+        geo1.computeBoundingBox(); // required to measure width for side-by-side layout
         const mesh1 = new THREE.Mesh(
           geo1,
           new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2, metalness: 0.1 })
         );
 
-        // "Team" — near-black, polished chrome
+        // ── "Team" mesh — near-black, polished dark chrome ───────────────────
+        // metalness 0.8: highly metallic — reflects the neon cyan point light,
+        // creating shimmering highlights against the dark base color.
         const geo2 = new TextGeometry('Team', opts);
         geo2.computeBoundingBox();
         const mesh2 = new THREE.Mesh(
@@ -74,91 +162,163 @@
           new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.2, metalness: 0.8 })
         );
 
-        // Neon cyan edge outlines
+        // ── Neon cyan edge outlines ───────────────────────────────────────────
+        // EdgesGeometry extracts only the hard (crease) edges from the geometry.
+        // LineSegments renders those as 1-px lines with the neon cyan material.
+        // Each LineSegments is attached as a child of its mesh so it moves/rotates
+        // with the parent automatically — no separate transform needed.
         const edgeMat = new THREE.LineBasicMaterial({ color: 0x00d8ff, linewidth: 2 });
         mesh1.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo1), edgeMat));
-        mesh2.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo2), edgeMat.clone()));
+        mesh2.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo2), edgeMat.clone())); // clone so each mesh has an independent material instance
 
-        // Side-by-side positioning
+        // ── Side-by-side layout ───────────────────────────────────────────────
+        // mesh1 ("Xalapa") starts at x=0.
+        // mesh2 ("Team") is offset by the bounding-box width of mesh1 + 0.5 gap.
+        // Using the bounding box (not hardcoded) so it adapts if the text changes.
         const width1 = geo1.boundingBox!.max.x - geo1.boundingBox!.min.x;
         mesh1.position.x = 0;
-        mesh2.position.x = width1 + 0.5;
+        mesh2.position.x = width1 + 0.5; // 0.5 world-unit gap between words
 
         textGroup.add(mesh1);
         textGroup.add(mesh2);
 
-        // Horizontally center the group
+        // ── Center the group in the scene ─────────────────────────────────────
+        // After adding both meshes, compute the combined bounding box center
+        // and negate it so the group sits symmetrically around x=0.
+        // position.y is set here as an initial value; the animation loop
+        // overrides it every frame with the floating sine wave.
         const center = new THREE.Box3()
           .setFromObject(textGroup)
           .getCenter(new THREE.Vector3());
-        textGroup.position.x = -center.x;
-        // Initial Y — animation loop will override each frame
-        textGroup.position.y = -center.y + 5;
+        textGroup.position.x = -center.x;          // horizontal centering
+        textGroup.position.y = -center.y + 5;       // push toward upper half of viewport
       },
+
+      // ── onProgress callback (unused, required as placeholder) ─────────────
       undefined,
+
+      // ── onError callback ──────────────────────────────────────────────────
       function (err) {
-        console.error('FontLoader error loading', fontUrl, err);
+        console.error('Background3D: FontLoader failed to load', fontUrl, err);
       }
     );
 
     // ── Particle system ───────────────────────────────────────────────────────
-    const particles: Array<{ mesh: THREE.Mesh; life: number; velocity: THREE.Vector3 }> = [];
-    const particleGeo = new THREE.SphereGeometry(0.15, 8, 8);
-    const particleMat = new THREE.MeshBasicMaterial({ color: 0x00d8ff, transparent: true, opacity: 0.8 });
+    /**
+     * Each particle is a small neon cyan sphere that spawns at the mouse's 3D
+     * position, drifts along a random velocity vector, shrinks, and fades out
+     * over ~66 animation frames (~1.1 s at 60 fps). Two are spawned per
+     * mousemove event for a dense trail effect.
+     *
+     * Memory management: geometry and material are disposed when life <= 0
+     * to avoid a WebGL memory leak during long sessions.
+     */
+    const particles: Array<{
+      mesh: THREE.Mesh;
+      life: number;           // 1.0 → 0.0; drives both scale and opacity
+      velocity: THREE.Vector3; // world-space drift per frame
+    }> = [];
 
+    // Base geometry — shared as a template; NOT shared between particles
+    // (each particle gets the same geometry data but its own mesh instance).
+    const particleGeo = new THREE.SphereGeometry(
+      0.15, // radius in world units
+      8,    // widthSegments (low poly — good performance for many particles)
+      8     // heightSegments
+    );
+
+    // Base material — MUST be cloned per particle so each instance has an
+    // independent opacity value. If shared, all particles would fade together.
+    const particleMat = new THREE.MeshBasicMaterial({
+      color: 0x00d8ff,   // neon cyan
+      transparent: true,
+      opacity: 0.8
+    });
+
+    // ── Mouse tracking ────────────────────────────────────────────────────────
+    // mouse holds Normalized Device Coordinates (NDC): x and y in range [-1, +1].
+    // NDC are required both for particle 3D unprojection and for text rotation.
     const mouse = new THREE.Vector2();
+
+    // Raycaster + plane: used to unproject the 2D mouse NDC into a 3D world
+    // position. We intersect a plane facing the camera at z=0 — this gives the
+    // 3D point the mouse is "pointing at" in the scene.
     const raycaster = new THREE.Raycaster();
-    const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
-    const planeIntersect = new THREE.Vector3();
+    const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0); // normal=(0,0,1), offset=0
+    const planeIntersect = new THREE.Vector3(); // reused vector to avoid GC pressure
+
+    // Rotation targets — lerped toward per frame for smooth mouse-follow.
     let targetRotX = 0;
     let targetRotY = 0;
 
+    // ── mousemove handler ────────────────────────────────────────────────────
     window.addEventListener('mousemove', (event) => {
+      // Convert pixel coordinates to NDC.
+      // X: 0 (left) → -1 .. 1920 (right) → +1
+      // Y: inverted because screen Y grows downward, Three.js NDC Y grows upward
       mouse.x =  (event.clientX / window.innerWidth)  * 2 - 1;
       mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
+      // Find where the mouse ray hits the z=0 plane → 3D spawn position
       raycaster.setFromCamera(mouse, camera);
       raycaster.ray.intersectPlane(plane, planeIntersect);
 
+      // Spawn 2 particles per event for a dense trail (1 looks sparse)
       for (let i = 0; i < 2; i++) {
-        const p = new THREE.Mesh(particleGeo, particleMat.clone());
+        const p = new THREE.Mesh(particleGeo, particleMat.clone()); // clone material!
         p.position.copy(planeIntersect);
-        p.position.x += (Math.random() - 0.5) * 0.4;
-        p.position.y += (Math.random() - 0.5) * 0.4;
+        p.position.x += (Math.random() - 0.5) * 0.4; // ±0.2 unit horizontal scatter
+        p.position.y += (Math.random() - 0.5) * 0.4; // ±0.2 unit vertical scatter
+        // Z is NOT scattered — all particles spawn on the z=0 plane
         scene.add(p);
         particles.push({
           mesh: p,
           life: 1.0,
           velocity: new THREE.Vector3(
-            (Math.random() - 0.5) * 0.05,
-            (Math.random() - 0.5) * 0.05,
-            Math.random() * 0.05
+            (Math.random() - 0.5) * 0.05,  // X drift: ±0.025 world units/frame
+            (Math.random() - 0.5) * 0.05,  // Y drift: ±0.025 world units/frame
+            Math.random() * 0.05            // Z drift: 0–0.05 toward camera only
           )
         });
       }
     });
 
     // ── Animation loop ────────────────────────────────────────────────────────
-    let time = 0;
-    function animate() {
-      requestAnimationFrame(animate);
-      time += 0.015;
+    let time = 0; // accumulates each frame; drives the floating sine wave
 
-      // Text: float + mouse rotation
+    function animate() {
+      requestAnimationFrame(animate); // schedule next frame
+      time += 0.015;                  // ~0.9 radians/second at 60 fps
+
+      // ── Text animation ──────────────────────────────────────────────────
+      // Floating: sine wave oscillates Y between +4.5 and +5.5 world units.
+      // At camera z=25, FOV=75, Y=5 is ~upper-center of the viewport.
       textGroup.position.y = Math.sin(time) * 0.5 + 5;
+
+      // Mouse rotation: map NDC [-1,+1] to rotation [-0.3,+0.3] radians.
+      // X mouse → Y-axis rotation (horizontal tilt).
+      // Y mouse → X-axis rotation (vertical tilt), negated so moving the
+      //           mouse up tilts the top of the text toward the viewer.
       targetRotY = mouse.x * 0.3;
-      targetRotX = mouse.y * -0.3;
+      targetRotX = mouse.y * -0.3; // negative = correct vertical feel
+
+      // Lerp factor 0.1: smooth but responsive. 
+      // < 0.05 feels sticky/unresponsive; > 0.3 feels jittery.
       textGroup.rotation.y += (targetRotY - textGroup.rotation.y) * 0.1;
       textGroup.rotation.x += (targetRotX - textGroup.rotation.x) * 0.1;
 
-      // Particles: move, fade, cull
+      // ── Particle update ─────────────────────────────────────────────────
+      // Iterate backwards so we can safely splice() while looping.
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
-        p.life -= 0.015;
-        p.mesh.position.add(p.velocity);
-        p.mesh.scale.setScalar(p.life);
-        (p.mesh.material as THREE.MeshBasicMaterial).opacity = p.life;
+
+        p.life -= 0.015;                       // decay: full life lasts ~66 frames
+        p.mesh.position.add(p.velocity);        // apply drift
+        p.mesh.scale.setScalar(p.life);         // shrink: scale 1.0 → 0.0
+        (p.mesh.material as THREE.MeshBasicMaterial).opacity = p.life; // fade out
+
         if (p.life <= 0) {
+          // Remove from scene and free GPU resources to prevent memory leak
           scene.remove(p.mesh);
           p.mesh.geometry.dispose();
           (p.mesh.material as THREE.Material).dispose();
@@ -170,19 +330,25 @@
     }
     animate();
 
-    // ── Resize handler ────────────────────────────────────────────────────────
+    // ── Responsive resize handler ─────────────────────────────────────────────
+    // Updates camera aspect ratio and renderer resolution when the window
+    // changes size (including mobile orientation change).
+    // Also re-applies the mobile/desktop Z distance so text always fits.
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.position.z = window.innerWidth < 768 ? 40 : 25;
-      camera.updateProjectionMatrix();
+      camera.updateProjectionMatrix(); // must be called after changing camera properties
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
-  }
+  } // end init()
 
-  // Guarantee DOM is ready before querying #canvas-container
+  // ── DOM readiness guard ───────────────────────────────────────────────────
+  // Astro loads component scripts as ES modules (type="module"), which can
+  // execute before the component's HTML is in the DOM in some render paths.
+  // This guard ensures init() only runs once the DOM is fully available.
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
-    init();
+    init(); // DOM already ready (common case for type="module" scripts)
   }
 </script>

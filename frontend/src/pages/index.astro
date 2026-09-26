@@ -1,14 +1,47 @@
 ---
+/**
+ * index.astro — Upload page (route: /)
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Entry point of the Code Archaeologist application.
+ *
+ * Layout:
+ *   - <Background3D /> renders the fullscreen WebGL scene behind everything
+ *   - <main> sits at z-index:1 above the canvas, anchored to the bottom of
+ *     the viewport (justify-content: flex-end) so the 3D text is visible above
+ *   - A glassmorphism panel with a rotating neon cyan border contains the UI
+ *
+ * Features:
+ *   1. File upload — hidden <input type="file">, triggered via styled <label>
+ *   2. Upload → POST /api/v1/analyses/binary (multipart/form-data, field "file")
+ *   3. Status polling — GET /api/v1/analyses/:id every 2000 ms until terminal
+ *      status: "completed" | "partial" | "failed"
+ *   4. On success → "View Results" button navigates to /results?id=<analysisId>
+ *   5. Background word rotation — 10 cybersecurity terms fade in/out every 4 s,
+ *      alternating left and right sides of the viewport
+ *
+ * Color tokens used:
+ *   #00d8ff — neon cyan  (borders, spinner, button, bg-word stroke)
+ *   #ff0055 — neon red   ("View Results" button)
+ *   #0a0a0a — near-black (panel background, html background)
+ */
 import Background3D from '../components/Background3D.astro';
 ---
+
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-<meta name="viewport" content="width=device-width" />
-<meta name="generator" content={Astro.generator} />
-<title>Code Archaeologist - XalapaTeam</title>
-<style>
+  <meta charset="utf-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width" />
+  <meta name="generator" content={Astro.generator} />
+  <title>Code Archaeologist - XalapaTeam</title>
+  <style>
+    /*
+     * html gets the background color so the page is dark from the very first
+     * paint — before WebGL initializes — preventing a white flash on load.
+     * body must stay transparent so the WebGL canvas (z-index:-1, fixed)
+     * is visible through it. If body has an opaque background, the canvas
+     * is painted but hidden behind it.
+     */
     html {
       background: #0a0a0a;
     }
@@ -19,18 +52,27 @@ import Background3D from '../components/Background3D.astro';
       color: white;
       overflow-x: hidden;
     }
+
+    /*
+     * main — full-viewport flex column, anchored to the bottom.
+     * pointer-events:none lets mouse events pass through to the WebGL canvas
+     * for particle trail spawning. Individual interactive elements restore
+     * pointer-events via pointer-events:auto.
+     */
     main {
       position: relative;
-      z-index: 1;
+      z-index: 1;            /* above the z-index:-1 canvas */
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: flex-end;  /* panel at bottom, 3D text visible above */
       height: 100vh;
       padding-bottom: 15vh;
       box-sizing: border-box;
       pointer-events: none;
     }
+
+    /* Mobile: center the panel vertically, reduce heading and padding */
     @media (max-width: 768px) {
       main {
         padding-bottom: 5vh;
@@ -43,14 +85,23 @@ import Background3D from '../components/Background3D.astro';
         padding: 1.5rem;
       }
     }
+
+    /*
+     * .panel-wrapper — the outer "frame" that creates the rotating neon border.
+     *
+     * Technique: a ::before pseudo-element with a conic-gradient is positioned
+     * to cover 200% × 200% of the wrapper (so it fully covers all sides) and
+     * rotated continuously. The inner .panel clips its overflow, revealing only
+     * a thin strip of the rotating gradient as a border effect.
+     */
     .panel-wrapper {
       position: relative;
       width: 90%;
       max-width: 550px;
       border-radius: 14px;
-      padding: 3px;
+      padding: 3px;          /* thickness of the visible neon border */
       overflow: hidden;
-      pointer-events: auto;
+      pointer-events: auto;  /* re-enable clicks on the panel */
       box-shadow: 0 0 30px rgba(0, 216, 255, 0.3);
     }
     .panel-wrapper::before {
@@ -65,6 +116,8 @@ import Background3D from '../components/Background3D.astro';
       0%   { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+
+    /* .panel — the dark glass inner card */
     .panel {
       background: rgba(10, 10, 10, 0.9);
       backdrop-filter: blur(15px);
@@ -74,18 +127,26 @@ import Background3D from '../components/Background3D.astro';
       height: 100%;
       box-sizing: border-box;
     }
+
     h1 {
       margin-top: 0;
       font-weight: 300;
       letter-spacing: 3px;
       font-size: 2.2rem;
     }
+
     p.subtitle {
       color: #ccc;
       font-size: 1.1rem;
       margin-bottom: 2.5rem;
       line-height: 1.5;
     }
+
+    /*
+     * .upload-btn — shared style for both the "Select Binary" label and the
+     * "View Results" button. The "View Results" variant overrides border/color
+     * with inline styles (#ff0055).
+     */
     .upload-btn {
       display: inline-flex;
       align-items: center;
@@ -105,38 +166,55 @@ import Background3D from '../components/Background3D.astro';
       color: #000;
       box-shadow: 0 0 20px #00d8ff;
     }
+
+    /* Hide the real file input — triggered programmatically via the label */
     #file-input {
       display: none;
     }
+
+    /* Status area below the buttons — shows text and optionally a spinner */
     .status-text {
       margin-top: 1.5rem;
       font-size: 1.1rem;
       color: #bbb;
-      min-height: 3rem;
+      min-height: 3rem;       /* prevents layout shift when content changes */
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 0.75rem;
     }
+
+    /*
+     * .neon-spinner — shown while polling the backend.
+     * A circular border with only the top segment colored creates the
+     * spinning arc effect when rotated continuously.
+     */
     @keyframes spin {
       100% { transform: rotate(360deg); }
     }
     .neon-spinner {
       width: 24px;
       height: 24px;
-      border: 3px solid rgba(0, 216, 255, 0.1);
-      border-top-color: #00d8ff;
+      border: 3px solid rgba(0, 216, 255, 0.1); /* dim full ring */
+      border-top-color: #00d8ff;                /* bright arc segment */
       border-radius: 50%;
       animation: spin 2s linear infinite;
       box-shadow: 0 0 10px rgba(0, 216, 255, 0.6);
     }
+
+    /*
+     * #bg-word — a large cybersecurity term that fades in/out behind the panel.
+     * Starts hidden (opacity:0); JS fades it in after 500 ms and cycles it
+     * every 4 s, alternating left:5% and right:5% for visual variety.
+     * pointer-events:none prevents it from interfering with mouse interactions.
+     */
     #bg-word {
       position: absolute;
       top: 55%;
       font-size: clamp(1rem, 2vw, 2rem);
       font-weight: 800;
       color: rgba(255, 255, 255, 0.4);
-      -webkit-text-stroke: 1px #00d8ff;
+      -webkit-text-stroke: 1px #00d8ff; /* neon cyan outline on the letters */
       text-shadow: 0 0 15px rgba(0, 216, 255, 0.8);
       opacity: 0;
       z-index: 0;
@@ -149,40 +227,66 @@ import Background3D from '../components/Background3D.astro';
   </style>
 </head>
 <body>
-<Background3D />
-<main>
-<div id="bg-word" style="left: 5%;">REVERSE-ENGINEERING</div>
-<div class="panel-wrapper" style="z-index: 1;">
-<div class="panel">
-<h1>BINARY ANALYSIS</h1>
-<p class="subtitle">Upload legacy Windows PE executables for static analysis.</p>
-<label class="upload-btn" for="file-input" id="upload-label">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4">
-</path>
-<polyline points="17 8 12 3 7 8">
-</polyline>
-<line x1="12" y1="3" x2="12" y2="15">
-</line>
-</svg>
+
+  <!-- Fullscreen WebGL background: "XalapaTeam" 3D text + particle trail -->
+  <Background3D />
+
+  <main>
+    <!-- Background rotating word — positioned absolutely within main -->
+    <div id="bg-word" style="left: 5%;">REVERSE-ENGINEERING</div>
+
+    <!-- Upload panel with rotating neon border -->
+    <div class="panel-wrapper" style="z-index: 1;">
+      <div class="panel">
+        <h1>BINARY ANALYSIS</h1>
+        <p class="subtitle">Upload legacy Windows PE executables for static analysis.</p>
+
+        <!--
+          "Select Binary" — a styled <label> that triggers the hidden file input.
+          Using a label instead of a button allows the native file-picker to open
+          without any JavaScript click handler.
+        -->
+        <label class="upload-btn" for="file-input" id="upload-label">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
           Select Binary
         </label>
-<input type="file" id="file-input" />
-<button class="upload-btn" id="results-btn" style="display: none; border-color: #ff0055; color: #ff0055;">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-<path d="M3 3v18h18">
-</path>
-<path d="M18 9l-5 5-4-4-5 5">
-</path>
-</svg>
+
+        <!-- Hidden file input — accepts any file type (PE validation is server-side) -->
+        <input type="file" id="file-input" />
+
+        <!--
+          "View Results" — hidden until analysis completes successfully.
+          onclick navigates to /results?id=<analysisId> (set dynamically by JS).
+          Uses #ff0055 (neon red) to visually distinguish it from the upload button.
+        -->
+        <button class="upload-btn" id="results-btn" style="display: none; border-color: #ff0055; color: #ff0055;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 3v18h18"></path>
+            <path d="M18 9l-5 5-4-4-5 5"></path>
+          </svg>
           View Results
         </button>
-<div class="status-text" id="status-display">Ready for upload.</div>
-</div>
-</div>
-</main>
-<script>
-    // ── Background word rotation ──────────────────────────────────────────
+
+        <!-- Status area: shows upload progress, polling status, or error messages -->
+        <div class="status-text" id="status-display">Ready for upload.</div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // ── Background word rotation ──────────────────────────────────────────────
+    /**
+     * Cycles through 10 cybersecurity terms, fading each in and out.
+     * - Initial fade-in: 500 ms after page load, opacity 0.3
+     * - Cycle interval: every 4000 ms
+     *   - Fade out (opacity → 0) immediately
+     *   - After 1000 ms (fade complete): swap text, toggle side, fade in (opacity → 0.4)
+     * - Alternates between left:5% (even index) and right:5% (odd index)
+     */
     const words = [
       "REVERSE-ENGINEERING",
       "DECOMPILATION",
@@ -196,74 +300,91 @@ import Background3D from '../components/Background3D.astro';
       "DISCOVERY"
     ];
     let wordIndex = 0;
-    const wordEl = document.getElementById('bg-word');
+    const wordEl = document.getElementById('bg-word') as HTMLElement;
 
+    // First fade-in — small delay so it appears after the page has settled
     setTimeout(() => { wordEl.style.opacity = '0.3'; }, 500);
 
     setInterval(() => {
-      wordEl.style.opacity = '0';
+      wordEl.style.opacity = '0'; // start fade out
       setTimeout(() => {
+        // Swap text and side while fully transparent
         wordIndex = (wordIndex + 1) % words.length;
         wordEl.textContent = words[wordIndex];
         if (wordIndex % 2 === 0) {
-          wordEl.style.left = '5%';
+          wordEl.style.left  = '5%';
           wordEl.style.right = 'auto';
         } else {
-          wordEl.style.left = 'auto';
+          wordEl.style.left  = 'auto';
           wordEl.style.right = '5%';
         }
-        wordEl.style.opacity = '0.4';
-      }, 1000);
+        wordEl.style.opacity = '0.4'; // fade back in
+      }, 1000); // wait for CSS transition to complete before swapping text
     }, 4000);
 
-    // ── Upload & polling logic ────────────────────────────────────────────
-    const fileInput = document.getElementById('file-input');
-    const statusDisplay = document.getElementById('status-display');
-    const uploadLabel = document.getElementById('upload-label');
-    const resultsBtn = document.getElementById('results-btn');
+    // ── Upload & polling logic ────────────────────────────────────────────────
+    const fileInput     = document.getElementById('file-input')     as HTMLInputElement;
+    const statusDisplay = document.getElementById('status-display') as HTMLElement;
+    const uploadLabel   = document.getElementById('upload-label')   as HTMLElement;
+    const resultsBtn    = document.getElementById('results-btn')    as HTMLButtonElement;
 
-    const setStatus = (text, isLoading = false) => {
+    /**
+     * setStatus(text, isLoading?)
+     * Updates the status display area.
+     * isLoading=true: renders a neon spinner above the message text.
+     * isLoading=false (default): renders only the message text.
+     */
+    const setStatus = (text: string, isLoading = false) => {
       statusDisplay.innerHTML = isLoading
-        ? `<div class="neon-spinner">
-</div>
-<span>${text}</span>`
+        ? `<div class="neon-spinner"></div><span>${text}</span>`
         : `<span>${text}</span>`;
     };
 
+    // ── File selection handler ────────────────────────────────────────────────
     fileInput.addEventListener('change', async (e) => {
-      const file = e.target.files[0];
+      const file = (e.target as HTMLInputElement).files?.[0];
       if (!file) return;
 
       setStatus(`Uploading ${file.name}...`, true);
-      uploadLabel.style.display = 'none';
-      resultsBtn.style.display = 'none';
+      uploadLabel.style.display = 'none'; // hide upload button while in progress
+      resultsBtn.style.display  = 'none';
 
       try {
+        // POST the binary as multipart/form-data.
+        // The backend expects the field name to be exactly "file".
         const formData = new FormData();
-        formData.append("file", file);
+        formData.append('file', file);
 
-        const res = await fetch("/api/v1/analyses/binary", {
-          method: "POST",
-          body: formData
-        });
-
+        const res  = await fetch('/api/v1/analyses/binary', { method: 'POST', body: formData });
         const data = await res.json();
 
         if (!res.ok) {
-          throw new Error(data.error?.message || data.message || "Upload failed");
+          // Backend ErrorResponse shape: { error: { code, message } }
+          throw new Error(data.error?.message || data.message || 'Upload failed');
         }
 
+        // Backend returns AnalysisMeta: { id, status, ... }
+        // Begin polling until a terminal status is reached.
         pollStatus(data.id);
-      } catch (err) {
+
+      } catch (err: any) {
         setStatus(`Error: ${err.message}`);
-        uploadLabel.style.display = 'inline-flex';
+        uploadLabel.style.display = 'inline-flex'; // restore upload button on error
       }
     });
 
-    async function pollStatus(id) {
+    /**
+     * pollStatus(id)
+     * Calls GET /api/v1/analyses/:id every 2000 ms.
+     * Terminal statuses that stop polling: "completed", "partial", "failed"
+     *   - "failed"                → show "Try Another Binary" label
+     *   - "completed" / "partial" → show "View Results" button that navigates
+     *                               to /results?id=<id>
+     */
+    async function pollStatus(id: string) {
       try {
-        const res = await fetch(`/api/v1/analyses/${id}`);
-        if (!res.ok) throw new Error("Failed to fetch status");
+        const res  = await fetch(`/api/v1/analyses/${id}`);
+        if (!res.ok) throw new Error('Failed to fetch status');
 
         const data = await res.json();
         setStatus(`Status: ${data.status.toUpperCase()}`, true);
@@ -272,20 +393,25 @@ import Background3D from '../components/Background3D.astro';
           setStatus(`Analysis finished with status: ${data.status}`);
 
           if (data.status === 'failed') {
+            // Allow the user to try a different binary
             uploadLabel.style.display = 'inline-flex';
-            uploadLabel.innerHTML = 'Try Another Binary';
+            uploadLabel.textContent   = 'Try Another Binary';
           } else {
+            // Navigate to the results dashboard with the analysis ID in the query string
             resultsBtn.style.display = 'inline-flex';
             resultsBtn.onclick = () => {
               window.location.href = `/results?id=${id}`;
             };
           }
-          return;
+          return; // stop polling
         }
 
+        // Non-terminal status ("queued", "preparing", "extracting", etc.)
+        // — schedule the next poll in 2 seconds
         setTimeout(() => pollStatus(id), 2000);
+
       } catch (err) {
-        setStatus("Error polling status.");
+        setStatus('Error polling status.');
         uploadLabel.style.display = 'inline-flex';
       }
     }
