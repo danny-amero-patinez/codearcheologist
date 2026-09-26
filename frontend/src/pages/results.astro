@@ -1,0 +1,373 @@
+---
+import Background3D from '../components/Background3D.astro';
+---
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<meta name="viewport" content="width=device-width" />
+<title>Results Dashboard - XalapaTeam</title>
+<style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+      overflow-x: hidden;
+      background: #0a0a0a;
+    }
+    .dashboard-container {
+      position: relative;
+      z-index: 1;
+      padding: 4rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      pointer-events: none;
+    }
+    .dashboard-content {
+      pointer-events: auto;
+    }
+    header {
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+    header h1 {
+      font-weight: 300;
+      letter-spacing: 3px;
+      margin: 0 0 0.5rem 0;
+      font-size: 2.5rem;
+      text-shadow: 0 0 10px rgba(0, 216, 255, 0.5);
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 1rem;
+      background: rgba(0, 216, 255, 0.1);
+      border: 1px solid #00d8ff;
+      border-radius: 20px;
+      color: #00d8ff;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .span-2 {
+      grid-column: span 2;
+    }
+    @media (max-width: 900px) {
+      .span-2 {
+        grid-column: span 1;
+      }
+    }
+    .card {
+      background: rgba(10, 10, 10, 0.85);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(0, 216, 255, 0.2);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .card:hover {
+      border-color: rgba(0, 216, 255, 0.6);
+      box-shadow: 0 0 15px rgba(0, 216, 255, 0.15);
+    }
+    .card h2 {
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: #00d8ff;
+      margin-top: 0;
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 0.75rem;
+    }
+    .data-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .data-list li {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px dashed rgba(255,255,255,0.05);
+      font-size: 0.95rem;
+    }
+    .data-list li:last-child { border: none; }
+    .data-label { color: #888; }
+    .data-value { color: #eee; font-family: monospace; }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .tag {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.3rem 0.8rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      color: #ccc;
+    }
+    .tag.high-risk {
+      border-color: #ff4757;
+      color: #ff4757;
+      background: rgba(255, 71, 87, 0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    th {
+      text-align: left;
+      color: #888;
+      font-weight: 400;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    td {
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: #ccc;
+    }
+    td.func-name {
+      font-family: monospace;
+      color: #00d8ff;
+      cursor: pointer;
+    }
+    td.func-name:hover { text-decoration: underline; }
+    .score-bar {
+      width: 100%;
+      height: 4px;
+      background: #222;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .score-fill {
+      height: 100%;
+      background: #ff4757;
+    }
+    .coverage-item { margin-bottom: 1rem; }
+    .coverage-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: #aaa;
+      margin-bottom: 0.4rem;
+    }
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: #00d8ff;
+      border-radius: 3px;
+    }
+    .nav-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #00d8ff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+      transition: opacity 0.2s;
+      pointer-events: auto;
+    }
+    .nav-back:hover { opacity: 0.7; }
+  </style>
+</head>
+<body>
+<Background3D />
+<div class="dashboard-container">
+<a href="/" class="nav-back">
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<line x1="19" y1="12" x2="5" y2="12">
+</line>
+<polyline points="12 19 5 12 12 5">
+</polyline>
+</svg>
+      Back to Upload
+    </a>
+<div class="dashboard-content">
+<header>
+<h1>ANALYSIS RESULTS</h1>
+<div class="badge">STATUS: COMPLETED</div>
+</header>
+<div class="grid">
+<!-- Binary Summary -->
+<div class="card">
+<h2>
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z">
+</path>
+<polyline points="14 2 14 8 20 8">
+</polyline>
+<line x1="16" y1="13" x2="8" y2="13">
+</line>
+<line x1="16" y1="17" x2="8" y2="17">
+</line>
+<polyline points="10 9 9 9 8 9">
+</polyline>
+</svg>
+            Binary Summary
+          </h2>
+<ul class="data-list">
+<li>
+<span class="data-label">Filename</span>
+<span class="data-value">legacy_app.exe</span>
+</li>
+<li>
+<span class="data-label">Architecture</span>
+<span class="data-value">x86 (32-bit)</span>
+</li>
+<li>
+<span class="data-label">Compiler</span>
+<span class="data-value">MSVC 2010</span>
+</li>
+<li>
+<span class="data-label">MD5</span>
+<span class="data-value">a1b2c3d4e5f6...</span>
+</li>
+<li>
+<span class="data-label">Size</span>
+<span class="data-value">2.4 MB</span>
+</li>
+</ul>
+</div>
+<!-- Engine Coverage -->
+<div class="card">
+<h2>
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="12" cy="12" r="10">
+</circle>
+<line x1="2" y1="12" x2="22" y2="12">
+</line>
+<path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+</path>
+</svg>
+            Engine Coverage
+          </h2>
+<div class="coverage-item">
+<div class="coverage-header">
+<span>PE Parser</span>
+<span>100%</span>
+</div>
+<div class="progress-track">
+<div class="progress-fill" style="width: 100%">
+</div>
+</div>
+</div>
+<div class="coverage-item">
+<div class="coverage-header">
+<span>String Extraction</span>
+<span>100%</span>
+</div>
+<div class="progress-track">
+<div class="progress-fill" style="width: 100%">
+</div>
+</div>
+</div>
+<div class="coverage-item">
+<div class="coverage-header">
+<span>Ghidra Decompilation</span>
+<span>85% (Partial)</span>
+</div>
+<div class="progress-track">
+<div class="progress-fill" style="width: 85%; background: #ffa502;">
+</div>
+</div>
+</div>
+</div>
+<!-- Reconstructed Capabilities -->
+<div class="card span-2">
+<h2>
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<polygon points="12 2 2 7 12 12 22 7 12 2">
+</polygon>
+<polyline points="2 17 12 22 22 17">
+</polyline>
+<polyline points="2 12 12 17 22 12">
+</polyline>
+</svg>
+            Reconstructed Capabilities
+          </h2>
+<div class="tags">
+<span class="tag high-risk">Cryptographic Operations</span>
+<span class="tag">Registry-backed Config</span>
+<span class="tag">Network Sockets</span>
+<span class="tag high-risk">Process Execution</span>
+<span class="tag">Filesystem Access</span>
+</div>
+</div>
+<!-- Interesting Functions -->
+<div class="card span-2">
+<h2>
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<polyline points="16 18 22 12 16 6">
+</polyline>
+<polyline points="8 6 2 12 8 18">
+</polyline>
+</svg>
+            Interesting Functions
+          </h2>
+<table>
+<thead>
+<tr>
+<th>Address / Name</th>
+<th>Confidence</th>
+<th>APIs Referenced</th>
+<th style="width: 100px;">Threat Score</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="func-name">FUN_00409140</td>
+<td>High (Observed)</td>
+<td>CreateProcessA, WriteFile</td>
+<td>
+<div class="score-bar">
+<div class="score-fill" style="width: 90%;">
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="func-name">FUN_0040A220</td>
+<td>Medium (Inferred)</td>
+<td>RegOpenKeyExA, CryptAcquireContextA</td>
+<td>
+<div class="score-bar">
+<div class="score-fill" style="width: 70%; background: #ffa502;">
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="func-name">FUN_0041C010</td>
+<td>High (Observed)</td>
+<td>WSASocketA, connect</td>
+<td>
+<div class="score-bar">
+<div class="score-fill" style="width: 60%; background: #ffa502;">
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

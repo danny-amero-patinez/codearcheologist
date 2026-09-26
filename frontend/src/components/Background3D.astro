@@ -1,0 +1,172 @@
+---
+// Background3D.astro
+---
+<div id="canvas-container" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;">
+</div>
+<script>
+  import * as THREE from 'three';
+  import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
+  import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
+
+  const container = document.getElementById('canvas-container');
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0a0a0a); // Dark background
+
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.z = window.innerWidth < 768 ? 40 : 25;
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(window.devicePixelRatio);
+  container.appendChild(renderer.domElement);
+
+  // Lighting
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+  scene.add(ambientLight);
+  const pointLight = new THREE.PointLight(0xffffff, 2);
+  pointLight.position.set(10, 20, 10);
+  scene.add(pointLight);
+
+  // Group for the text
+  const textGroup = new THREE.Group();
+  scene.add(textGroup);
+
+  // Load Font
+  const loader = new FontLoader();
+  loader.load('/fonts/helvetiker_bold.typeface.json', function (font) {
+    const textOptions = {
+      font: font,
+      size: 4,
+      depth: 0.5,
+      curveSegments: 12,
+      bevelEnabled: true,
+      bevelThickness: 0.05,
+      bevelSize: 0.05,
+      bevelOffset: 0,
+      bevelSegments: 5
+    };
+
+    // "Xalapa" Text (White)
+    const geo1 = new TextGeometry('Xalapa', textOptions);
+    geo1.computeBoundingBox();
+    const mat1 = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2, metalness: 0.1 });
+    const mesh1 = new THREE.Mesh(geo1, mat1);
+    
+    // "Team" Text (Dark metal)
+    const geo2 = new TextGeometry('Team', textOptions);
+    geo2.computeBoundingBox();
+    const mat2 = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.2, metalness: 0.8 });
+    const mesh2 = new THREE.Mesh(geo2, mat2);
+
+    // Neon Blue edge outline on both texts
+    const edgeMat = new THREE.LineBasicMaterial({ color: 0x00d8ff, linewidth: 2 });
+    
+    const edges1 = new THREE.EdgesGeometry(geo1);
+    const line1 = new THREE.LineSegments(edges1, edgeMat);
+    mesh1.add(line1);
+
+    const edges2 = new THREE.EdgesGeometry(geo2);
+    const line2 = new THREE.LineSegments(edges2, edgeMat);
+    mesh2.add(line2);
+
+    // Align side by side
+    const width1 = geo1.boundingBox.max.x - geo1.boundingBox.min.x;
+    mesh1.position.x = 0; 
+    mesh2.position.x = width1 + 0.5;
+
+    // Add to group and center horizontally
+    textGroup.add(mesh1);
+    textGroup.add(mesh2);
+
+    const box = new THREE.Box3().setFromObject(textGroup);
+    const center = box.getCenter(new THREE.Vector3());
+    textGroup.position.x = -center.x;
+    textGroup.position.y = -center.y + 7; // position it towards the top half of viewport
+  });
+
+  // Mouse-following neon particle trail
+  const particles = [];
+  const particleMaterial = new THREE.MeshBasicMaterial({ color: 0x00d8ff, transparent: true, opacity: 0.8 });
+  const particleGeometry = new THREE.SphereGeometry(0.15, 8, 8);
+
+  const mouse = new THREE.Vector2();
+  const raycaster = new THREE.Raycaster();
+  const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+  const planeIntersect = new THREE.Vector3();
+
+  window.addEventListener('mousemove', (event) => {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    
+    raycaster.setFromCamera(mouse, camera);
+    raycaster.ray.intersectPlane(plane, planeIntersect);
+
+    // Spawn 2 particles per mousemove event for a dense trail
+    for (let i = 0; i < 2; i++) {
+      const particle = new THREE.Mesh(particleGeometry, particleMaterial.clone());
+      particle.position.copy(planeIntersect);
+      particle.position.x += (Math.random() - 0.5) * 0.4;
+      particle.position.y += (Math.random() - 0.5) * 0.4;
+      
+      scene.add(particle);
+      particles.push({
+        mesh: particle,
+        life: 1.0,
+        velocity: new THREE.Vector3(
+          (Math.random()-0.5)*0.05,
+          (Math.random()-0.5)*0.05,
+          (Math.random())*0.05
+        )
+      });
+    }
+  });
+
+  let time = 0;
+  let targetRotationX = 0;
+  let targetRotationY = 0;
+
+  function animate() {
+    requestAnimationFrame(animate);
+    time += 0.015;
+    
+    if (textGroup) {
+      // Floating Y oscillation
+      textGroup.position.y = Math.sin(time) * 0.5 + 9;
+      
+      // Mouse-driven rotation targets
+      targetRotationY = mouse.x * 0.3;
+      targetRotationX = mouse.y * -0.3;
+      
+      // Smooth lerp to target rotation (factor 0.1)
+      textGroup.rotation.y += (targetRotationY - textGroup.rotation.y) * 0.1;
+      textGroup.rotation.x += (targetRotationX - textGroup.rotation.x) * 0.1;
+    }
+
+    // Update and cull dead particles
+    for(let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.life -= 0.015;
+      p.mesh.position.add(p.velocity);
+      p.mesh.scale.setScalar(p.life);
+      p.mesh.material.opacity = p.life;
+
+      if(p.life <= 0) {
+        scene.remove(p.mesh);
+        p.mesh.geometry.dispose();
+        p.mesh.material.dispose();
+        particles.splice(i, 1);
+      }
+    }
+
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  // Responsive resize handler
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.position.z = window.innerWidth < 768 ? 40 : 25;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+</script>
