@@ -20,12 +20,15 @@
   renderer.setPixelRatio(window.devicePixelRatio);
   container.appendChild(renderer.domElement);
 
-  // Lighting
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+  // Lighting — strong enough to make Xalapa read white and Team read dark
+  const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
   scene.add(ambientLight);
-  const pointLight = new THREE.PointLight(0xffffff, 2);
-  pointLight.position.set(10, 20, 10);
+  const pointLight = new THREE.PointLight(0xffffff, 4);
+  pointLight.position.set(0, 10, 20);
   scene.add(pointLight);
+  const pointLight2 = new THREE.PointLight(0x00d8ff, 1.5);
+  pointLight2.position.set(-10, -5, 15);
+  scene.add(pointLight2);
 
   // Group for the text
   const textGroup = new THREE.Group();
@@ -46,21 +49,31 @@
       bevelSegments: 5
     };
 
-    // "Xalapa" Text (White)
+    // "Xalapa" Text — bright white, slightly reflective
     const geo1 = new TextGeometry('Xalapa', textOptions);
     geo1.computeBoundingBox();
-    const mat1 = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2, metalness: 0.1 });
+    const mat1 = new THREE.MeshPhongMaterial({
+      color: 0xffffff,
+      emissive: 0x444444,
+      specular: 0xffffff,
+      shininess: 80
+    });
     const mesh1 = new THREE.Mesh(geo1, mat1);
-    
-    // "Team" Text (Dark metal)
+
+    // "Team" Text — near-black with a neon cyan emissive glow so edges read clearly
     const geo2 = new TextGeometry('Team', textOptions);
     geo2.computeBoundingBox();
-    const mat2 = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.2, metalness: 0.8 });
+    const mat2 = new THREE.MeshPhongMaterial({
+      color: 0x0a0a0a,
+      emissive: 0x003040,
+      specular: 0x00d8ff,
+      shininess: 120
+    });
     const mesh2 = new THREE.Mesh(geo2, mat2);
 
-    // Neon Blue edge outline on both texts
+    // Neon cyan edge outline on both texts
     const edgeMat = new THREE.LineBasicMaterial({ color: 0x00d8ff, linewidth: 2 });
-    
+
     const edges1 = new THREE.EdgesGeometry(geo1);
     const line1 = new THREE.LineSegments(edges1, edgeMat);
     mesh1.add(line1);
