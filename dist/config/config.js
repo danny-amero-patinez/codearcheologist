@@ -45,7 +45,7 @@ const dotenv = __importStar(require("dotenv"));
 dotenv.config();
 const configSchema = zod_1.z.object({
     PORT: zod_1.z.coerce.number().int().min(1).max(65535).default(3000),
-    HOST: zod_1.z.string().default('127.0.0.1'),
+    HOST: zod_1.z.string().default('0.0.0.0'),
     WORK_DIR: zod_1.z.string().default('./work'),
     MAX_BINARY_BYTES: zod_1.z.coerce.number().int().positive().default(104_857_600), // 100 MB
     MAX_GHIDRA_FUNCTIONS: zod_1.z.coerce.number().int().positive().default(20),

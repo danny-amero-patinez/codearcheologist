@@ -1,0 +1,45 @@
+# ── Version control ───────────────────────────────────────────────────────────
+.git
+.gitignore
+
+# ── Node dependencies (rebuilt inside container) ──────────────────────────────
+node_modules
+frontend/node_modules
+
+# ── Build artefacts (rebuilt inside container) ────────────────────────────────
+dist
+frontend/dist
+frontend/.astro
+
+# ── Dev/test files ────────────────────────────────────────────────────────────
+**/*.test.ts
+**/__tests__
+jest.config.js
+
+# ── Local work directory (ephemeral data, never part of image) ────────────────
+work
+
+# ── Environment / secrets ─────────────────────────────────────────────────────
+.env
+.env.*
+
+# ── Editor / IDE metadata ─────────────────────────────────────────────────────
+.bob
+.vscode
+.idea
+*.swp
+*.swo
+
+# ── OS artefacts ──────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Documentation (not needed at runtime) ────────────────────────────────────
+docs
+examples
+*.md
+!README.md
+
+# ── Docker files themselves ────────────────────────────────────────────────────
+Dockerfile
+.dockerignore
