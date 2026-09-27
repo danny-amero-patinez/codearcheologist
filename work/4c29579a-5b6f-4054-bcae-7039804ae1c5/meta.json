@@ -1,0 +1,67 @@
+{
+  "id": "4c29579a-5b6f-4054-bcae-7039804ae1c5",
+  "status": "completed",
+  "createdAt": "2026-09-27T02:36:11.052Z",
+  "updatedAt": "2026-09-27T02:38:32.914Z",
+  "originalFilename": "encriptador.exe",
+  "storedFilename": "binary.exe",
+  "fileSizeBytes": 2805078,
+  "sha256": "eae7516e62e42cf204205f1c224a38054e2c170cfc4e338cd6da5e58bb8e7431",
+  "phases": [
+    {
+      "phase": "intake",
+      "status": "completed",
+      "startedAt": "2026-09-27T02:36:11.052Z",
+      "completedAt": "2026-09-27T02:36:11.059Z"
+    },
+    {
+      "phase": "profiling",
+      "status": "completed",
+      "startedAt": "2026-09-27T02:36:11.084Z",
+      "completedAt": "2026-09-27T02:36:11.209Z",
+      "durationMs": 125
+    },
+    {
+      "phase": "extracting",
+      "status": "completed",
+      "startedAt": "2026-09-27T02:36:11.215Z",
+      "completedAt": "2026-09-27T02:36:11.240Z",
+      "durationMs": 25
+    },
+    {
+      "phase": "ghidra-analysis",
+      "status": "completed",
+      "startedAt": "2026-09-27T02:36:11.242Z",
+      "completedAt": "2026-09-27T02:38:32.781Z",
+      "durationMs": 141492
+    },
+    {
+      "phase": "correlating",
+      "status": "completed",
+      "startedAt": "2026-09-27T02:38:32.782Z",
+      "completedAt": "2026-09-27T02:38:32.844Z",
+      "durationMs": 62
+    },
+    {
+      "phase": "inferring",
+      "status": "completed",
+      "startedAt": "2026-09-27T02:38:32.846Z",
+      "completedAt": "2026-09-27T02:38:32.867Z",
+      "durationMs": 21
+    },
+    {
+      "phase": "reconstructing",
+      "status": "completed",
+      "startedAt": "2026-09-27T02:38:32.868Z",
+      "completedAt": "2026-09-27T02:38:32.878Z",
+      "durationMs": 10
+    },
+    {
+      "phase": "reporting",
+      "status": "completed",
+      "startedAt": "2026-09-27T02:38:32.887Z",
+      "completedAt": "2026-09-27T02:38:32.897Z",
+      "durationMs": 10
+    }
+  ]
+}

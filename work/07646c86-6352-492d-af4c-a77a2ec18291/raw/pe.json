@@ -1,0 +1,451 @@
+{
+  "fileSizeBytes": 2805078,
+  "sha256": "eae7516e62e42cf204205f1c224a38054e2c170cfc4e338cd6da5e58bb8e7431",
+  "peType": "PE32+",
+  "architecture": "x86-64",
+  "subsystem": "WINDOWS_CUI",
+  "entryPoint": "0x0000105F",
+  "sections": [
+    {
+      "name": ".text",
+      "virtualAddress": "0x00001000",
+      "virtualSize": 844992,
+      "rawSize": 845312,
+      "characteristics": [
+        "IMAGE_SCN_CNT_CODE",
+        "IMAGE_SCN_MEM_EXECUTE",
+        "IMAGE_SCN_MEM_READ"
+      ],
+      "entropy": 6.15
+    },
+    {
+      "name": ".data",
+      "virtualAddress": "0x000D0000",
+      "virtualSize": 12832,
+      "rawSize": 13312,
+      "characteristics": [
+        "IMAGE_SCN_CNT_INITIALIZED_DATA",
+        "IMAGE_SCN_MEM_READ",
+        "IMAGE_SCN_MEM_WRITE"
+      ],
+      "entropy": 0.41
+    },
+    {
+      "name": ".rdata",
+      "virtualAddress": "0x000D4000",
+      "virtualSize": 73288,
+      "rawSize": 73728,
+      "characteristics": [
+        "IMAGE_SCN_CNT_INITIALIZED_DATA",
+        "IMAGE_SCN_MEM_READ"
+      ],
+      "entropy": 5.04
+    },
+    {
+      "name": "/4",
+      "virtualAddress": "0x000E6000",
+      "virtualSize": 4,
+      "rawSize": 512,
+      "characteristics": [
+        "IMAGE_SCN_CNT_INITIALIZED_DATA",
+        "IMAGE_SCN_MEM_READ",
+        "IMAGE_SCN_MEM_WRITE"
+      ],
+      "entropy": 0
+    },
+    {
+      "name": ".pdata",
+      "virtualAddress": "0x000E7000",
+      "virtualSize": 49320,
+      "rawSize": 49664,
+      "characteristics": [
+        "IMAGE_SCN_CNT_INITIALIZED_DATA",
+        "IMAGE_SCN_MEM_READ"
+      ],
+      "entropy": 5.97
+    },
+    {
+      "name": ".xdata",
+      "virtualAddress": "0x000F4000",
+      "virtualSize": 69048,
+      "rawSize": 69120,
+      "characteristics": [
+        "IMAGE_SCN_CNT_INITIALIZED_DATA",
+        "IMAGE_SCN_MEM_READ"
+      ],
+      "entropy": 4.87
+    },
+    {
+      "name": ".bss",
+      "virtualAddress": "0x00105000",
+      "virtualSize": 3440,
+      "rawSize": 0,
+      "characteristics": [
+        "IMAGE_SCN_CNT_UNINITIALIZED_DATA",
+        "IMAGE_SCN_MEM_READ",
+        "IMAGE_SCN_MEM_WRITE"
+      ]
+    },
+    {
+      "name": ".idata",
+      "virtualAddress": "0x00106000",
+      "virtualSize": 6016,
+      "rawSize": 6144,
+      "characteristics": [
+        "IMAGE_SCN_CNT_INITIALIZED_DATA",
+        "IMAGE_SCN_MEM_READ"
+      ],
+      "entropy": 4.29
+    },
+    {
+      "name": ".tls",
+      "virtualAddress": "0x00108000",
+      "virtualSize": 16,
+      "rawSize": 512,
+      "characteristics": [
+        "IMAGE_SCN_CNT_INITIALIZED_DATA",
+        "IMAGE_SCN_MEM_READ",
+        "IMAGE_SCN_MEM_WRITE"
+      ],
+      "entropy": 0
+    },
+    {
+      "name": ".rsrc",
+      "virtualAddress": "0x00109000",
+      "virtualSize": 688,
+      "rawSize": 1024,
+      "characteristics": [
+        "IMAGE_SCN_CNT_INITIALIZED_DATA",
+        "IMAGE_SCN_MEM_READ"
+      ],
+      "entropy": 4.08
+    },
+    {
+      "name": ".reloc",
+      "virtualAddress": "0x0010A000",
+      "virtualSize": 5800,
+      "rawSize": 6144,
+      "characteristics": [
+        "IMAGE_SCN_CNT_INITIALIZED_DATA",
+        "IMAGE_SCN_MEM_READ"
+      ],
+      "entropy": 5.36
+    },
+    {
+      "name": "/14",
+      "virtualAddress": "0x0010C000",
+      "virtualSize": 208,
+      "rawSize": 512,
+      "characteristics": [
+        "IMAGE_SCN_CNT_INITIALIZED_DATA",
+        "IMAGE_SCN_MEM_READ"
+      ],
+      "entropy": 0.86
+    },
+    {
+      "name": "/29",
+      "virtualAddress": "0x0010D000",
+      "virtualSize": 19522,
+      "rawSize": 19968,
+      "characteristics": [
+        "IMAGE_SCN_CNT_INITIALIZED_DATA",
+        "IMAGE_SCN_MEM_READ"
+      ],
+      "entropy": 5.79
+    },
+    {
+      "name": "/41",
+      "virtualAddress": "0x00112000",
+      "virtualSize": 2349,
+      "rawSize": 2560,
+      "characteristics": [
+        "IMAGE_SCN_CNT_INITIALIZED_DATA",
+        "IMAGE_SCN_MEM_READ"
+      ],
+      "entropy": 4.7
+    },
+    {
+      "name": "/55",
+      "virtualAddress": "0x00113000",
+      "virtualSize": 2519,
+      "rawSize": 2560,
+      "characteristics": [
+        "IMAGE_SCN_CNT_INITIALIZED_DATA",
+        "IMAGE_SCN_MEM_READ"
+      ],
+      "entropy": 4.87
+    },
+    {
+      "name": "/67",
+      "virtualAddress": "0x00114000",
+      "virtualSize": 1072,
+      "rawSize": 1536,
+      "characteristics": [
+        "IMAGE_SCN_CNT_INITIALIZED_DATA",
+        "IMAGE_SCN_MEM_READ"
+      ],
+      "entropy": 2.76
+    },
+    {
+      "name": "/80",
+      "virtualAddress": "0x00115000",
+      "virtualSize": 219,
+      "rawSize": 512,
+      "characteristics": [
+        "IMAGE_SCN_CNT_INITIALIZED_DATA",
+        "IMAGE_SCN_MEM_READ"
+      ],
+      "entropy": 3.02
+    },
+    {
+      "name": "/91",
+      "virtualAddress": "0x00116000",
+      "virtualSize": 1228,
+      "rawSize": 1536,
+      "characteristics": [
+        "IMAGE_SCN_CNT_INITIALIZED_DATA",
+        "IMAGE_SCN_MEM_READ"
+      ],
+      "entropy": 4.43
+    },
+    {
+      "name": "/107",
+      "virtualAddress": "0x00117000",
+      "virtualSize": 2452,
+      "rawSize": 2560,
+      "characteristics": [
+        "IMAGE_SCN_CNT_INITIALIZED_DATA",
+        "IMAGE_SCN_MEM_READ"
+      ],
+      "entropy": 4.5
+    },
+    {
+      "name": "/123",
+      "virtualAddress": "0x00118000",
+      "virtualSize": 249,
+      "rawSize": 512,
+      "characteristics": [
+        "IMAGE_SCN_CNT_INITIALIZED_DATA",
+        "IMAGE_SCN_MEM_READ"
+      ],
+      "entropy": 2.31
+    }
+  ],
+  "imports": [
+    {
+      "dll": "KERNEL32.dll",
+      "functions": [
+        "CloseHandle",
+        "CreateEventA",
+        "CreateSemaphoreA",
+        "DeleteCriticalSection",
+        "DuplicateHandle",
+        "EnterCriticalSection",
+        "FormatMessageA",
+        "FreeLibrary",
+        "GetCurrentProcess",
+        "GetCurrentProcessId",
+        "GetCurrentThread",
+        "GetCurrentThreadId",
+        "GetLastError",
+        "GetModuleHandleA",
+        "GetProcAddress",
+        "GetProcessAffinityMask",
+        "GetSystemTimeAsFileTime",
+        "GetThreadContext",
+        "GetThreadPriority",
+        "GetTickCount",
+        "InitializeCriticalSection",
+        "LeaveCriticalSection",
+        "LoadLibraryA",
+        "LocalFree",
+        "OpenProcess",
+        "OutputDebugStringA",
+        "QueryPerformanceCounter",
+        "QueryPerformanceFrequency",
+        "RaiseException",
+        "ReleaseSemaphore",
+        "ResetEvent",
+        "ResumeThread",
+        "RtlCaptureContext",
+        "RtlLookupFunctionEntry",
+        "RtlUnwindEx",
+        "RtlVirtualUnwind",
+        "SetConsoleOutputCP",
+        "SetEvent",
+        "SetLastError",
+        "SetProcessAffinityMask",
+        "SetThreadContext",
+        "SetThreadPriority",
+        "SetUnhandledExceptionFilter",
+        "Sleep",
+        "SuspendThread",
+        "TlsAlloc",
+        "TlsGetValue",
+        "TlsSetValue",
+        "TryEnterCriticalSection",
+        "VirtualProtect",
+        "VirtualQuery",
+        "WaitForMultipleObjects",
+        "WaitForSingleObject"
+      ]
+    },
+    {
+      "dll": "api-ms-win-crt-convert-l1-1-0.dll",
+      "functions": [
+        "mbrtowc",
+        "mbsrtowcs",
+        "strtoul",
+        "wcrtomb"
+      ]
+    },
+    {
+      "dll": "api-ms-win-crt-environment-l1-1-0.dll",
+      "functions": [
+        "__p__environ",
+        "getenv"
+      ]
+    },
+    {
+      "dll": "api-ms-win-crt-filesystem-l1-1-0.dll",
+      "functions": [
+        "_fstat64"
+      ]
+    },
+    {
+      "dll": "api-ms-win-crt-heap-l1-1-0.dll",
+      "functions": [
+        "_set_new_mode",
+        "calloc",
+        "free",
+        "malloc",
+        "realloc"
+      ]
+    },
+    {
+      "dll": "api-ms-win-crt-locale-l1-1-0.dll",
+      "functions": [
+        "___mb_cur_max_func",
+        "_configthreadlocale",
+        "localeconv",
+        "setlocale"
+      ]
+    },
+    {
+      "dll": "api-ms-win-crt-math-l1-1-0.dll",
+      "functions": [
+        "__setusermatherr",
+        "_fdopen"
+      ]
+    },
+    {
+      "dll": "api-ms-win-crt-private-l1-1-0.dll",
+      "functions": [
+        "__C_specific_handler",
+        "__intrinsic_setjmp",
+        "longjmp",
+        "memchr",
+        "memcmp",
+        "memcpy",
+        "memmove",
+        "strchr"
+      ]
+    },
+    {
+      "dll": "api-ms-win-crt-runtime-l1-1-0.dll",
+      "functions": [
+        "__p___argc",
+        "__p___argv",
+        "_assert",
+        "_beginthreadex",
+        "_cexit",
+        "_configure_narrow_argv",
+        "_crt_atexit",
+        "_endthreadex",
+        "_errno",
+        "_exit",
+        "_initialize_narrow_environment",
+        "_set_app_type",
+        "_initterm",
+        "_initterm_e",
+        "_set_invalid_parameter_handler",
+        "abort",
+        "exit",
+        "signal",
+        "strerror"
+      ]
+    },
+    {
+      "dll": "api-ms-win-crt-stdio-l1-1-0.dll",
+      "functions": [
+        "__acrt_iob_func",
+        "__p__commode",
+        "__p__fmode",
+        "__stdio_common_vfprintf",
+        "__stdio_common_vsprintf",
+        "_fileno",
+        "_fseeki64",
+        "_ftelli64",
+        "_get_osfhandle",
+        "_lseeki64",
+        "_read",
+        "_setmode",
+        "_wfopen",
+        "_write",
+        "fclose",
+        "fflush",
+        "fopen",
+        "fputc",
+        "fputs",
+        "fread",
+        "fwrite",
+        "getc",
+        "getwc",
+        "putc",
+        "putwc",
+        "setvbuf",
+        "ungetc",
+        "ungetwc"
+      ]
+    },
+    {
+      "dll": "api-ms-win-crt-string-l1-1-0.dll",
+      "functions": [
+        "_strdup",
+        "iswctype",
+        "memset",
+        "strcmp",
+        "strcoll",
+        "strlen",
+        "strncmp",
+        "strnlen",
+        "strxfrm",
+        "towlower",
+        "towupper",
+        "wcscoll",
+        "wcslen",
+        "wcsnlen",
+        "wcsxfrm",
+        "wctype"
+      ]
+    },
+    {
+      "dll": "api-ms-win-crt-time-l1-1-0.dll",
+      "functions": [
+        "strftime",
+        "wcsftime"
+      ]
+    },
+    {
+      "dll": "api-ms-win-crt-utility-l1-1-0.dll",
+      "functions": [
+        "rand_s"
+      ]
+    }
+  ],
+  "exports": [],
+  "hasSignature": false,
+  "overallEntropy": 5.84,
+  "originalFilename": "encriptador.exe",
+  "storedFilename": "binary.exe"
+}

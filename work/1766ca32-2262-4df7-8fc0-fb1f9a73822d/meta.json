@@ -1,0 +1,69 @@
+{
+  "id": "1766ca32-2262-4df7-8fc0-fb1f9a73822d",
+  "status": "partial",
+  "createdAt": "2026-09-27T02:30:42.827Z",
+  "updatedAt": "2026-09-27T02:33:43.329Z",
+  "originalFilename": "auditoria-api.exe",
+  "storedFilename": "binary.exe",
+  "fileSizeBytes": 3681317,
+  "sha256": "ef48e5258591d3ca12ca9eac8e4085fb7d4727c3db96c1181520a6b2863d2acd",
+  "phases": [
+    {
+      "phase": "intake",
+      "status": "completed",
+      "startedAt": "2026-09-27T02:30:42.827Z",
+      "completedAt": "2026-09-27T02:30:42.843Z"
+    },
+    {
+      "phase": "profiling",
+      "status": "completed",
+      "startedAt": "2026-09-27T02:30:42.864Z",
+      "completedAt": "2026-09-27T02:30:43.017Z",
+      "durationMs": 153
+    },
+    {
+      "phase": "extracting",
+      "status": "completed",
+      "startedAt": "2026-09-27T02:30:43.020Z",
+      "completedAt": "2026-09-27T02:30:43.052Z",
+      "durationMs": 32
+    },
+    {
+      "phase": "ghidra-analysis",
+      "status": "failed",
+      "startedAt": "2026-09-27T02:30:43.054Z",
+      "completedAt": "2026-09-27T02:33:43.101Z",
+      "durationMs": 180026,
+      "error": "Ghidra timed out after 180000ms"
+    },
+    {
+      "phase": "correlating",
+      "status": "completed",
+      "startedAt": "2026-09-27T02:33:43.107Z",
+      "completedAt": "2026-09-27T02:33:43.157Z",
+      "durationMs": 50
+    },
+    {
+      "phase": "inferring",
+      "status": "completed",
+      "startedAt": "2026-09-27T02:33:43.164Z",
+      "completedAt": "2026-09-27T02:33:43.216Z",
+      "durationMs": 52
+    },
+    {
+      "phase": "reconstructing",
+      "status": "completed",
+      "startedAt": "2026-09-27T02:33:43.219Z",
+      "completedAt": "2026-09-27T02:33:43.247Z",
+      "durationMs": 28
+    },
+    {
+      "phase": "reporting",
+      "status": "completed",
+      "startedAt": "2026-09-27T02:33:43.265Z",
+      "completedAt": "2026-09-27T02:33:43.289Z",
+      "durationMs": 24
+    }
+  ],
+  "errorMessage": "Ghidra analysis failed — partial result (PE + strings only)"
+}
