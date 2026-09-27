@@ -1,293 +1,562 @@
 ---
-import Background3D from '../components/Background3D.astro';
 ---
 <html lang="en">
 <head>
 <meta charset="utf-8" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-<meta name="viewport" content="width=device-width" />
-<title>Results Dashboard - XalapaTeam</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Analysis Results — Code Archaeologist</title>
 <style>
-    html {
-      background: #0a0a0a;
-    }
-    body {
-      margin: 0;
-      background: transparent;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: white;
-      overflow-x: hidden;
-    }
-    .dashboard-container {
-      position: relative;
-      z-index: 1;
-      padding: 4rem 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
-      pointer-events: none;
-    }
-    .dashboard-content {
-      pointer-events: auto;
-    }
-    header {
-      margin-bottom: 3rem;
-      text-align: center;
-    }
-    header h1 {
-      font-weight: 300;
-      letter-spacing: 3px;
-      margin: 0 0 0.5rem 0;
-      font-size: 2.5rem;
-      text-shadow: 0 0 10px rgba(0, 216, 255, 0.5);
-    }
-    .badge {
-      display: inline-block;
-      padding: 0.25rem 1rem;
-      background: rgba(0, 216, 255, 0.1);
-      border: 1px solid #00d8ff;
-      border-radius: 20px;
-      color: #00d8ff;
-      font-size: 0.85rem;
-      letter-spacing: 1px;
-    }
-    .badge.partial  { border-color: #ffa502; color: #ffa502; background: rgba(255,165,2,0.1); }
-    .badge.failed   { border-color: #ff4757; color: #ff4757; background: rgba(255,71,87,0.1); }
-    .badge.loading  { border-color: #888;    color: #888;    background: rgba(136,136,136,0.1); }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-    }
-    .span-2 { grid-column: span 2; }
-    @media (max-width: 900px) {
-      .span-2 { grid-column: span 1; }
-    }
-    .card {
-      background: rgba(10, 10, 10, 0.85);
-      backdrop-filter: blur(15px);
-      border: 1px solid rgba(0, 216, 255, 0.2);
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-      transition: border-color 0.3s, box-shadow 0.3s;
-    }
-    .card:hover {
-      border-color: rgba(0, 216, 255, 0.6);
-      box-shadow: 0 0 15px rgba(0, 216, 255, 0.15);
-    }
-    .card h2 {
-      font-size: 1.1rem;
-      font-weight: 400;
-      color: #00d8ff;
-      margin-top: 0;
-      margin-bottom: 1.2rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      padding-bottom: 0.75rem;
-    }
-    .data-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .data-list li {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      padding: 0.5rem 0;
-      border-bottom: 1px dashed rgba(255,255,255,0.05);
-      font-size: 0.95rem;
-      gap: 1rem;
-    }
-    .data-list li:last-child { border: none; }
-    .data-label { color: #888; white-space: nowrap; }
-    .data-value { color: #eee; font-family: monospace; text-align: right; word-break: break-all; }
-    .tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-    .tag {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 0.3rem 0.8rem;
-      border-radius: 4px;
-      font-size: 0.85rem;
-      color: #ccc;
-    }
-    .tag.high-risk  { border-color: #ff4757; color: #ff4757; background: rgba(255,71,87,0.1); }
-    .tag.medium-risk { border-color: #ffa502; color: #ffa502; background: rgba(255,165,2,0.1); }
-    .tag.low-risk   { border-color: #00d8ff; color: #00d8ff; background: rgba(0,216,255,0.05); }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.9rem;
-    }
-    th {
-      text-align: left;
-      color: #888;
-      font-weight: 400;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    td {
-      padding: 0.75rem 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      color: #ccc;
-      vertical-align: top;
-    }
-    td.func-name {
-      font-family: monospace;
-      color: #00d8ff;
-      white-space: nowrap;
-    }
-    td.apis {
-      font-family: monospace;
-      font-size: 0.82rem;
-      color: #aaa;
-      max-width: 260px;
-    }
-    .score-bar {
-      width: 100%;
-      height: 4px;
-      background: #222;
-      border-radius: 2px;
-      overflow: hidden;
-      min-width: 80px;
-    }
-    .score-fill { height: 100%; background: #ff4757; border-radius: 2px; }
-    .coverage-item { margin-bottom: 1rem; }
-    .coverage-header {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.85rem;
-      color: #aaa;
-      margin-bottom: 0.4rem;
-    }
-    .progress-track {
-      width: 100%;
-      height: 6px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 3px;
-      overflow: hidden;
-    }
-    .progress-fill { height: 100%; background: #00d8ff; border-radius: 3px; }
-    .nav-back {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: #00d8ff;
-      text-decoration: none;
-      font-size: 0.9rem;
-      margin-bottom: 2rem;
-      transition: opacity 0.2s;
-      pointer-events: auto;
-    }
-    .nav-back:hover { opacity: 0.7; }
-    .error-state {
-      text-align: center;
-      padding: 4rem 2rem;
-      color: #ff4757;
-    }
-    .error-state h2 { font-weight: 300; letter-spacing: 2px; }
-    .error-state p  { color: #888; }
-    .loading-state {
-      text-align: center;
-      padding: 4rem 2rem;
-      color: #888;
-    }
-    @keyframes spin { 100% { transform: rotate(360deg); } }
-    .neon-spinner {
-      width: 32px; height: 32px;
-      border: 3px solid rgba(0,216,255,0.1);
-      border-top-color: #00d8ff;
-      border-radius: 50%;
-      animation: spin 1.5s linear infinite;
-      box-shadow: 0 0 12px rgba(0,216,255,0.5);
-      margin: 0 auto 1.5rem;
-    }
-    .confidence-badge {
-      display: inline-block;
-      padding: 0.1rem 0.5rem;
-      border-radius: 3px;
-      font-size: 0.78rem;
-      font-family: monospace;
-    }
-    .confidence-high   { color: #00d8ff; border: 1px solid rgba(0,216,255,0.4); }
-    .confidence-medium { color: #ffa502; border: 1px solid rgba(255,165,2,0.4); }
-    .confidence-low    { color: #888;    border: 1px solid rgba(136,136,136,0.3); }
-    .section-empty { color: #555; font-size: 0.9rem; font-style: italic; padding: 0.5rem 0; }
-    .risk-item {
-      padding: 0.5rem 0;
-      border-bottom: 1px dashed rgba(255,255,255,0.05);
-      font-size: 0.9rem;
-      color: #ff4757;
-      display: flex;
-      align-items: flex-start;
-      gap: 0.5rem;
-    }
-    .risk-item:last-child { border: none; }
-    .risk-item::before { content: "⚠"; font-size: 0.8rem; margin-top: 0.05rem; }
-    .modernization-item {
-      padding: 0.75rem 0;
-      border-bottom: 1px dashed rgba(255,255,255,0.05);
-    }
-    .modernization-item:last-child { border: none; }
-    .modernization-title {
-      font-size: 0.95rem;
-      color: #eee;
-      margin-bottom: 0.3rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .modernization-desc { font-size: 0.85rem; color: #888; line-height: 1.5; }
-    .limitation-item {
-      padding: 0.4rem 0;
-      font-size: 0.85rem;
-      color: #888;
-      border-bottom: 1px dashed rgba(255,255,255,0.04);
-      display: flex; gap: 0.5rem;
-    }
-    .limitation-item:last-child { border: none; }
-    .limitation-item::before { content: "·"; color: #444; }
-    .download-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-      background: transparent;
-      color: #00d8ff;
-      border: 1px solid rgba(0,216,255,0.4);
-      padding: 0.5rem 1.2rem;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-family: inherit;
-      transition: all 0.2s;
-      margin-top: 0.5rem;
-    }
-    .download-btn:hover {
-      background: rgba(0,216,255,0.08);
-      border-color: #00d8ff;
-      box-shadow: 0 0 12px rgba(0,216,255,0.3);
-    }
-  </style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { background: #0a0a0a; }
+  body {
+    margin: 0;
+    background: #0a0a0a;
+    font-family: system-ui, "Segoe UI", sans-serif;
+    color: #e6edf3;
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  /* ── App header ──────────────────────────────────────────────────── */
+  .app-header {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .app-header-left { display: flex; flex-direction: column; gap: 0.15rem; }
+  .app-name { font-size: 1.1rem; font-weight: 600; color: #e6edf3; }
+  .app-tagline { font-size: 0.78rem; color: #57606a; }
+  .app-credit { font-size: 0.78rem; color: #57606a; }
+
+  /* ── Page container ──────────────────────────────────────────────── */
+  .page {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 2rem 2rem 4rem;
+  }
+
+  .nav-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #29d9ff;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin-bottom: 2rem;
+    transition: opacity 0.15s;
+  }
+  .nav-back:hover { opacity: 0.7; }
+
+  /* ── Results page header ─────────────────────────────────────────── */
+  .results-header {
+    margin-bottom: 2.5rem;
+  }
+  .results-header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .results-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #e6edf3;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.01em;
+  }
+  .binary-name {
+    font-size: 1.05rem;
+    font-family: "Cascadia Code", Consolas, monospace;
+    color: #c9d1d9;
+    margin: 0 0 0.4rem;
+    word-break: break-all;
+  }
+  .binary-meta-line {
+    font-size: 0.82rem;
+    color: #57606a;
+    margin: 0;
+  }
+  .binary-meta-line span { margin-right: 0.6rem; }
+  .binary-meta-line span + span::before { content: "•"; margin-right: 0.6rem; color: #333; }
+
+  /* Status badge */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.9rem;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-family: "Cascadia Code", Consolas, monospace;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 0.3rem;
+  }
+  .status-badge.completed { background: rgba(63,185,80,0.12); color: #3fb950; border: 1px solid rgba(63,185,80,0.3); }
+  .status-badge.partial   { background: rgba(210,153,34,0.12); color: #d29922; border: 1px solid rgba(210,153,34,0.3); }
+  .status-badge.failed    { background: rgba(248,81,73,0.12);  color: #f85149; border: 1px solid rgba(248,81,73,0.3); }
+  .status-badge.loading   { background: rgba(139,148,158,0.12); color: #8b949e; border: 1px solid rgba(139,148,158,0.2); }
+
+  /* Download button */
+  .download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    color: #29d9ff;
+    border: 1px solid rgba(41,217,255,0.4);
+    padding: 0.55rem 1.25rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    font-family: inherit;
+    font-weight: 500;
+    transition: border-color 0.15s, background 0.15s;
+    white-space: nowrap;
+  }
+  .download-btn:hover {
+    border-color: #29d9ff;
+    background: rgba(41,217,255,0.07);
+  }
+
+  /* ── Grid layout ─────────────────────────────────────────────────── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1.25rem;
+  }
+  .col-4  { grid-column: span 4; }
+  .col-8  { grid-column: span 8; }
+  .col-6  { grid-column: span 6; }
+  .col-12 { grid-column: span 12; }
+
+  @media (max-width: 960px) {
+    .col-4, .col-8, .col-6 { grid-column: span 12; }
+  }
+  @media (max-width: 640px) {
+    .col-12 { grid-column: span 12; }
+    .page { padding: 1.5rem 1rem 3rem; }
+    .results-title { font-size: 1.3rem; }
+    .app-credit { display: none; }
+  }
+
+  /* ── Card ────────────────────────────────────────────────────────── */
+  .card {
+    background: #161b22;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+  }
+  .card-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #57606a;
+    margin: 0 0 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .card-title svg { color: #29d9ff; flex-shrink: 0; }
+
+  /* ── Metadata grid (Binary Summary) ─────────────────────────────── */
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 6px;
+    overflow: hidden;
+    font-size: 0.82rem;
+  }
+  .meta-cell {
+    padding: 0.7rem 0.9rem;
+    border-right: 1px solid rgba(255,255,255,0.07);
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .meta-cell:nth-child(3n) { border-right: none; }
+  .meta-label {
+    font-size: 0.7rem;
+    color: #57606a;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+  }
+  .meta-value {
+    color: #c9d1d9;
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 0.82rem;
+    word-break: break-all;
+  }
+  .meta-cell.full-width {
+    grid-column: span 3;
+    border-right: none;
+  }
+  .meta-cell:nth-last-child(-n+3):not(:last-child) { border-bottom: none; }
+  .meta-cell:last-child { border-bottom: none; }
+  /* Simpler last-row removal — target cells without a bottom neighbor */
+  .meta-grid .meta-cell { border-bottom: 1px solid rgba(255,255,255,0.07); }
+  .meta-grid .meta-cell.no-bottom { border-bottom: none; }
+
+  @media (max-width: 500px) {
+    .meta-grid { grid-template-columns: repeat(2, 1fr); }
+    .meta-cell:nth-child(3n) { border-right: 1px solid rgba(255,255,255,0.07); }
+    .meta-cell:nth-child(2n) { border-right: none; }
+    .meta-cell.full-width { grid-column: span 2; }
+  }
+
+  .signature-note {
+    font-size: 0.72rem;
+    color: #57606a;
+    margin-top: 0.2rem;
+  }
+
+  /* ── Engine coverage cards ───────────────────────────────────────── */
+  .engine-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+  .engine-card {
+    background: #0d1117;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 6px;
+    padding: 0.9rem 1rem;
+  }
+  .engine-name {
+    font-size: 0.8rem;
+    color: #8b949e;
+    margin-bottom: 0.4rem;
+  }
+  .engine-status {
+    font-size: 0.78rem;
+    font-family: "Cascadia Code", Consolas, monospace;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .engine-status.ok     { color: #3fb950; }
+  .engine-status.warn   { color: #d29922; }
+  .engine-status.err    { color: #f85149; }
+  .engine-error { font-size: 0.72rem; color: #57606a; margin-top: 0.35rem; line-height: 1.4; }
+  @media (max-width: 600px) {
+    .engine-cards { grid-template-columns: 1fr; }
+  }
+
+  /* ── Pipeline timeline ───────────────────────────────────────────── */
+  .pipeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .pipeline-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 0.83rem;
+  }
+  .pipeline-row:last-child { border-bottom: none; }
+  .pipeline-icon { width: 16px; text-align: center; flex-shrink: 0; font-size: 0.85rem; }
+  .pipeline-icon.completed { color: #3fb950; }
+  .pipeline-icon.failed    { color: #f85149; }
+  .pipeline-icon.running   { color: #29d9ff; }
+  .pipeline-icon.skipped   { color: #484f58; }
+  .pipeline-icon.pending   { color: #484f58; }
+  .pipeline-phase { flex: 1; text-transform: capitalize; color: #c9d1d9; }
+  .pipeline-dur   { font-family: "Cascadia Code", Consolas, monospace; font-size: 0.75rem; color: #57606a; white-space: nowrap; }
+  .pipeline-error { font-size: 0.72rem; color: #f85149; }
+
+  /* ── Capabilities / interactions ─────────────────────────────────── */
+  .cap-row {
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 0.87rem;
+  }
+  .cap-row:last-child { border-bottom: none; }
+  .cap-top { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.3rem; }
+  .cap-cat { color: #c9d1d9; font-weight: 500; }
+  .cap-stmt { font-size: 0.83rem; color: #8b949e; line-height: 1.5; }
+
+  /* ── Confidence badge ────────────────────────────────────────────── */
+  .conf-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.1rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-family: "Cascadia Code", Consolas, monospace;
+    flex-shrink: 0;
+  }
+  .conf-high   { color: #3fb950; border: 1px solid rgba(63,185,80,0.35); }
+  .conf-medium { color: #d29922; border: 1px solid rgba(210,153,34,0.35); }
+  .conf-low    { color: #8b949e; border: 1px solid rgba(139,148,158,0.3); }
+
+  /* ── Interesting functions ───────────────────────────────────────── */
+  .fn-card {
+    background: #0d1117;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-left: 3px solid rgba(41,217,255,0.4);
+    border-radius: 6px;
+    padding: 1rem 1.1rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.83rem;
+  }
+  .fn-card:last-child { margin-bottom: 0; }
+  .fn-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.6rem;
+    flex-wrap: wrap;
+  }
+  .fn-name {
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 0.9rem;
+    color: #29d9ff;
+  }
+  .fn-autogen {
+    font-size: 0.7rem;
+    color: #57606a;
+    font-style: italic;
+    font-family: system-ui, "Segoe UI", sans-serif;
+    margin-left: 0.4rem;
+  }
+  .fn-addr {
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 0.75rem;
+    color: #57606a;
+  }
+  .fn-score {
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 0.75rem;
+    color: #8b949e;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .fn-score strong { color: #c9d1d9; }
+  .fn-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.3rem;
+    flex-wrap: wrap;
+  }
+  .fn-label {
+    font-size: 0.7rem;
+    color: #57606a;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    margin-top: 0.05rem;
+  }
+  .fn-apis, .fn-strings, .fn-callers {
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 0.78rem;
+    color: #8b949e;
+    word-break: break-word;
+    flex: 1;
+  }
+  .score-bar {
+    height: 3px;
+    background: #1c2128;
+    border-radius: 2px;
+    overflow: hidden;
+    width: 60px;
+    flex-shrink: 0;
+    margin-top: 0.45rem;
+  }
+  .score-fill { height: 100%; border-radius: 2px; }
+
+  /* ── Candidate responsibilities ──────────────────────────────────── */
+  .cand-row {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .cand-row:last-child { border-bottom: none; }
+  .cand-top { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.35rem; }
+  .cand-name { color: #e6edf3; font-weight: 600; font-size: 0.92rem; }
+  .cand-summary { font-size: 0.83rem; color: #8b949e; line-height: 1.5; }
+
+  /* ── Tags / DLLs ─────────────────────────────────────────────────── */
+  .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .tag {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 0.2rem 0.7rem;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    color: #8b949e;
+    font-family: "Cascadia Code", Consolas, monospace;
+  }
+
+  /* ── Unknowns ────────────────────────────────────────────────────── */
+  .unknown-card {
+    border-left: 3px solid #d29922;
+    padding: 0.9rem 1rem;
+    margin-bottom: 0.75rem;
+    background: rgba(210,153,34,0.04);
+    border-radius: 0 6px 6px 0;
+  }
+  .unknown-card:last-child { margin-bottom: 0; }
+  .unknown-heading {
+    font-size: 0.88rem;
+    color: #d29922;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+  .unknown-badge {
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 0.1rem 0.45rem;
+    border: 1px solid rgba(210,153,34,0.4);
+    border-radius: 3px;
+    color: #d29922;
+    font-family: "Cascadia Code", Consolas, monospace;
+    flex-shrink: 0;
+  }
+  .unknown-question { color: #e6edf3; font-weight: 500; }
+  .sub-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #57606a;
+    margin: 0.6rem 0 0.2rem;
+    font-weight: 600;
+  }
+  .unknown-body { font-size: 0.82rem; color: #8b949e; line-height: 1.5; }
+  .unknown-list {
+    margin: 0.3rem 0 0 0;
+    padding-left: 1.2rem;
+    font-size: 0.82rem;
+    color: #8b949e;
+    line-height: 1.6;
+  }
+
+  /* ── Modernization ───────────────────────────────────────────────── */
+  .mod-card {
+    border-radius: 6px;
+    padding: 1rem 1.1rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.83rem;
+  }
+  .mod-card:last-child { margin-bottom: 0; }
+  .mod-high   { border-left: 3px solid #f85149; background: rgba(248,81,73,0.04); border-radius: 0 6px 6px 0; }
+  .mod-medium { border-left: 3px solid #d29922; background: rgba(210,153,34,0.04); border-radius: 0 6px 6px 0; }
+  .mod-low    { border-left: 3px solid #484f58; background: rgba(72,79,88,0.08); border-radius: 0 6px 6px 0; }
+  .priority-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-family: "Cascadia Code", Consolas, monospace;
+    padding: 0.1rem 0.45rem;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .priority-high   { color: #f85149; border: 1px solid rgba(248,81,73,0.35); }
+  .priority-medium { color: #d29922; border: 1px solid rgba(210,153,34,0.35); }
+  .priority-low    { color: #8b949e; border: 1px solid rgba(139,148,158,0.3); }
+  .mod-title-row   { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.4rem; flex-wrap: wrap; }
+  .mod-title       { color: #e6edf3; font-weight: 600; font-size: 0.9rem; }
+  .mod-desc        { color: #8b949e; line-height: 1.5; margin-bottom: 0.35rem; }
+
+  /* ── Limitations ─────────────────────────────────────────────────── */
+  .limit-row {
+    padding: 0.35rem 0;
+    font-size: 0.82rem;
+    color: #57606a;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    display: flex;
+    gap: 0.5rem;
+  }
+  .limit-row:last-child { border-bottom: none; }
+  .limit-row::before { content: "·"; color: #333; flex-shrink: 0; }
+
+  /* ── Risk ────────────────────────────────────────────────────────── */
+  .risk-row {
+    padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 0.85rem;
+    color: #f85149;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .risk-row:last-child { border-bottom: none; }
+  .risk-row::before { content: "⚠"; font-size: 0.78rem; }
+
+  /* ── Empty state ─────────────────────────────────────────────────── */
+  .section-empty { color: #484f58; font-size: 0.85rem; font-style: italic; }
+
+  /* ── Loading / error states ──────────────────────────────────────── */
+  @keyframes spin { 100% { transform: rotate(360deg); } }
+  .neon-spinner {
+    width: 28px; height: 28px;
+    border: 2px solid rgba(41,217,255,0.12);
+    border-top-color: #29d9ff;
+    border-radius: 50%;
+    animation: spin 1.5s linear infinite;
+    margin: 0 auto 1.25rem;
+  }
+  .loading-state {
+    text-align: center;
+    padding: 5rem 2rem;
+    color: #57606a;
+  }
+  .loading-state p { font-size: 0.9rem; margin: 0; }
+  .loading-status  { color: #29d9ff; font-weight: 500; }
+  .error-state {
+    text-align: center;
+    padding: 5rem 2rem;
+    color: #f85149;
+  }
+  .error-state h2 { font-weight: 400; letter-spacing: 0.02em; font-size: 1.2rem; }
+  .error-state p  { color: #57606a; font-size: 0.9rem; }
+</style>
 </head>
 <body>
-<Background3D />
-<div class="dashboard-container">
+
+<!-- App header -->
+<header class="app-header">
+  <div class="app-header-left">
+    <span class="app-name">Code Archaeologist</span>
+    <span class="app-tagline">Evidence-driven binary archaeology</span>
+  </div>
+  <span class="app-credit">Built by Xalapa Team</span>
+</header>
+
+<div class="page">
   <a href="/" class="nav-back">
-    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
       <line x1="19" y1="12" x2="5" y2="12"></line>
       <polyline points="12 19 5 12 12 5"></polyline>
     </svg>
-    Back to Upload
+    Analyze another binary
   </a>
 
-  <div class="dashboard-content" id="dashboard-content">
-    <!-- Filled by JS -->
+  <div id="dashboard-content">
     <div class="loading-state">
       <div class="neon-spinner"></div>
       <p>Loading analysis results…</p>
@@ -296,7 +565,7 @@ import Background3D from '../components/Background3D.astro';
 </div>
 
 <script>
-  // ── Helpers ───────────────────────────────────────────────────────────────────
+  // ── Helpers ──────────────────────────────────────────────────────────────────
   const el = (tag, cls, html) => {
     const e = document.createElement(tag);
     if (cls) e.className = cls;
@@ -304,17 +573,14 @@ import Background3D from '../components/Background3D.astro';
     return e;
   };
 
-  const confidenceCls = (c) =>
-    c === 'high' ? 'confidence-high' : c === 'medium' ? 'confidence-medium' : 'confidence-low';
+  const esc = (s) => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
-  const tagCls = (c) =>
-    c === 'high' ? 'tag high-risk' : c === 'medium' ? 'tag medium-risk' : 'tag low-risk';
+  const confCls = (c) =>
+    c === 'high' ? 'conf-badge conf-high' : c === 'medium' ? 'conf-badge conf-medium' : 'conf-badge conf-low';
 
-  // Selection scores are absolute integers (e.g. 14), not 0-1 fractions.
-  // Cap at 20 for visual normalization; color by absolute value thresholds.
-  const scoreBarWidth = (s) => Math.min((s / 20) * 100, 100).toFixed(0) + '%';
-  const scoreColor = (s) =>
-    s >= 10 ? '#ff4757' : s >= 5 ? '#ffa502' : '#00d8ff';
+  const confBadge = (c) => `<span class="${confCls(c)}">${esc(c)}</span>`;
+
+  const scoreColor = (s) => s >= 15 ? '#f85149' : s >= 8 ? '#d29922' : '#29d9ff';
 
   const fmt = (v) => (v === null || v === undefined ? '—' : String(v));
   const fmtBytes = (b) => {
@@ -323,321 +589,368 @@ import Background3D from '../components/Background3D.astro';
     if (b >= 1024)      return (b / 1024).toFixed(1) + ' KB';
     return b + ' B';
   };
-
-  // Human-readable labels for internal pipeline phase/status names.
-  const STATUS_LABELS = {
-    queued:        'Queued',
-    preparing:     'Preparing',
-    extracting:    'Extracting strings',
-    decompiling:   'Decompiling (Ghidra)',
-    correlating:   'Correlating evidence',
-    inferring:     'Running inference engine',
-    reconstructing:'Reconstructing responsibilities',
-    reporting:     'Generating reports',
-    completed:     'Completed',
-    partial:       'Partial (Ghidra unavailable)',
-    failed:        'Failed',
-    running:       'Running',
-    pending:       'Pending',
-    skipped:       'Skipped',
+  const fmtDur = (ms) => {
+    if (ms === undefined || ms === null) return '';
+    if (ms >= 60000) return (ms/60000).toFixed(1) + ' min';
+    if (ms >= 1000)  return (ms/1000).toFixed(1) + ' s';
+    return ms + ' ms';
   };
-  const friendlyStatus = (s) => STATUS_LABELS[s] ?? s;
 
-  // ── Render ────────────────────────────────────────────────────────────────────
+  const STATUS_LABELS = {
+    // overall analysis statuses
+    queued:'Queued', preparing:'Preparing', completed:'Completed',
+    partial:'Partial (Ghidra unavailable)', failed:'Failed',
+    running:'Running', pending:'Pending', skipped:'Skipped',
+    // backend phase IDs → friendly labels (must match pipeline.ts exactly)
+    intake:'Intake', profiling:'Profiling',
+    extracting:'Evidence Extraction',
+    'ghidra-analysis':'Ghidra Analysis',
+    correlating:'Correlation',
+    inferring:'Inference',
+    reconstructing:'Reconstruction',
+    reporting:'Reporting',
+  };
+  const friendly = (s) => STATUS_LABELS[s] ?? s;
+
+  // ── Card builder ─────────────────────────────────────────────────────────────
+  function makeCard(titleHTML, cls = '') {
+    const card = el('div', 'card ' + cls);
+    const h = el('div', 'card-title');
+    h.innerHTML = titleHTML;
+    card.appendChild(h);
+    return card;
+  }
+
+  // ── Main render ──────────────────────────────────────────────────────────────
   function renderDashboard(r) {
-    const a = r.analysis;
-    const b = r.binary;
+    const a   = r.analysis;
+    const b   = r.binary;
     const cov = r.coverage;
-
-    const statusCls = a.status === 'partial' ? 'partial' : a.status === 'failed' ? 'failed' : '';
-
     const frag = document.createDocumentFragment();
 
-    // Header
-    const hdr = el('header');
+    // ── Results header ──────────────────────────────────────────────────────
+    const hdr = el('div', 'results-header');
+
+    const statusCls = a.status === 'partial' ? 'partial' : a.status === 'failed' ? 'failed' : 'completed';
+    const statusLabel = friendly(a.status).toUpperCase();
+
+    // Build binary one-liner meta
+    const metaParts = [b.peType, b.architecture, b.subsystem].filter(Boolean);
+    const sizeStr   = fmtBytes(b.fileSizeBytes);
+    if (sizeStr && sizeStr !== '—') metaParts.push(sizeStr);
+
+    const dlBtnHtml = `
+      <button class="download-btn" id="dl-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Download HTML Report
+      </button>`;
+
     hdr.innerHTML = `
-      <h1>ANALYSIS RESULTS</h1>
-      <div class="badge ${statusCls}">STATUS: ${friendlyStatus(a.status).toUpperCase()}</div>
-    `;
+      <div class="results-header-top">
+        <div>
+          <h1 class="results-title">Analysis Results</h1>
+          <p class="binary-name">${esc(b.originalFilename)}</p>
+          <p class="binary-meta-line">${metaParts.map(p => `<span>${esc(p)}</span>`).join('')}</p>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.6rem">
+          <span class="status-badge ${statusCls}">${statusLabel}</span>
+          ${dlBtnHtml}
+        </div>
+      </div>`;
     frag.appendChild(hdr);
+
+    // Wire download button
+    setTimeout(() => {
+      const dlBtn = document.getElementById('dl-btn');
+      if (dlBtn) {
+        dlBtn.addEventListener('click', () => {
+          const id = new URLSearchParams(window.location.search).get('id');
+          let count = parseInt(localStorage.getItem('reportCounter') || '0', 10) + 1;
+          localStorage.setItem('reportCounter', String(count));
+          const anchor = document.createElement('a');
+          anchor.href = `/api/v1/analyses/${id}/report?format=html`;
+          anchor.download = `Analysis_Report_${count}.html`;
+          anchor.style.display = 'none';
+          document.body.appendChild(anchor);
+          anchor.click();
+          document.body.removeChild(anchor);
+        });
+      }
+    }, 0);
 
     const grid = el('div', 'grid');
 
-    // ── Card: Binary Summary ─────────────────────────────────────────────────
-    const cardBin = makeCard(
-      `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
-        <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
-      </svg> Binary Summary`
-    );
-    const binRows = [
-      ['Filename',     b.originalFilename],
-      ['PE Type',      b.peType],
-      ['Architecture', b.architecture],
-      ['Subsystem',    b.subsystem],
-      ['Entry Point',  b.entryPoint],
-      ['Size',         fmtBytes(b.fileSizeBytes)],
-      ['SHA-256',      b.sha256 ? b.sha256.slice(0, 16) + '…' : '—'],
-      ['Signed',       b.hasSignature ? 'Yes' : 'No'],
-      ['Entropy',      b.overallEntropy != null ? b.overallEntropy.toFixed(3) : '—'],
-    ];
-    if (b.versionInfo?.companyName)  binRows.push(['Company',  b.versionInfo.companyName]);
-    if (b.versionInfo?.productName)  binRows.push(['Product',  b.versionInfo.productName]);
-    if (b.versionInfo?.fileVersion)  binRows.push(['Version',  b.versionInfo.fileVersion]);
-    const binList = el('ul', 'data-list');
-    binRows.forEach(([label, value]) => {
-      binList.innerHTML += `<li><span class="data-label">${label}</span><span class="data-value">${fmt(value)}</span></li>`;
-    });
-    cardBin.appendChild(binList);
+    // ── Binary Summary ────────────────────────────────────────────────────
+    const cardBin = makeCard(`
+      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+      </svg> Binary Summary`, 'col-4');
 
-    // Download report button
-    const dlBtn = el('button', 'download-btn');
-    dlBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-      <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-    </svg> Download HTML Report`;
-    dlBtn.onclick = () => {
-      const id = new URLSearchParams(window.location.search).get('id');
-      let count = parseInt(localStorage.getItem('reportCounter') || '0', 10) + 1;
-      localStorage.setItem('reportCounter', String(count));
-      const anchor = document.createElement('a');
-      anchor.href = `/api/v1/analyses/${id}/report?format=html`;
-      anchor.download = `Reporte_Analisis_${count}.html`;
-      anchor.style.display = 'none';
-      document.body.appendChild(anchor);
-      anchor.click();
-      document.body.removeChild(anchor);
-    };
-    cardBin.appendChild(dlBtn);
+    // Build metadata cells
+    const cells = [];
+    cells.push(['PE Type',       fmt(b.peType)]);
+    cells.push(['Architecture',  fmt(b.architecture)]);
+    cells.push(['Subsystem',     fmt(b.subsystem)]);
+    cells.push(['Entry Point',   fmt(b.entryPoint)]);
+    cells.push(['Size',          fmtBytes(b.fileSizeBytes)]);
+    cells.push(['Entropy',       b.overallEntropy != null ? b.overallEntropy.toFixed(3) : '—']);
+    if (b.versionInfo?.companyName) cells.push(['Company', fmt(b.versionInfo.companyName)]);
+    if (b.versionInfo?.productName) cells.push(['Product', fmt(b.versionInfo.productName)]);
+    if (b.versionInfo?.fileVersion) cells.push(['Version', fmt(b.versionInfo.fileVersion)]);
+
+    const metaGridEl = el('div', 'meta-grid');
+    cells.forEach(([label, value]) => {
+      const cell = el('div', 'meta-cell');
+      cell.innerHTML = `<div class="meta-label">${esc(label)}</div><div class="meta-value">${esc(value)}</div>`;
+      metaGridEl.appendChild(cell);
+    });
+
+    // SHA-256 full-width
+    if (b.sha256) {
+      const shaCell = el('div', 'meta-cell full-width');
+      shaCell.innerHTML = `<div class="meta-label">SHA-256</div><div class="meta-value">${esc(b.sha256)}</div>`;
+      metaGridEl.appendChild(shaCell);
+    }
+
+    // Signature — honest wording
+    const sigCell = el('div', 'meta-cell full-width');
+    if (b.hasSignature) {
+      sigCell.innerHTML = `<div class="meta-label">Signature</div><div class="meta-value">Present</div><div class="signature-note">Verification not performed</div>`;
+    } else {
+      sigCell.innerHTML = `<div class="meta-label">Signature</div><div class="meta-value">Not present</div>`;
+    }
+    metaGridEl.appendChild(sigCell);
+    cardBin.appendChild(metaGridEl);
     grid.appendChild(cardBin);
 
-    // ── Card: Engine Coverage ────────────────────────────────────────────────
-    const cardCov = makeCard(
-      `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    // ── Engine Coverage + Pipeline ────────────────────────────────────────
+    const cardCov = makeCard(`
+      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
         <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-      </svg> Engine Coverage`
-    );
+      </svg> Engine Coverage`, 'col-8');
+
+    const engDiv = el('div', 'engine-cards');
     const engines = [
-      { label: 'PE Parser',            ok: cov.peParser,  width: '100%',  color: '#00d8ff' },
-      { label: 'String Extraction',    ok: cov.strings,   width: '100%',  color: '#00d8ff' },
-      { label: 'Ghidra Decompilation', ok: cov.ghidra,    width: cov.ghidra ? '100%' : '0%', color: cov.ghidra ? '#00d8ff' : '#ffa502' },
+      { name: 'PE Parser',         ok: cov.peParser, error: null },
+      { name: 'String Extraction', ok: cov.strings,  error: null },
+      { name: 'Ghidra Analysis',   ok: cov.ghidra,   error: cov.ghidraError ?? null },
     ];
-    engines.forEach(({ label, ok, width, color }) => {
-      const pct = ok ? '100%' : (label === 'Ghidra Decompilation' && cov.ghidraError ? 'Unavailable' : '0%');
-      cardCov.innerHTML += `
-        <div class="coverage-item">
-          <div class="coverage-header">
-            <span>${label}</span>
-            <span style="color:${ok ? '#00d8ff' : '#ffa502'}">${pct}</span>
-          </div>
-          <div class="progress-track">
-            <div class="progress-fill" style="width:${width};background:${color}"></div>
-          </div>
-          ${cov.ghidraError && label === 'Ghidra Decompilation' ? `<div style="font-size:0.78rem;color:#888;margin-top:0.3rem">${cov.ghidraError}</div>` : ''}
-        </div>`;
+    engines.forEach(({ name, ok, error }) => {
+      const ec = el('div', 'engine-card');
+      const cls = ok ? 'ok' : error ? 'err' : 'warn';
+      const icon = ok ? '✓' : '✗';
+      const label = ok ? 'Completed' : (error ? 'Failed' : 'Not available');
+      ec.innerHTML = `
+        <div class="engine-name">${esc(name)}</div>
+        <div class="engine-status ${cls}">${icon} ${label}</div>
+        ${error ? `<div class="engine-error">${esc(error)}</div>` : ''}`;
+      engDiv.appendChild(ec);
     });
-    // Phase timeline
+    cardCov.appendChild(engDiv);
+
+    // Pipeline timeline
     if (a.phases?.length) {
-      const phaseColors = { completed: '#00d8ff', failed: '#ff4757', running: '#ffa502', pending: '#444', skipped: '#555' };
-      cardCov.innerHTML += `<div style="margin-top:1.2rem;border-top:1px solid rgba(255,255,255,0.06);padding-top:1rem">
-        ${a.phases.map(p => `
-          <div style="display:flex;justify-content:space-between;font-size:0.78rem;padding:0.25rem 0;color:#888">
-            <span style="text-transform:capitalize">${p.phase}</span>
-            <span style="color:${phaseColors[p.status] || '#888'}">${friendlyStatus(p.status)}</span>
-          </div>`).join('')}
-      </div>`;
+      const phHeader = el('div', 'card-title');
+      phHeader.style.cssText = 'margin-top:1.25rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.06)';
+      phHeader.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+          <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+        </svg> Pipeline Phases`;
+      cardCov.appendChild(phHeader);
+
+      const pipe = el('div', 'pipeline');
+      a.phases.forEach(p => {
+        const iconMap = { completed: '✓', failed: '✗', running: '⟳', skipped: '—', pending: '○' };
+        const icon = iconMap[p.status] ?? '○';
+        const row = el('div', 'pipeline-row');
+        const dur = fmtDur(p.durationMs);
+        row.innerHTML = `
+          <span class="pipeline-icon ${p.status}">${icon}</span>
+          <span class="pipeline-phase">${esc(friendly(p.phase))}</span>
+          ${dur ? `<span class="pipeline-dur">${dur}</span>` : ''}
+          ${p.error ? `<span class="pipeline-error">${esc(p.error)}</span>` : ''}`;
+        pipe.appendChild(row);
+      });
+      cardCov.appendChild(pipe);
     }
+
     grid.appendChild(cardCov);
 
-    // ── Card: Capabilities (span-2) ──────────────────────────────────────────
-    const cardCap = makeCard(
-      `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    // ── Capabilities ──────────────────────────────────────────────────────
+    const cardCap = makeCard(`
+      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polygon points="12 2 2 7 12 12 22 7 12 2"/>
         <polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>
-      </svg> Capabilities`,
-      'card span-2'
-    );
+      </svg> Reconstructed Capabilities`, 'col-6');
     if (r.capabilities?.length) {
-      const tagsDiv = el('div', 'tags');
       r.capabilities.forEach(cap => {
-        const span = el('span', tagCls(cap.confidence));
-        span.title = cap.statement;
-        span.textContent = cap.category;
-        tagsDiv.appendChild(span);
-      });
-      cardCap.appendChild(tagsDiv);
-      // Expanded detail rows
-      const detail = el('div');
-      detail.style.cssText = 'margin-top:1rem;display:flex;flex-direction:column;gap:0.6rem';
-      r.capabilities.forEach(cap => {
-        const row = el('div');
-        row.style.cssText = 'font-size:0.87rem;border-bottom:1px dashed rgba(255,255,255,0.05);padding-bottom:0.5rem';
+        const row = el('div', 'cap-row');
         row.innerHTML = `
-          <span class="confidence-badge ${confidenceCls(cap.confidence)}">${cap.confidence}</span>
-          <span style="color:#ccc;margin-left:0.5rem">${cap.statement}</span>`;
-        detail.appendChild(row);
+          <div class="cap-top">${confBadge(cap.confidence)}<span class="cap-cat">${esc(cap.category)}</span></div>
+          <div class="cap-stmt">${esc(cap.statement)}</div>`;
+        cardCap.appendChild(row);
       });
-      cardCap.appendChild(detail);
     } else {
-      cardCap.innerHTML += `<p class="section-empty">No capabilities detected.</p>`;
+      cardCap.appendChild(el('p', 'section-empty', 'No capabilities detected.'));
     }
     grid.appendChild(cardCap);
 
-    // ── Card: External Interactions ──────────────────────────────────────────
-    if (r.externalInteractions?.length) {
-      const cardExt = makeCard(
-        `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
-        </svg> External Interactions`,
-        'card span-2'
-      );
-      const tagsDiv = el('div', 'tags');
-      r.externalInteractions.forEach(xi => {
-        const span = el('span', tagCls(xi.confidence));
-        span.title = xi.description;
-        span.textContent = xi.kind.charAt(0).toUpperCase() + xi.kind.slice(1);
-        tagsDiv.appendChild(span);
-      });
-      cardExt.appendChild(tagsDiv);
-      const detail = el('div');
-      detail.style.cssText = 'margin-top:1rem;display:flex;flex-direction:column;gap:0.5rem';
-      r.externalInteractions.forEach(xi => {
-        const row = el('div');
-        row.style.cssText = 'font-size:0.87rem;border-bottom:1px dashed rgba(255,255,255,0.05);padding-bottom:0.4rem';
+    // ── Candidate Responsibilities ────────────────────────────────────────
+    const cardCand = makeCard(`
+      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+      </svg> Candidate Responsibilities`, 'col-6');
+    if (r.candidateComponents?.length) {
+      r.candidateComponents.forEach(comp => {
+        const row = el('div', 'cand-row');
         row.innerHTML = `
-          <span class="confidence-badge ${confidenceCls(xi.confidence)}">${xi.confidence}</span>
-          <span style="color:#888;margin-left:0.3rem;font-family:monospace">${xi.kind}</span>
-          <span style="color:#ccc;margin-left:0.5rem">${xi.description}</span>`;
-        detail.appendChild(row);
+          <div class="cand-top">${confBadge(comp.confidence)}<span class="cand-name">${esc(comp.name)}</span></div>
+          <div class="cand-summary">${esc(comp.summary)}</div>`;
+        cardCand.appendChild(row);
       });
-      cardExt.appendChild(detail);
+    } else {
+      cardCand.appendChild(el('p', 'section-empty', 'No candidate responsibilities identified.'));
+    }
+    grid.appendChild(cardCand);
+
+    // ── External Interactions ─────────────────────────────────────────────
+    if (r.externalInteractions?.length) {
+      const cardExt = makeCard(`
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/>
+        </svg> External Interactions`, 'col-12');
+      r.externalInteractions.forEach(xi => {
+        const row = el('div', 'cap-row');
+        row.innerHTML = `
+          <div class="cap-top">
+            ${confBadge(xi.confidence)}
+            <span style="font-family:'Cascadia Code',Consolas,monospace;font-size:0.8rem;color:#8b949e">${esc(xi.kind)}</span>
+          </div>
+          <div class="cap-stmt">${esc(xi.description)}</div>`;
+        cardExt.appendChild(row);
+      });
       grid.appendChild(cardExt);
     }
 
-    // ── Card: Interesting Functions (span-2) ─────────────────────────────────
-    const cardFn = makeCard(
-      `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    // ── Interesting Functions ─────────────────────────────────────────────
+    const cardFn = makeCard(`
+      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
-      </svg> Interesting Functions`,
-      'card span-2'
-    );
+      </svg> Interesting Functions`, 'col-12');
     if (r.interestingFunctions?.length) {
-      const tbl = el('table');
-      tbl.innerHTML = `<thead><tr>
-        <th>Address / Name</th>
-        <th>APIs Referenced</th>
-        <th style="width:110px">Selection Score</th>
-      </tr></thead>`;
-      const tbody = el('tbody');
       r.interestingFunctions.forEach(fn => {
         const score = fn.selectionScore ?? 0;
-        const apis = fn.apiReferences?.slice(0, 4).join(', ') || '—';
-        const apiExtra = (fn.apiReferences?.length ?? 0) > 4 ? ` +${fn.apiReferences.length - 4} more` : '';
-        const tr = el('tr');
-        tr.innerHTML = `
-          <td class="func-name">${fn.name || fn.address}</td>
-          <td class="apis">${apis}<span style="color:#555">${apiExtra}</span></td>
-          <td>
-            <div class="score-bar">
-              <div class="score-fill" style="width:${scoreBarWidth(score)};background:${scoreColor(score)}"></div>
+        const fc = el('div', 'fn-card');
+        const autoNote = fn.autoGenerated ? `<span class="fn-autogen">auto-generated name</span>` : '';
+        const apis = fn.apiReferences?.slice(0, 6).join('  ') || '';
+        const apiMore = (fn.apiReferences?.length ?? 0) > 6 ? `  +${fn.apiReferences.length - 6} more` : '';
+        const strs = fn.stringReferences?.slice(0, 4).map(s => s.length > 60 ? s.slice(0, 60) + '…' : s).join('  ') || '';
+        const callers = fn.callers?.slice(0, 4).join('  ') || '';
+        const barPct = Math.min((score / 60) * 100, 100).toFixed(0);
+        fc.innerHTML = `
+          <div class="fn-header">
+            <div>
+              <div><span class="fn-name">${esc(fn.name || fn.address)}</span>${autoNote}</div>
+              <div class="fn-addr">${esc(fn.address)}</div>
             </div>
-            <div style="font-size:0.75rem;color:#666;margin-top:0.2rem">${score}</div>
-          </td>`;
-        tbody.appendChild(tr);
+            <div style="text-align:right">
+              <div class="fn-score">Score <strong>${score}</strong></div>
+              <div class="score-bar" style="margin-left:auto">
+                <div class="score-fill" style="width:${barPct}%;background:${scoreColor(score)}"></div>
+              </div>
+            </div>
+          </div>
+          ${apis ? `<div class="fn-row"><span class="fn-label">APIs</span><span class="fn-apis">${esc(apis)}${esc(apiMore)}</span></div>` : ''}
+          ${strs ? `<div class="fn-row"><span class="fn-label">Strings</span><span class="fn-strings">${esc(strs)}</span></div>` : ''}
+          ${callers ? `<div class="fn-row"><span class="fn-label">Called by</span><span class="fn-callers">${esc(callers)}</span></div>` : ''}`;
+        cardFn.appendChild(fc);
       });
-      tbl.appendChild(tbody);
-      cardFn.appendChild(tbl);
     } else {
-      cardFn.innerHTML += `<p class="section-empty">No interesting functions identified.</p>`;
+      cardFn.appendChild(el('p', 'section-empty', 'No interesting functions identified.'));
     }
     grid.appendChild(cardFn);
 
-    // ── Card: Candidate Components ───────────────────────────────────────────
-    if (r.candidateComponents?.length) {
-      const cardComp = makeCard(
-        `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-        </svg> Candidate Components`,
-        'card span-2'
-      );
-      r.candidateComponents.forEach(comp => {
-        const item = el('div');
-        item.style.cssText = 'padding:0.75rem 0;border-bottom:1px dashed rgba(255,255,255,0.06)';
-        item.innerHTML = `
-          <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.3rem">
-            <span style="color:#eee;font-size:0.95rem">${comp.name}</span>
-            <span class="confidence-badge ${confidenceCls(comp.confidence)}">${comp.confidence}</span>
+    // ── Unknowns ──────────────────────────────────────────────────────────
+    if (r.unknowns?.length) {
+      const cardUnk = makeCard(`
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg> Unknowns`, 'col-12');
+      r.unknowns.forEach(unk => {
+        const uc = el('div', 'unknown-card');
+        const resolveItems = (unk.howToResolve ?? []).map(h => `<li>${esc(h)}</li>`).join('');
+        uc.innerHTML = `
+          <div class="unknown-heading">
+            <span class="unknown-badge">UNKNOWN</span>
+            <span class="unknown-question">${esc(unk.question)}</span>
           </div>
-          <div style="font-size:0.85rem;color:#888;line-height:1.5">${comp.summary}</div>`;
-        cardComp.appendChild(item);
+          ${unk.whyItMatters ? `<div class="sub-label">Why it matters</div><div class="unknown-body">${esc(unk.whyItMatters)}</div>` : ''}
+          ${unk.missingEvidence ? `<div class="sub-label">Missing evidence</div><div class="unknown-body">${esc(unk.missingEvidence)}</div>` : ''}
+          ${resolveItems ? `<div class="sub-label">How to resolve</div><ul class="unknown-list">${resolveItems}</ul>` : ''}`;
+        cardUnk.appendChild(uc);
       });
-      grid.appendChild(cardComp);
+      grid.appendChild(cardUnk);
     }
 
-    // ── Card: Dependencies ───────────────────────────────────────────────────
-    if (r.dependencies?.length) {
-      const cardDeps = makeCard(
-        `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/>
-        </svg> DLL Dependencies`
-      );
-      const tagsDiv = el('div', 'tags');
-      r.dependencies.forEach(dll => {
-        tagsDiv.appendChild(el('span', 'tag', dll));
-      });
-      cardDeps.appendChild(tagsDiv);
-      grid.appendChild(cardDeps);
-    }
-
-    // ── Card: Risks ──────────────────────────────────────────────────────────
-    if (r.risks?.length) {
-      const cardRisk = makeCard(
-        `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-        </svg> Risks`
-      );
-      r.risks.forEach(risk => {
-        cardRisk.appendChild(el('div', 'risk-item', risk));
-      });
-      grid.appendChild(cardRisk);
-    }
-
-    // ── Card: Modernization Recommendations ──────────────────────────────────
+    // ── Modernization ─────────────────────────────────────────────────────
     if (r.modernization?.length) {
-      const cardMod = makeCard(
-        `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      const cardMod = makeCard(`
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-        </svg> Modernization Recommendations`,
-        'card span-2'
-      );
+        </svg> Modernization Blueprint`, 'col-12');
       r.modernization.forEach(rec => {
-        const item = el('div', 'modernization-item');
-        const priorityColor = rec.priority === 'high' ? '#ff4757' : rec.priority === 'medium' ? '#ffa502' : '#00d8ff';
-        item.innerHTML = `
-          <div class="modernization-title">
-            <span style="color:${priorityColor};font-family:monospace;font-size:0.8rem;text-transform:uppercase">${rec.priority}</span>
-            <span>${rec.title}</span>
+        const mc = el('div', `mod-card mod-${rec.priority}`);
+        const pc = rec.priority === 'high' ? 'priority-high' : rec.priority === 'medium' ? 'priority-medium' : 'priority-low';
+        mc.innerHTML = `
+          <div class="mod-title-row">
+            <span class="priority-label ${pc}">${esc(rec.priority).toUpperCase()}</span>
+            <span class="mod-title">${esc(rec.title)}</span>
           </div>
-          <div class="modernization-desc">${rec.description}</div>`;
-        cardMod.appendChild(item);
+          <div class="mod-desc">${esc(rec.description)}</div>`;
+        cardMod.appendChild(mc);
       });
       grid.appendChild(cardMod);
     }
 
-    // ── Card: Limitations ────────────────────────────────────────────────────
+    // ── Dependencies ──────────────────────────────────────────────────────
+    if (r.dependencies?.length) {
+      const cardDeps = makeCard(`
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/>
+        </svg> DLL Dependencies`, 'col-6');
+      const tagsDiv = el('div', 'tags');
+      r.dependencies.forEach(dll => tagsDiv.appendChild(el('span', 'tag', esc(dll))));
+      cardDeps.appendChild(tagsDiv);
+      grid.appendChild(cardDeps);
+    }
+
+    // ── Risks ─────────────────────────────────────────────────────────────
+    if (r.risks?.length) {
+      const cardRisk = makeCard(`
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg> Risks`, 'col-6');
+      r.risks.forEach(risk => cardRisk.appendChild(el('div', 'risk-row', esc(risk))));
+      grid.appendChild(cardRisk);
+    }
+
+    // ── Limitations ───────────────────────────────────────────────────────
     if (r.limitations?.length) {
-      const cardLim = makeCard(
-        `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-        </svg> Analysis Limitations`,
-        'card span-2'
-      );
-      r.limitations.forEach(lim => {
-        cardLim.appendChild(el('div', 'limitation-item', lim));
-      });
+      const cardLim = makeCard(`
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg> Analysis Limitations`, 'col-12');
+      r.limitations.forEach(lim => cardLim.appendChild(el('div', 'limit-row', esc(lim))));
       grid.appendChild(cardLim);
     }
 
@@ -645,15 +958,7 @@ import Background3D from '../components/Background3D.astro';
     return frag;
   }
 
-  function makeCard(titleHTML, cls = 'card') {
-    const card = el('div', cls);
-    const h2 = el('h2');
-    h2.innerHTML = titleHTML;
-    card.appendChild(h2);
-    return card;
-  }
-
-  // ── Entry point ───────────────────────────────────────────────────────────────
+  // ── Entry point ──────────────────────────────────────────────────────────────
   const container = document.getElementById('dashboard-content');
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
@@ -661,13 +966,11 @@ import Background3D from '../components/Background3D.astro';
   if (!id) {
     container.innerHTML = `
       <div class="error-state">
-        <h2>NO ANALYSIS ID</h2>
+        <h2>No Analysis ID</h2>
         <p>Navigate here from the upload page after submitting a binary.</p>
-        <a href="/" style="color:#00d8ff;font-size:0.9rem">← Back to Upload</a>
+        <a href="/" style="color:#29d9ff;font-size:0.85rem">← Back to Upload</a>
       </div>`;
   } else {
-    // Auto-polling: retry every 3 s while the analysis is still running (202).
-    // Stops automatically when a terminal result arrives or on a hard error.
     const POLL_INTERVAL_MS = 3000;
     let pollTimer = null;
 
@@ -675,8 +978,8 @@ import Background3D from '../components/Background3D.astro';
       container.innerHTML = `
         <div class="loading-state">
           <div class="neon-spinner"></div>
-          <p>Analysis in progress — <strong style="color:#00d8ff">${friendlyStatus(status)}</strong></p>
-          <p style="font-size:0.82rem;color:#555;margin-top:0.4rem">Checking automatically every 3 seconds…</p>
+          <p>Analysis in progress — <span class="loading-status">${friendly(status)}</span></p>
+          <p style="font-size:0.78rem;color:#333;margin-top:0.4rem">Checking every 3 seconds…</p>
         </div>`;
     }
 
@@ -687,7 +990,6 @@ import Background3D from '../components/Background3D.astro';
             const body = await res.json().catch(() => ({}));
             const status = body.analysis?.status ?? 'running';
             showPollingState(status);
-            // Schedule next poll — will not fire if the page is unloaded
             pollTimer = setTimeout(poll, POLL_INTERVAL_MS);
             return null;
           }
@@ -698,8 +1000,7 @@ import Background3D from '../components/Background3D.astro';
           return res.json();
         })
         .then(result => {
-          if (result === null) return; // still polling, already scheduled
-          // Terminal result received — render dashboard
+          if (result === null) return;
           const frag = renderDashboard(result);
           container.innerHTML = '';
           container.appendChild(frag);
@@ -708,9 +1009,9 @@ import Background3D from '../components/Background3D.astro';
           clearTimeout(pollTimer);
           container.innerHTML = `
             <div class="error-state">
-              <h2>FAILED TO LOAD RESULTS</h2>
+              <h2>Failed to Load Results</h2>
               <p>${err.message}</p>
-              <a href="/" style="color:#00d8ff;font-size:0.9rem">← Back to Upload</a>
+              <a href="/" style="color:#29d9ff;font-size:0.85rem">← Back to Upload</a>
             </div>`;
         });
     }

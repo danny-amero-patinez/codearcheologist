@@ -179,6 +179,8 @@ function analysesRouter(config) {
             else if (format === 'html') {
                 const html = (0, index_js_2.generateHtmlReport)(result);
                 res.setHeader('Content-Type', 'text/html; charset=utf-8');
+                // Force browser download rather than opening in the current tab
+                res.setHeader('Content-Disposition', `attachment; filename="report-${id}.html"`);
                 res.send(html);
             }
             else {

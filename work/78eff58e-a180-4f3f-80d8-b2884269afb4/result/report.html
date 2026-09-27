@@ -1,0 +1,729 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Code Archaeologist — VeraCrypt.Setup.1.26.29.exe</title><style>body{font-family:-apple-system,"Segoe UI",system-ui,sans-serif;font-size:14px;line-height:1.6;color:#1f2328;max-width:980px;margin:0 auto;padding:24px;background:#fff}
+  h1{font-size:22px;border-bottom:2px solid #e5e7eb;padding-bottom:8px;margin-top:32px}
+  h2{font-size:18px;border-bottom:1px solid #e5e7eb;padding-bottom:4px;margin-top:28px;color:#1f2328}
+  h3{font-size:15px;margin-top:20px;color:#1f2328}
+  h4{font-size:13px;margin-top:14px;color:#1f2328;font-weight:600}
+  .disclaimer{background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:12px 16px;margin:16px 0;color:#991b1b;font-weight:500}
+  .meta{background:#f7f8fa;border:1px solid #e5e7eb;border-radius:6px;padding:12px 16px;margin:16px 0}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13px}
+  th{background:#f7f8fa;text-align:left;padding:6px 10px;border:1px solid #e5e7eb;font-weight:600}
+  td{padding:6px 10px;border:1px solid #e5e7eb;vertical-align:top;word-break:break-word;max-width:400px}
+  code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-size:12px;font-family:"Cascadia Code","Consolas",monospace;word-break:break-all}
+  pre{background:#f0f0f0;padding:10px 14px;border-radius:4px;font-size:12px;font-family:"Cascadia Code","Consolas",monospace;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+  .card{background:#f7f8fa;border:1px solid #e5e7eb;border-radius:6px;padding:12px 16px;margin:12px 0}
+  .fn-card{background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:12px 16px;margin:12px 0;border-left:3px solid #3b82f6}
+  ul{margin:6px 0;padding-left:22px} li{margin:3px 0}
+  ol{margin:6px 0;padding-left:22px}
+  .label{font-weight:600;color:#57606a;font-size:12px;text-transform:uppercase;margin-bottom:2px;margin-top:10px}
+  .unknown-card{border-left:3px solid #f59e0b;padding-left:12px;margin:16px 0}
+  .mod-high{border-left:3px solid #dc2626;padding-left:12px;margin:16px 0}
+  .mod-medium{border-left:3px solid #d97706;padding-left:12px;margin:16px 0}
+  .mod-low{border-left:3px solid #6b7280;padding-left:12px;margin:16px 0}
+  .limitation{color:#57606a;font-style:italic;font-size:13px}
+  .autogen{color:#6b7280;font-style:italic;font-size:12px}
+  details>summary{cursor:pointer;font-weight:600;color:#3b82f6;font-size:13px;margin:8px 0}
+  footer{margin-top:40px;padding-top:16px;border-top:1px solid #e5e7eb;text-align:center;color:#57606a;font-size:12px}</style></head><body>
+<h1>Code Archaeologist — Analysis Report</h1>
+<div class="disclaimer">⚠️ Static analysis does NOT establish that this binary is safe. The binary was never executed.</div>
+<div class="meta"><strong>Analysis ID:</strong> <code>78eff58e-a180-4f3f-80d8-b2884269afb4</code>&nbsp;&nbsp;<strong>Status:</strong> completed&nbsp;&nbsp;<strong>Generated:</strong> 2026-09-27T02:24:28.746Z</div>
+<h2>1. Executive Reconstruction Summary</h2>
+<p>Static evidence suggests this binary contains 2 candidate responsibilities related to: <em>Filesystem deployment and file management</em>, <em>External process creation and management</em>. These conclusions are based on correlated imports, strings, call-graph edges, and function-level references; they do not establish runtime execution paths.</p>
+<p>Confidence breakdown: 1 at high confidence, 1 at medium confidence.</p>
+<p><strong>Unresolved questions (5):</strong></p>
+<ul><li>Which service or driver name is managed?</li><li>Which process or executable is launched, and for what purpose?</li><li>Which server or endpoint is contacted?</li><li>Which database engine is used?</li><li>How are credentials stored and transmitted?</li></ul>
+<h2>2. Binary Identification</h2>
+<table><tr><th>Field</th><th>Value</th></tr>
+<tr><td>Filename</td><td><code>VeraCrypt.Setup.1.26.29.exe</code></td></tr>
+<tr><td>SHA-256</td><td><code>dca9ddec7934fc0b1c25ac8984db7d504bfe9f37c21861ac91c67a98ecd3964b</code></td></tr>
+<tr><td>PE Type</td><td>PE32</td></tr>
+<tr><td>Architecture</td><td>x86</td></tr>
+<tr><td>Subsystem</td><td>WINDOWS_GUI</td></tr>
+<tr><td>Entry Point</td><td><code>0x000272F0</code></td></tr>
+<tr><td>File Size</td><td>40,832,408 bytes</td></tr>
+<tr><td>Signed</td><td>Yes (signature present — not verified)</td></tr>
+<tr><td>Overall Entropy</td><td>7.560</td></tr>
+<tr><td>Company</td><td>AM Crypto</td></tr>
+<tr><td>Product</td><td>VeraCrypt</td></tr>
+<tr><td>Version</td><td>1.26.29</td></tr>
+<tr><td>Description</td><td>VeraCrypt Setup</td></tr>
+<tr><td>Original Filename</td><td><code>VeraCrypt Setup.exe</code></td></tr>
+</table>
+<h2>3. Analysis Coverage &amp; Tool Status</h2>
+<table><tr><th>Tool</th><th>Status</th></tr>
+<tr><td>PE Parser</td><td>✓ Ran</td></tr>
+<tr><td>String Extractor</td><td>✓ Ran</td></tr>
+<tr><td>Ghidra</td><td>✓ Ran</td></tr>
+</table>
+<p><strong>Phases:</strong></p><ul>
+<li>✓ <strong>intake</strong></li>
+<li>✓ <strong>profiling</strong> (12317ms)</li>
+<li>✓ <strong>extracting</strong> (122ms)</li>
+<li>✓ <strong>ghidra-analysis</strong> (91343ms)</li>
+<li>✓ <strong>correlating</strong> (73ms)</li>
+<li>✓ <strong>inferring</strong> (27ms)</li>
+<li>✓ <strong>reconstructing</strong> (12ms)</li>
+<li>✓ <strong>reporting</strong> (10ms)</li>
+</ul>
+<h2>4. Reconstructed Capabilities</h2>
+<div class="card">
+<h3>service <span style="background:#f3f4f6;color:#6b7280;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;text-transform:uppercase;">low</span></h3>
+<p>The binary manages Windows service or driver lifecycle (install, start, stop, delete).</p>
+<div class="label">Rationale</div>
+<ul><li>Service-related strings (.sys paths, driver error strings) are present.</li></ul>
+<div class="label">Evidence</div>
+<p><code>evd-str-1159</code> <code>evd-str-1442</code></p>
+<div class="label">Limitations</div>
+<ul><li><span class="limitation">Static analysis cannot confirm which services are actually managed at runtime.</span></li><li><span class="limitation">SCM API imports may be present in libraries that are not always invoked.</span></li></ul>
+</div>
+<div class="card">
+<h3>filesystem <span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span></h3>
+<p>The binary performs filesystem deployment operations (writing, copying, or moving files to system locations).</p>
+<div class="label">Rationale</div>
+<ul><li>File write/copy/move/delete APIs are imported.</li><li>System path resolution APIs (GetSystemDirectoryW, GetTempPathW, etc.) are imported.</li><li>Deployment path strings (System32, temp, install) are present.</li></ul>
+<div class="label">Evidence</div>
+<p><code>evd-str-3605</code> <code>evd-str-3696</code> <code>evd-str-3849</code> <code>evd-str-3919</code></p>
+<div class="label">Limitations</div>
+<ul><li><span class="limitation">Static analysis cannot determine which files are deployed or whether deployment succeeds.</span></li><li><span class="limitation">CreateFileW alone is not sufficient evidence of deployment behavior.</span></li></ul>
+</div>
+<div class="card">
+<h3>process <span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;text-transform:uppercase;">medium</span></h3>
+<p>The binary creates or manages external processes.</p>
+<div class="label">Rationale</div>
+<ul><li>Process creation APIs (CreateProcessW, ShellExecuteW, etc.) are imported.</li><li>Command-line strings correlated to process-launching code.</li></ul>
+<div class="label">Evidence</div>
+<p><code>evd-str-2549</code> <code>evd-str-2562</code> <code>evd-str-3078</code> <code>evd-str-3099</code> <code>evd-str-3235</code> <code>evd-str-3236</code> <code>evd-str-3238</code> <code>evd-str-3239</code> <code>evd-str-3507</code> <code>evd-str-3508</code> <code>evd-str-3514</code> <code>evd-str-3515</code> <code>evd-str-3516</code> <code>evd-str-3521</code> <code>evd-str-3527</code> <code>evd-str-3528</code> <code>evd-str-3529</code> <code>evd-str-3530</code> <code>evd-str-3531</code> <code>evd-str-3532</code> <code>evd-str-3540</code> <code>evd-str-3541</code> <code>evd-str-3542</code> <code>evd-str-3543</code> <code>evd-str-3544</code> <code>evd-str-3623</code> <code>evd-str-3625</code> <code>evd-str-3628</code> <code>evd-str-3630</code> <code>evd-str-3632</code> <code>evd-str-3663</code> <code>evd-str-3684</code> <code>evd-str-3690</code> <code>evd-str-3694</code> <code>evd-str-3773</code> <code>evd-str-3856</code> <code>evd-str-3915</code></p>
+<div class="label">Limitations</div>
+<ul><li><span class="limitation">Static analysis cannot determine which processes are launched or under what conditions.</span></li><li><span class="limitation">CreateThread indicates concurrency, not necessarily external process launching.</span></li></ul>
+</div>
+<div class="card">
+<h3>network <span style="background:#f3f4f6;color:#6b7280;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;text-transform:uppercase;">low</span></h3>
+<p>URL or endpoint strings are present, but no network API was identified.</p>
+<div class="label">Rationale</div>
+<ul><li>URL or hostname strings found, but no network API (WinHTTP/WinINet/Winsock) is imported.</li></ul>
+<div class="label">Evidence</div>
+<p><code>evd-str-1797</code> <code>evd-str-1798</code> <code>evd-str-3812</code></p>
+<div class="label">Limitations</div>
+<ul><li><span class="limitation">A URL string alone does not confirm network activity.</span></li><li><span class="limitation">The URL may be a resource reference, error message, or documentation string.</span></li></ul>
+</div>
+<div class="card">
+<h3>database <span style="background:#f3f4f6;color:#6b7280;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;text-transform:uppercase;">low</span></h3>
+<p>The binary interacts with a database via ODBC or similar interface.</p>
+<div class="label">Rationale</div>
+<ul><li>SQL statement strings or ODBC connection string fragments are present.</li></ul>
+<div class="label">Evidence</div>
+<p><code>evd-str-1520</code> <code>evd-str-1820</code> <code>evd-str-1845</code> <code>evd-str-1847</code> <code>evd-str-1848</code> <code>evd-str-3478</code> <code>evd-str-3549</code> <code>evd-str-3841</code> <code>evd-str-3933</code> <code>evd-str-4481</code> <code>evd-str-4486</code> <code>evd-str-4492</code> <code>evd-str-4495</code> <code>evd-str-4576</code> <code>evd-str-4676</code> <code>evd-str-4677</code> <code>evd-str-4746</code> <code>evd-str-4827</code></p>
+<div class="label">Limitations</div>
+<ul><li><span class="limitation">Static analysis cannot determine which database engine or schema is used.</span></li><li><span class="limitation">SQL strings may be error messages or documentation, not executed queries.</span></li><li><span class="limitation">Generic SQL strings alone are not sufficient for high-confidence database inference.</span></li></ul>
+</div>
+<div class="card">
+<h3>authentication <span style="background:#f3f4f6;color:#6b7280;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;text-transform:uppercase;">low</span></h3>
+<p>The binary handles authentication or credential management.</p>
+<div class="label">Rationale</div>
+<ul><li>Authentication-related strings (password, login, token) are present.</li></ul>
+<div class="label">Evidence</div>
+<p><code>evd-str-1328</code> <code>evd-str-1329</code> <code>evd-str-1338</code> <code>evd-str-1574</code> <code>evd-str-1575</code> <code>evd-str-3274</code> <code>evd-str-3288</code> <code>evd-str-3355</code> <code>evd-str-4501</code> <code>evd-str-4505</code> <code>evd-str-4519</code> <code>evd-str-4525</code> <code>evd-str-4573</code> <code>evd-str-4574</code> <code>evd-str-4577</code> <code>evd-str-4578</code> <code>evd-str-4579</code> <code>evd-str-4610</code> <code>evd-str-4618</code> <code>evd-str-4619</code> <code>evd-str-4647</code> <code>evd-str-4671</code> <code>evd-str-4676</code> <code>evd-str-4677</code> <code>evd-str-4809</code></p>
+<div class="label">Limitations</div>
+<ul><li><span class="limitation">Static analysis cannot determine whether credentials are handled securely.</span></li><li><span class="limitation">Generic authentication strings alone are insufficient for high-confidence claims.</span></li><li><span class="limitation">Credential APIs may be present in third-party libraries that are not always invoked.</span></li></ul>
+</div>
+<h2>5. Candidate Responsibilities</h2>
+<div class="card">
+<h3>Filesystem deployment and file management <span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span></h3>
+<p>The binary performs filesystem deployment operations (writing, copying, or moving files to system locations).</p>
+<div class="label">Evidence</div>
+<p><code>evd-str-3605</code> <code>evd-str-3696</code> <code>evd-str-3849</code> <code>evd-str-3919</code></p>
+<div class="label">Analysis</div>
+<ul>
+<li><strong>Inferred:</strong> File write/copy/move/delete APIs are imported.</li>
+<li><strong>Inferred:</strong> System path resolution APIs (GetSystemDirectoryW, GetTempPathW, etc.) are imported.</li>
+<li><strong>Inferred:</strong> Deployment path strings (System32, temp, install) are present.</li>
+<li><strong>Inferred:</strong> The binary performs filesystem deployment operations (writing, copying, or moving files to system locations).</li>
+<li><strong>Unknown:</strong> Static analysis cannot determine which files are deployed or whether deployment succeeds.</li>
+<li><strong>Unknown:</strong> CreateFileW alone is not sufficient evidence of deployment behavior.</li>
+</ul>
+<div class="label">Limitations</div>
+<ul><li><span class="limitation">Static analysis cannot enumerate which files are created, copied, or deleted.</span></li><li><span class="limitation">Exact deployment paths are not recoverable without runtime tracing.</span></li><li><span class="limitation">Static analysis cannot determine which files are deployed or whether deployment succeeds.</span></li><li><span class="limitation">CreateFileW alone is not sufficient evidence of deployment behavior.</span></li></ul>
+</div>
+<div class="card">
+<h3>External process creation and management <span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;text-transform:uppercase;">medium</span></h3>
+<p>The binary creates or manages external processes.</p>
+<div class="label">Evidence</div>
+<p><code>evd-str-2549</code> <code>evd-str-2562</code> <code>evd-str-3078</code> <code>evd-str-3099</code> <code>evd-str-3235</code> <code>evd-str-3236</code> <code>evd-str-3238</code> <code>evd-str-3239</code> <code>evd-str-3507</code> <code>evd-str-3508</code> <code>evd-str-3514</code> <code>evd-str-3515</code> <code>evd-str-3516</code> <code>evd-str-3521</code> <code>evd-str-3527</code> <code>evd-str-3528</code> <code>evd-str-3529</code> <code>evd-str-3530</code> <code>evd-str-3531</code> <code>evd-str-3532</code> <code>evd-str-3540</code> <code>evd-str-3541</code> <code>evd-str-3542</code> <code>evd-str-3543</code> <code>evd-str-3544</code> <code>evd-str-3623</code> <code>evd-str-3625</code> <code>evd-str-3628</code> <code>evd-str-3630</code> <code>evd-str-3632</code> <code>evd-str-3663</code> <code>evd-str-3684</code> <code>evd-str-3690</code> <code>evd-str-3694</code> <code>evd-str-3773</code> <code>evd-str-3856</code> <code>evd-str-3915</code></p>
+<div class="label">Analysis</div>
+<ul>
+<li><strong>Inferred:</strong> Process creation APIs (CreateProcessW, ShellExecuteW, etc.) are imported.</li>
+<li><strong>Inferred:</strong> Command-line strings correlated to process-launching code.</li>
+<li><strong>Inferred:</strong> The binary creates or manages external processes.</li>
+<li><strong>Unknown:</strong> Static analysis cannot determine which processes are launched or under what conditions.</li>
+<li><strong>Unknown:</strong> CreateThread indicates concurrency, not necessarily external process launching.</li>
+</ul>
+<div class="label">Limitations</div>
+<ul><li><span class="limitation">Static analysis cannot determine which binaries are launched or their arguments.</span></li><li><span class="limitation">Static analysis cannot determine which processes are launched or under what conditions.</span></li><li><span class="limitation">CreateThread indicates concurrency, not necessarily external process launching.</span></li></ul>
+</div>
+<h2>6. External Interactions</h2>
+<div class="card">
+<h3>service <span style="background:#f3f4f6;color:#6b7280;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;text-transform:uppercase;">low</span></h3>
+<p>Potential service management: service-related evidence is present, but corroborated API usage was not established.</p>
+<div class="label">Evidence</div>
+<p><code>evd-str-1159</code> <code>evd-str-1442</code></p>
+<ul><li><span class="limitation">Static analysis cannot confirm which service names are managed or their configurations.</span></li></ul>
+</div>
+<div class="card">
+<h3>filesystem <span style="background:#dcfce7;color:#166534;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;text-transform:uppercase;">high</span></h3>
+<p>Static evidence strongly supports filesystem interaction through correlated filesystem APIs and path evidence.</p>
+<div class="label">Evidence</div>
+<p><code>evd-str-3605</code> <code>evd-str-3696</code> <code>evd-str-3849</code> <code>evd-str-3919</code></p>
+<ul><li><span class="limitation">Static analysis cannot enumerate specific files accessed at runtime.</span></li><li><span class="limitation">File paths may be computed dynamically and are not recoverable statically.</span></li></ul>
+</div>
+<div class="card">
+<h3>process <span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;text-transform:uppercase;">medium</span></h3>
+<p>Static evidence suggests the binary may create or manage external processes.</p>
+<div class="label">Evidence</div>
+<p><code>evd-str-2549</code> <code>evd-str-2562</code> <code>evd-str-3078</code> <code>evd-str-3099</code> <code>evd-str-3235</code> <code>evd-str-3236</code> <code>evd-str-3238</code> <code>evd-str-3239</code> <code>evd-str-3507</code> <code>evd-str-3508</code> <code>evd-str-3514</code> <code>evd-str-3515</code> <code>evd-str-3516</code> <code>evd-str-3521</code> <code>evd-str-3527</code> <code>evd-str-3528</code> <code>evd-str-3529</code> <code>evd-str-3530</code> <code>evd-str-3531</code> <code>evd-str-3532</code> <code>evd-str-3540</code> <code>evd-str-3541</code> <code>evd-str-3542</code> <code>evd-str-3543</code> <code>evd-str-3544</code> <code>evd-str-3623</code> <code>evd-str-3625</code> <code>evd-str-3628</code> <code>evd-str-3630</code> <code>evd-str-3632</code> <code>evd-str-3663</code> <code>evd-str-3684</code> <code>evd-str-3690</code> <code>evd-str-3694</code> <code>evd-str-3773</code> <code>evd-str-3856</code> <code>evd-str-3915</code></p>
+<ul><li><span class="limitation">Static analysis cannot determine which processes are launched or their arguments.</span></li></ul>
+</div>
+<div class="card">
+<h3>network <span style="background:#f3f4f6;color:#6b7280;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;text-transform:uppercase;">low</span></h3>
+<p>Potential network interaction: endpoint or URL evidence is present, but network API usage was not corroborated.</p>
+<div class="label">Evidence</div>
+<p><code>evd-str-1797</code> <code>evd-str-1798</code> <code>evd-str-3812</code></p>
+<ul><li><span class="limitation">Static analysis cannot confirm which hosts or ports are contacted at runtime.</span></li><li><span class="limitation">Network payloads cannot be recovered by static analysis.</span></li></ul>
+</div>
+<div class="card">
+<h3>database <span style="background:#f3f4f6;color:#6b7280;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;text-transform:uppercase;">low</span></h3>
+<p>Potential database interaction: SQL or database-like strings are present, but executed database access was not established.</p>
+<div class="label">Evidence</div>
+<p><code>evd-str-1520</code> <code>evd-str-1820</code> <code>evd-str-1845</code> <code>evd-str-1847</code> <code>evd-str-1848</code> <code>evd-str-3478</code> <code>evd-str-3549</code> <code>evd-str-3841</code> <code>evd-str-3933</code> <code>evd-str-4481</code> <code>evd-str-4486</code> <code>evd-str-4492</code> <code>evd-str-4495</code> <code>evd-str-4576</code> <code>evd-str-4676</code> <code>evd-str-4677</code> <code>evd-str-4746</code> <code>evd-str-4827</code></p>
+<ul><li><span class="limitation">Static analysis cannot identify the database engine, connection string, or schema.</span></li></ul>
+</div>
+<h2>7. Interesting Functions</h2>
+<div class="fn-card">
+<h3><code>FUN_00425540</code> at <code>00425540</code> <span class="autogen">(auto-generated name)</span></h3>
+<ul>
+<li><strong>Selection score:</strong> 119.5</li>
+<li><strong>Selection reasons:</strong> references 9 import(s), references 65 string(s), connectivity=26</li>
+<li><strong>API references:</strong> <code>IsUserAnAdmin</code> <code>LoadCursorW</code> <code>SetCursor</code> <code>CoInitializeEx</code> <code>CoUninitialize</code> <code>Sleep</code> <code>UrlUnescapeW</code> <code>CoCreateInstance</code> <code>ShellExecuteW</code></li>
+<li><strong>String references:</strong> <code>zh-cn</code> <code>donate</code> <code>Donation.html</code> <code>https://amcrypto.jp</code> <code>localizations</code> <code>Language%20Packs.html</code> <code>beginnerstutorial</code> <code>tutorial</code> <code>releasenotes</code> <code>history</code> <code>hwacceleration</code> <code>Hardware%20Acceleration.html</code> <code>parallelization</code> <code>Parallelization.html</code> <code>Documentation.html</code> <code>onlinehelp</code> <code>https://veracrypt.jp/%s/Documentation.html</code> <code>keyfiles</code> <code>Keyfiles.html</code> <code>keyfilesextensions</code> <code>Avoid%20Third-Party%20File%20Extensions.html</code> <code>introcontainer</code> <code>Creating%20New%20Volumes.html</code> <code>introsysenc</code> <code>System%20Encryption.html</code> <code>hiddensysenc</code> <code>VeraCrypt%20Hidden%20Operating%20System.html</code> <code>sysencprogressinfo</code> <code>hiddenvolume</code> <code>Hidden%20Volume.html</code> <code>serpent</code> <code>Serpent.html</code> <code>twofish</code> <code>Twofish.html</code> <code>Kuznyechik.html</code> <code>camellia</code> <code>Camellia.html</code> <code>cascades</code> <code>Cascades.html</code> <code>hashalgorithms</code> <code>Hash%20Algorithms.html</code> <code>isoburning</code> <code>https://cdburnerxp.se/en/home</code> <code>sysfavorites</code> <code>System%20Favorite%20Volumes.html</code> <code>favorites</code> <code>Favorite%20Volumes.html</code> <code>hiddenvolprotection</code> <code>Protection%20of%20Hidden%20Volumes.html</code> <code>FAQ.html</code> <code>downloads</code> <code>Downloads.html</code> <code>News.html</code> <code>contact</code> <code>Contact.html</code> <code>memoryprotection</code> <code>VeraCrypt%20Memory%20Protection.html</code> <code>https://veracrypt.jp</code> <code>Release%20Notes.html</code> <code>Beginner%27s%20Tutorial.html</code> <code>https://veracrypt.jp/%s/%s</code> <code>docs\html\</code> <code>file:///%sdocs/html/en/%s</code> <code>file:///%sdocs/html/%s/%s</code> <code>open</code></li>
+<li><strong>Called by:</strong> <code>0040dd60</code> <code>0042b710</code> <code>00424eb0</code> <code>0040cfd0</code> <code>0042cf20</code></li>
+<li><strong>Calls:</strong> <code>00405860</code> <code>00451665</code> <code>0041f3f0</code> <code>0041ed80</code> <code>00405a00</code> <code>0042bc10</code> <code>00403d20</code> <code>004535b0</code> <em>…+4</em></li>
+<li><strong>Evidence:</strong> <code>evd-fun-4928</code> <code>evd-dec-4929</code></li>
+</ul>
+<details><summary>Decompiled pseudocode preview — not original source</summary>
+<pre>/* WARNING: Function: __alloca_probe replaced with injection: alloca_probe */
+/* WARNING: Function: __security_check_cookie replaced with injection: security_check_cookie */
+/* WARNING: Removing unreachable block (ram,0x004261bb) */
+/* WARNING: Type propagation algorithm not settling */
+void FUN_00425540(byte *param_1)
+{
+  byte bVar1;
+  char cVar2;
+// …1343 more lines</pre>
+</details>
+</div>
+<div class="fn-card">
+<h3><code>FUN_0040dd60</code> at <code>0040dd60</code> <span class="autogen">(auto-generated name)</span></h3>
+<ul>
+<li><strong>Selection score:</strong> 109</li>
+<li><strong>Selection reasons:</strong> references 21 import(s), references 42 string(s), connectivity=58</li>
+<li><strong>API references:</strong> <code>SetTextAlign</code> <code>CreateSolidBrush</code> <code>GetWindowTextLengthW</code> <code>SetWindowTextW</code> <code>SetDlgItemTextW</code> <code>SendMessageW</code> <code>TextOutW</code> <code>DestroyWindow</code> <code>SetBkColor</code> <code>GetDlgItem</code> <code>EnableWindow</code> <code>BeginPaint</code> <code>GetParent</code> <code>FillRect</code> <code>SetTextColor</code> <code>EndPaint</code> <code>SelectObject</code> <code>CreateFontIndirectW</code> <code>ReleaseDC</code> <code>EndDialog</code> <code>SHGetSpecialFolderPathW</code></li>
+<li><strong>String references:</strong> <code>SELECT_DEST_DIR</code> <code>DISABLE_SCREEN_PROTECTION_WARNING</code> <code>memoryprotection</code> <code>DISABLE_MEMORY_PROTECTION_WARNING</code> <code>donate</code> <code>IDD_INSTL_DLG</code> <code>SETUP_WIZARD_PAGE_%d</code> <code>Please read the license terms</code> <code>You must accept these license terms before you can use, extract, or install Vera…</code> <code>IMPORTANT: By checking the checkbox below, you accept these license terms and si…</code> <code>I &amp;accept the license terms</code> <code>CANCEL</code> <code>UPGRADE</code> <code>REPAIR_REINSTALL</code> <code>SETUP_MODE_TITLE</code> <code>SETUP_MODE_INFO</code> <code>SETUP_MODE_HELP_EXTRACT</code> <code>SETUP_MODE_HELP_INSTALL</code> <code>SETUP_MODE_HELP_UPGRADE</code> <code>VeraCrypt\</code> <code>EXTRACTION_OPTIONS_TITLE</code> <code>EXTRACTION_OPTIONS_INFO</code> <code>AUTO_FOLDER_CREATION</code> <code>EXTRACT</code> <code>EXTRACTING_VERB</code> <code>EXTRACTION_PROGRESS_INFO</code> <code>EXTRACTION_IN_PROGRESS</code> <code>SETUP_OPTIONS_TITLE</code> <code>SETUP_OPTIONS_INFO</code> <code>SETUP_UPGRADE_DESTINATION</code> <code>\VeraCrypt</code> <code>INSTALL</code> <code>SETUP_PROGRESS_TITLE</code> <code>SETUP_PROGRESS_INFO</code> <code>INSTALL_IN_PROGRESS</code> <code>EXTRACTION_FINISHED_TITLE_DON</code> <code>SETUP_FINISHED_UPGRADE_TITLE_DON</code> <code>SETUP_FINISHED_TITLE_DON</code> <code>SETUP_FINISHED_INFO_DON</code> <code>Please consider making a donation.</code> <code>Times New Roman</code> <code>CANNOT_DISPLAY_LICENSE</code></li>
+<li><strong>Calls:</strong> <code>004055d0</code> <code>004271c0</code> <code>00403d20</code> <code>00427000</code> <code>00425190</code> <code>0040cea0</code> <code>00427080</code> <code>004535b0</code> <em>…+29</em></li>
+<li><strong>Evidence:</strong> <code>evd-fun-4930</code> <code>evd-dec-4931</code></li>
+</ul>
+<details><summary>Decompiled pseudocode preview — not original source</summary>
+<pre>/* WARNING: Function: __security_check_cookie replaced with injection: security_check_cookie */
+/* WARNING: Globals starting with &#39;_&#39; overlap smaller symbols at the same address */
+undefined4 FUN_0040dd60(HWND param_1,uint param_2,uint param_3)
+{
+  WCHAR WVar1;
+  int iVar2;
+  HDC hdc;
+  HBRUSH hbr;
+// …839 more lines</pre>
+</details>
+</div>
+<div class="fn-card">
+<h3><code>FUN_0040cfd0</code> at <code>0040cfd0</code> <span class="autogen">(auto-generated name)</span></h3>
+<ul>
+<li><strong>Selection score:</strong> 96</li>
+<li><strong>Selection reasons:</strong> references 28 import(s), references 24 string(s), connectivity=59</li>
+<li><strong>API references:</strong> <code>SetBkMode</code> <code>InvalidateRect</code> <code>MapDialogRect</code> <code>CryptAcquireContextW</code> <code>ShowWindow</code> <code>GetWindowRect</code> <code>MoveWindow</code> <code>SetWindowPos</code> <code>CreateSolidBrush</code> <code>GetStockObject</code> <code>SetWindowTextW</code> <code>ShellExecuteW</code> <code>SendMessageW</code> <code>DestroyWindow</code> <code>GetDlgItem</code> <code>GetModuleFileNameW</code> <code>EnableWindow</code> <code>MultiByteToWideChar</code> <code>BeginPaint</code> <code>GetWindowTextW</code> <code>GetClientRect</code> <code>CryptGenRandom</code> <code>FillRect</code> <code>EndPaint</code> <code>CreateDialogParamW</code> <code>PostMessageW</code> <code>ReleaseDC</code> <code>EndDialog</code></li>
+<li><strong>String references:</strong> <code>CONFIRM_EXIT_UNIVERSAL</code> <code>open</code> <code>AFTER_UPGRADE_RELEASE_NOTES</code> <code>releasenotes</code> <code>AFTER_INSTALL_TUTORIAL</code> <code>beginnerstutorial</code> <code>CONFIRM_DISABLE_FAST_STARTUP</code> <code>HiberbootEnabled</code> <code>SYSTEM\CurrentControlSet\Control\Session Manager\Power</code> <code>CONFIRM_RESTART</code> <code>UPGRADE_OK_REBOOT_REQUIRED</code> <code>TC_INSTALLER_IS_RUNNING</code> <code>IDD_INSTL_DLG</code> <code>VeraCrypt Setup 1.26.29</code> <code>Microsoft Enhanced Cryptographic Provider v1.0</code> <code>TRAVELER_LIMITATIONS_NOTE</code> <code>TRAVELER_UAC_NOTE</code> <code>SetupUILanguage</code> <code>Software\VeraCrypt</code> <code>FINALIZE</code> <code>EXTRACTION_FAILED</code> <code>IDCLOSE</code> <code>INSTALL_FAILED</code> <code>EXTRACTION_FINISHED_INFO</code></li>
+<li><strong>Calls:</strong> <code>00429580</code> <code>0040f5b0</code> <code>0042a6c0</code> <code>00426a60</code> <code>0042b830</code> <code>00427080</code> <code>0042bb00</code> <code>0042b6a0</code> <em>…+23</em></li>
+<li><strong>Evidence:</strong> <code>evd-fun-4932</code> <code>evd-dec-4933</code></li>
+</ul>
+<details><summary>Decompiled pseudocode preview — not original source</summary>
+<pre>/* WARNING: Function: __security_check_cookie replaced with injection: security_check_cookie */
+/* WARNING: Globals starting with &#39;_&#39; overlap smaller symbols at the same address */
+HGDIOBJ FUN_0040cfd0(HWND param_1,uint param_2,HDC param_3,HWND param_4)
+{
+  HDC hDC;
+  HBRUSH hbr;
+  char *pcVar1;
+  int iVar2;
+// …475 more lines</pre>
+</details>
+</div>
+<div class="fn-card">
+<h3><code>FUN_00407fa0</code> at <code>00407fa0</code> <span class="autogen">(auto-generated name)</span></h3>
+<ul>
+<li><strong>Selection score:</strong> 84.5</li>
+<li><strong>Selection reasons:</strong> references 14 import(s), references 35 string(s), connectivity=52</li>
+<li><strong>API references:</strong> <code>SetCurrentDirectoryW</code> <code>FormatMessageW</code> <code>MoveFileExW</code> <code>GetLastError</code> <code>LocalFree</code> <code>GetModuleFileNameW</code> <code>CopyFileW</code> <code>FindClose</code> <code>MessageBoxW</code> <code>FindNextFileW</code> <code>DeleteFileW</code> <code>GetWindowsDirectoryW</code> <code>GetSystemDirectoryW</code> <code>FindFirstFileW</code></li>
+<li><strong>String references:</strong> <code>VeraCrypt Setup</code> <code>C:\Windows\System32</code> <code>Drivers\</code> <code>C:\Windows</code> <code>%s%s</code> <code>INSTALLING</code> <code>REMOVING</code> <code>Dveracrypt.sys</code> <code>Averacrypt.sys</code> <code>veracrypt-arm64.sys</code> <code>veracrypt-x64.sys</code> <code>Averacrypt.cat</code> <code>veracrypt-arm64.cat</code> <code>veracrypt-x64.cat</code> <code>AVeraCrypt.exe</code> <code>VeraCrypt-arm64.exe</code> <code>VeraCrypt-x64.exe</code> <code>AVeraCryptExpander.exe</code> <code>VeraCryptExpander-arm64.exe</code> <code>VeraCryptExpander-x64.exe</code> <code>AVeraCrypt Format.exe</code> <code>VeraCrypt Format-arm64.exe</code> <code>VeraCrypt Format-x64.exe</code> <code>DoFilesInstall:923</code> <code>DoFilesInstall:949</code> <code>VeraCrypt.exe</code> <code>VeraCrypt System Favorite Volumes.xml</code> <code>VeraCryptSystemFavorites</code> <code>/SkipMount</code> <code>0x%.8X</code> <code>UNINSTALL_OF_FAILED</code> <code>INSTALL_OF_FAILED</code> <code>VeraCrypt User Guide*.pdf</code> <code>docs\html\en\ru</code> <code>Language*.xml</code></li>
+<li><strong>Called by:</strong> <code>0040be10</code> <code>00409140</code></li>
+<li><strong>Calls:</strong> <code>00403d20</code> <code>00427e50</code> <code>00427dd0</code> <code>00405370</code> <code>0042bbc0</code> <code>0042cb40</code> <code>004535b0</code> <code>004273a0</code> <em>…+28</em></li>
+<li><strong>Evidence:</strong> <code>evd-fun-4934</code> <code>evd-dec-4935</code></li>
+</ul>
+<details><summary>Decompiled pseudocode preview — not original source</summary>
+<pre>/* WARNING: Function: __security_check_cookie replaced with injection: security_check_cookie */
+/* WARNING: Type propagation algorithm not settling */
+undefined4 FUN_00407fa0(HWND param_1,wchar_t *param_2)
+{
+  WCHAR WVar1;
+  short sVar2;
+  wchar_t wVar3;
+  int iVar4;
+// …862 more lines</pre>
+</details>
+</div>
+<div class="fn-card">
+<h3><code>FUN_00428fb0</code> at <code>00428fb0</code> <span class="autogen">(auto-generated name)</span></h3>
+<ul>
+<li><strong>Selection score:</strong> 67.5</li>
+<li><strong>Selection reasons:</strong> references 16 import(s), references 21 string(s), connectivity=36</li>
+<li><strong>API references:</strong> <code>GetModuleHandleW</code> <code>CoInitializeEx</code> <code>GetModuleFileNameW</code> <code>SetUnhandledExceptionFilter</code> <code>GetClassInfoW</code> <code>RegisterClassW</code> <code>GetCurrentProcess</code> <code>VirtualLock</code> <code>MessageBoxW</code> <code>LoadCursorW</code> <code>LoadLibraryExW</code> <code>GetSystemMetrics</code> <code>InitCommonControlsEx</code> <code>GetProcAddress</code> <code>SetErrorMode</code> <code>InitializeCriticalSection</code></li>
+<li><strong>String references:</strong> <code>IsWow64Process</code> <code>kernel32</code> <code>IsWow64Process2</code> <code>SetDefaultDllDirectories</code> <code>kernel32.dll</code> <code>Riched20.dll</code> <code>Language</code> <code>#32770</code> <code>VeraCryptCustomDlg</code> <code>VeraCryptSplashDlg</code> <code>docs\VeraCrypt User Guide.%S.chm</code> <code>docs\VeraCrypt User Guide.chm</code> <code>VeraCrypt requires at least Windows 10 version 1809 (October 2018 Update) to run…</code> <code>VeraCrypt requires a 64-bit version of Windows to run.</code> <code>VeraCrypt requires KB2533623 to be installed on Windows 7 and Windows Server 200…</code> <code>SHA-2 support missing from Windows.
+
+Please Install KB3033929 or KB4474419</code> <code>UNSUPPORTED_OS</code> <code>InitApp:3975</code> <code>INIT_REGISTER</code> <code>InitApp:3993</code> <code>InitApp:4005</code></li>
+<li><strong>Called by:</strong> <code>0040c560</code></li>
+<li><strong>Calls:</strong> <code>0042cee0</code> <code>0042e400</code> <code>004236d0</code> <code>00403cb0</code> <code>00422ad0</code> <code>0042cb40</code> <code>00405370</code> <code>0045370a</code> <em>…+11</em></li>
+<li><strong>Evidence:</strong> <code>evd-fun-4936</code> <code>evd-dec-4937</code></li>
+</ul>
+<details><summary>Decompiled pseudocode preview — not original source</summary>
+<pre>/* WARNING: Function: __security_check_cookie replaced with injection: security_check_cookie */
+/* WARNING: Globals starting with &#39;_&#39; overlap smaller symbols at the same address */
+void FUN_00428fb0(HINSTANCE param_1)
+{
+  byte bVar1;
+  code *pcVar2;
+  char cVar3;
+  HMODULE pHVar4;
+// …242 more lines</pre>
+</details>
+</div>
+<div class="fn-card">
+<h3><code>FUN_00417ce0</code> at <code>00417ce0</code> <span class="autogen">(auto-generated name)</span></h3>
+<ul>
+<li><strong>Selection score:</strong> 59</li>
+<li><strong>Selection reasons:</strong> references 2 import(s), references 34 string(s), connectivity=53</li>
+<li><strong>API references:</strong> <code>GetLastError</code> <code>CreateDirectoryW</code></li>
+<li><strong>String references:</strong> <code>ADMIN_PRIVILEGES_WARN_DEVICES</code> <code>\EFI\Microsoft\Boot\bootmgfw.efi</code> <code>\EFI\VeraCrypt\DcsBoot.efi</code> <code>VeraCrypt BootLoader (DcsBoot)</code> <code>\EFI\Microsoft\Boot\bootmgfw_ms.vc</code> <code>bootmgfw.pdb</code> <code>\EFI\VeraCrypt\DcsProp</code> <code>\EFI\Boot\bootx64.efi</code> <code>\EFI\Boot\original_bootx64.vc_backup</code> <code>\EFI\VeraCrypt</code> <code>\EFI\VeraCrypt\PlatformInfo</code> <code>VeraCrypt</code> <code>\DcsProp</code> <code>\EFI\VeraCrypt\DcsBoot</code> <code>\DcsBoot</code> <code>\EFI\Boot\original_bootx64_vc_backup.efi</code> <code>\DcsBoot.efi</code> <code>\DcsInt.efi</code> <code>\DcsCfg.efi</code> <code>\LegacySpeaker.efi</code> <code>\EFI\VeraCrypt\DcsBml.dcs</code> <code>Invalid partition table</code> <code>Error loading operating system</code> <code>Missing operating system</code> <code>DcsBoot</code> <code>DcsInt</code> <code>DcsCfg</code> <code>LegacySpeaker</code> <code>DcsRe</code> <code>DcsInfo</code> <code>VeraCrypt::BootEncryption::InstallBootLoader:4152</code> <code>WINDOWS_EFI_BOOT_LOADER_MISSING</code> <code>VeraCrypt::BootEncryption::InstallBootLoader:4329</code> <code>ERROR_MBR_PROTECTED</code></li>
+<li><strong>Called by:</strong> <code>00419020</code></li>
+<li><strong>Calls:</strong> <code>004076e0</code> <code>0041c640</code> <code>00452bf3</code> <code>0045ce30</code> <code>00419170</code> <code>0041c950</code> <code>0042a6c0</code> <code>00418eb2</code> <em>…+42</em></li>
+<li><strong>Evidence:</strong> <code>evd-fun-4938</code> <code>evd-dec-4939</code></li>
+</ul>
+<details><summary>Decompiled pseudocode preview — not original source</summary>
+<pre>/* WARNING: Function: __alloca_probe replaced with injection: alloca_probe */
+/* WARNING: Function: __security_check_cookie replaced with injection: security_check_cookie */
+void __thiscall
+FUN_00417ce0(undefined1 *param_1,void *param_2,char param_3,undefined4 param_4,int param_5,
+            int param_6)
+{
+  char ****ppppcVar1;
+  char cVar2;
+// …702 more lines</pre>
+</details>
+</div>
+<div class="fn-card">
+<h3><code>FUN_00409140</code> at <code>00409140</code> <span class="autogen">(auto-generated name)</span></h3>
+<ul>
+<li><strong>Selection score:</strong> 57.5</li>
+<li><strong>Selection reasons:</strong> references 8 import(s), references 25 string(s), connectivity=37</li>
+<li><strong>API references:</strong> <code>InvalidateRect</code> <code>RegOpenKeyExW</code> <code>RegCloseKey</code> <code>MessageBoxW</code> <code>RegQueryValueExW</code> <code>SendMessageW</code> <code>GetWindowsDirectoryW</code> <code>GetDlgItem</code></li>
+<li><strong>String references:</strong> <code>SOFTWARE\VeraCrypt_MSI</code> <code>ProductGuid</code> <code>CANT_INSTALL_WITH_EXE_OVER_MSI</code> <code>INSTALL_FAILED</code> <code>DoInstall:2267</code> <code>CANT_CREATE_FOLDER</code> <code>VeraCrypt.exe</code> <code>VeraCrypt-x86.exe</code> <code>VeraCrypt-x64.exe</code> <code>VeraCrypt-arm64.exe</code> <code>VeraCrypt Format.exe</code> <code>VeraCrypt Format-x86.exe</code> <code>VeraCrypt Format-x64.exe</code> <code>VeraCrypt Format-arm64.exe</code> <code>VeraCryptExpander.exe</code> <code>VeraCryptExpander-x86.exe</code> <code>VeraCryptExpander-x64.exe</code> <code>VeraCryptExpander-arm64.exe</code> <code>VeraCrypt Setup.exe</code> <code>CLOSE_TC_FIRST</code> <code>DoInstall:2320</code> <code>FAILED_TO_DISABLE_PAGING_FILES</code> <code>VeraCryptService</code> <code>\VeraCrypt Setup.exe</code> <code>veracrypt</code></li>
+<li><strong>Calls:</strong> <code>004055d0</code> <code>00409f33</code> <code>004064e0</code> <code>00403cb0</code> <code>0040c3c0</code> <code>0040f5b0</code> <code>00405370</code> <code>0040a370</code> <em>…+21</em></li>
+<li><strong>Evidence:</strong> <code>evd-fun-4940</code> <code>evd-dec-4941</code></li>
+</ul>
+<details><summary>Decompiled pseudocode preview — not original source</summary>
+<pre>/* WARNING: Function: __alloca_probe replaced with injection: alloca_probe */
+/* WARNING: Function: __security_check_cookie replaced with injection: security_check_cookie */
+void FUN_00409140(HWND param_1)
+{
+  HWND hWnd;
+  DWORD DVar1;
+  LSTATUS LVar2;
+  LPCWSTR lpText;
+// …486 more lines</pre>
+</details>
+</div>
+<div class="fn-card">
+<h3><code>FUN_0040a370</code> at <code>0040a370</code> <span class="autogen">(auto-generated name)</span></h3>
+<ul>
+<li><strong>Selection score:</strong> 55.5</li>
+<li><strong>Selection reasons:</strong> references 4 import(s), references 29 string(s), connectivity=14</li>
+<li><strong>API references:</strong> <code>RegCloseKey</code> <code>RegCreateKeyExW</code> <code>SHChangeNotify</code> <code>RegSetValueExW</code></li>
+<li><strong>String references:</strong> <code>Software\Microsoft\Windows\CurrentVersion\Uninstall\VeraCrypt</code> <code>1.26.29</code> <code>DisplayVersion</code> <code>https://amcrypto.jp</code> <code>URLInfoAbout</code> <code>Software\Classes\VeraCryptVolume</code> <code>ADDING_REG</code> <code>VeraCrypt Volume</code> <code>AMCrypto.VeraCrypt</code> <code>AppUserModelID</code> <code>Software\Classes\VeraCryptVolume\DefaultIcon</code> <code>%sVeraCrypt.exe,1</code> <code>Software\Classes\VeraCryptVolume\Shell\open\command</code> <code>&quot;%sVeraCrypt.exe&quot; /v &quot;%%1&quot;</code> <code>Software\Classes\.hc</code> <code>VeraCryptVolume</code> <code>&quot;%sVeraCrypt Setup.exe&quot; /u</code> <code>UninstallString</code> <code>&quot;%sVeraCrypt Setup.exe&quot; /c</code> <code>ModifyPath</code> <code>&quot;%sVeraCrypt Setup.exe&quot;</code> <code>DisplayIcon</code> <code>VeraCrypt</code> <code>DisplayName</code> <code>AM Crypto</code> <code>Publisher</code> <code>DoRegInstall:1350</code> <code>REG_INSTALL_FAILED</code> <code>COM_REG_FAILED</code></li>
+<li><strong>Called by:</strong> <code>00409140</code></li>
+<li><strong>Calls:</strong> <code>00403620</code> <code>00403d20</code> <code>00403cb0</code> <code>00427e90</code> <code>00405370</code> <code>0040c310</code> <code>00451665</code> <code>0042cb40</code> <em>…+1</em></li>
+<li><strong>Evidence:</strong> <code>evd-fun-4942</code> <code>evd-dec-4943</code></li>
+</ul>
+<details><summary>Decompiled pseudocode preview — not original source</summary>
+<pre>/* WARNING: Function: __security_check_cookie replaced with injection: security_check_cookie */
+bool FUN_0040a370(undefined4 param_1,short *param_2,int param_3)
+{
+  short sVar1;
+  wchar_t wVar2;
+  LSTATUS LVar3;
+  wchar_t *pwVar4;
+  uint uVar5;
+// …373 more lines</pre>
+</details>
+</div>
+<div class="fn-card">
+<h3><code>FUN_004045c0</code> at <code>004045c0</code> <span class="autogen">(auto-generated name)</span></h3>
+<ul>
+<li><strong>Selection score:</strong> 53</li>
+<li><strong>Selection reasons:</strong> references 2 import(s), references 30 string(s), connectivity=22</li>
+<li><strong>API references:</strong> <code>MessageBoxW</code> <code>GetModuleFileNameW</code></li>
+<li><strong>String references:</strong> <code>VeraCrypt Setup 1.26.29.exe</code> <code>MakeSelfExtractingPackage:176</code> <code>VeraCrypt</code> <code>Cannot copy &#39;VeraCrypt Setup.exe&#39; to the package</code> <code>-x64</code> <code>%s%s</code> <code>Cannot allocate memory for uncompressed data</code> <code>Cannot allocate memory for uncompressed data.
+Failed also to delete package file</code> <code>VCINSTRT</code> <code>Cannot write the start marker
+Failed also to delete package file</code> <code>Cannot write the start marker</code> <code>Cannot write the total size of the uncompressed data.
+Failed also to delete pack…</code> <code>Cannot write the total size of the uncompressed data</code> <code>Cannot allocate memory for compressed data.
+Failed also to delete package file</code> <code>Cannot allocate memory for compressed data</code> <code>Cannot write the total size of the compressed data.
+Failed also to delete packag…</code> <code>Cannot write the total size of the compressed data</code> <code>Cannot write compressed data to the package.
+Failed also to delete package file</code> <code>Cannot write compressed data to the package</code> <code>Cannot write the end marker.
+Failed also to delete package file</code> <code>Cannot write the end marker</code> <code>MakeSelfExtractingPackage:395</code> <code>Cannot load the package to compute CRC.
+Failed also to delete package file</code> <code>Cannot load the package to compute CRC</code> <code>Self-extracting package successfully created (%s)</code> <code>Failed to compress the data.
+Failed also to delete package file</code> <code>Failed to compress the data</code> <code>Cannot load file 
+&#39;%s&#39;</code> <code>
+Failed also to delete package file</code> <code>File not found:
+
+&#39;%s&#39;</code></li>
+<li><strong>Called by:</strong> <code>0040c560</code></li>
+<li><strong>Calls:</strong> <code>00453030</code> <code>00444600</code> <code>00403d20</code> <code>00456c90</code> <code>00421990</code> <code>00403cb0</code> <code>00428710</code> <code>0042a760</code> <em>…+11</em></li>
+<li><strong>Evidence:</strong> <code>evd-fun-4944</code> <code>evd-dec-4945</code></li>
+</ul>
+<details><summary>Decompiled pseudocode preview — not original source</summary>
+<pre>/* WARNING: Function: __alloca_probe replaced with injection: alloca_probe */
+/* WARNING: Function: __security_check_cookie replaced with injection: security_check_cookie */
+undefined4 FUN_004045c0(undefined4 param_1,short *param_2,int param_3)
+{
+  short sVar1;
+  char *pcVar2;
+  undefined1 uVar3;
+  undefined1 extraout_AH;
+// …398 more lines</pre>
+</details>
+</div>
+<div class="fn-card">
+<h3><code>FUN_0040ada0</code> at <code>0040ada0</code> <span class="autogen">(auto-generated name)</span></h3>
+<ul>
+<li><strong>Selection score:</strong> 47</li>
+<li><strong>Selection reasons:</strong> references 5 import(s), references 22 string(s), connectivity=15</li>
+<li><strong>API references:</strong> <code>RegOpenKeyExW</code> <code>RegCloseKey</code> <code>RegDeleteKeyW</code> <code>SHChangeNotify</code> <code>RegDeleteKeyExW</code></li>
+<li><strong>String references:</strong> <code>COM_DEREG_FAILED</code> <code>REMOVING_REG</code> <code>Software\Microsoft\Windows\CurrentVersion\Uninstall\VeraCrypt</code> <code>Software\VeraCrypt</code> <code>Software\VeraCrypt\Diagnostics\EfiBootLoader</code> <code>Software\VeraCrypt\Diagnostics</code> <code>Software\Classes\VeraCryptVolume\Shell\open\command</code> <code>Software\Classes\VeraCryptVolume\Shell\open</code> <code>Software\Classes\VeraCryptVolume\Shell</code> <code>Software\Classes\VeraCryptVolume\DefaultIcon</code> <code>Software\Classes\VeraCryptVolume</code> <code>VeraCrypt</code> <code>Software\Classes\.hc</code> <code>SeTakeOwnershipPrivilege</code> <code>Local Settings\Software\Microsoft\Windows\Shell\MuiCache</code> <code>Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.hc</code> <code>Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Compatibility Assist…</code> <code>Software\Microsoft\Windows\CurrentVersion\Explorer\StartPage\NewShortcuts</code> <code>SYSTEM</code> <code>ControlSet</code> <code>Enum\Root\LEGACY_VERACRYPT</code> <code>services\veracrypt</code></li>
+<li><strong>Called by:</strong> <code>0040be10</code> <code>00409140</code></li>
+<li><strong>Calls:</strong> <code>004279c0</code> <code>0042e580</code> <code>00403a60</code> <code>00406780</code> <code>00451665</code> <code>0040c2a0</code> <code>0042e500</code> <code>0042c220</code></li>
+<li><strong>Evidence:</strong> <code>evd-fun-4946</code> <code>evd-dec-4947</code></li>
+</ul>
+<details><summary>Decompiled pseudocode preview — not original source</summary>
+<pre>/* WARNING: Function: __security_check_cookie replaced with injection: security_check_cookie */
+undefined4 FUN_0040ada0(undefined4 param_1,int param_2)
+{
+  int iVar1;
+  LSTATUS LVar2;
+  HKEY local_8c;
+  undefined1 local_88 [128];
+  uint local_8;
+// …44 more lines</pre>
+</details>
+</div>
+<p><em>…and 10 more functions in the canonical result.</em></p>
+<h2>8. Dependencies / Runtime Hints (DLL Imports)</h2>
+<ul><li><code>KERNEL32.dll</code></li></ul>
+<h2>9. Unknowns (Actionable Questions)</h2>
+<div class="unknown-card">
+<h3>❓ Which service or driver name is managed?</h3>
+<p><strong>Why it matters:</strong> Service names and configurations must be documented for replacement or migration.</p>
+<p><strong>Missing evidence:</strong> Service name strings were not conclusively matched to SCM API call sites.</p>
+<div class="label">How to resolve</div>
+<ul><li>Run the binary and monitor Service Control Manager calls using Process Monitor.</li><li>Search for service name strings adjacent to SCM API call sites in disassembly.</li></ul>
+</div>
+<div class="unknown-card">
+<h3>❓ Which process or executable is launched, and for what purpose?</h3>
+<p><strong>Why it matters:</strong> Process dependencies must be documented before replacement to avoid missing capabilities.</p>
+<p><strong>Missing evidence:</strong> The specific executable path or command line is not statically deterministic.</p>
+<div class="label">How to resolve</div>
+<ul><li>Run the binary in a process-monitored sandbox and capture child process creation events.</li><li>Search for embedded executable names and command-line argument patterns in strings.</li></ul>
+</div>
+<div class="unknown-card">
+<h3>❓ Which server or endpoint is contacted?</h3>
+<p><strong>Why it matters:</strong> Replacement requires knowledge of all external dependencies and authentication mechanisms.</p>
+<p><strong>Missing evidence:</strong> No concrete hostname or IP address was statically recoverable from code paths.</p>
+<div class="label">How to resolve</div>
+<ul><li>Run the binary in a network-monitored sandbox and capture DNS queries and TCP connections.</li><li>Inspect configuration files and registry entries for URL or hostname settings.</li><li>Check embedded string literals for URL patterns.</li></ul>
+</div>
+<div class="unknown-card">
+<h3>❓ Which database engine is used?</h3>
+<p><strong>Why it matters:</strong> Replacement requires knowing the database technology, schema, and query patterns.</p>
+<p><strong>Missing evidence:</strong> No database engine identifier string or connection string was found in static analysis.</p>
+<div class="label">How to resolve</div>
+<ul><li>Run the binary in a monitored environment and capture ODBC or network database traffic.</li><li>Search for DSN= or Driver={ connection string fragments in configuration files.</li><li>Check application configuration files (.ini, .xml, .config) for database settings.</li></ul>
+</div>
+<div class="unknown-card">
+<h3>❓ How are credentials stored and transmitted?</h3>
+<p><strong>Why it matters:</strong> Security assessment and replacement require understanding credential handling.</p>
+<p><strong>Missing evidence:</strong> Credential storage mechanism (registry, file, memory) not determined statically.</p>
+<div class="label">How to resolve</div>
+<ul><li>Audit credential API usage (CredWrite, CredRead) in disassembly.</li><li>Monitor registry and file access for credential storage patterns.</li></ul>
+</div>
+<h2>10. Modernization Blueprint</h2>
+<div class="mod-medium">
+<h3>[MEDIUM] Document file layout and side effects</h3>
+<p>The binary reads and writes files. Enumerate all file paths accessed at runtime using process monitoring. Document side effects (created, modified, deleted files) so the replacement can replicate or improve on the file management behavior.</p>
+<p><strong>Rationale:</strong> Filesystem APIs and file-path strings were correlated in static evidence. Exact runtime file operations cannot be confirmed without dynamic tracing.</p>
+<div class="label">Recommended Steps</div>
+<ol><li>Map observed path and file-path string evidence already collected in this analysis.</li><li>Recover the deployed directory layout from a live installation.</li><li>Identify configuration, data, and log files.</li><li>Validate read, write, and delete behavior using process monitoring before replacement.</li></ol>
+<div class="label">Artifacts to Recover</div>
+<ul><li>installed directory layout</li><li>configuration files</li><li>log files</li><li>data files</li></ul>
+<div class="label">Evidence</div>
+<p><code>evd-str-3605</code> <code>evd-str-3696</code> <code>evd-str-3849</code> <code>evd-str-3919</code></p>
+<div class="label">Related Responsibilities</div>
+<p><code>a51bde1f-428c-4267-8ead-750bd36cf629</code></p>
+</div>
+<div class="mod-medium">
+<h3>[MEDIUM] Document external process dependencies</h3>
+<p>The binary launches external processes. Identify all child processes, their arguments, and the conditions under which they are invoked. Document whether the binary waits for completion or runs them asynchronously.</p>
+<p><strong>Rationale:</strong> Process-creation APIs were correlated in static evidence. Child executable identities and invocation arguments cannot be confirmed from static analysis.</p>
+<div class="label">Recommended Steps</div>
+<ol><li>Identify child executable evidence from string and API references in this analysis.</li><li>Recover executable dependencies from the deployed system.</li><li>Document invocation arguments and conditions through runtime monitoring.</li><li>Determine whether child processes are waited for or run asynchronously.</li></ol>
+<div class="label">Artifacts to Recover</div>
+<ul><li>external executable dependencies</li><li>child process invocation documentation</li></ul>
+<div class="label">Evidence</div>
+<p><code>evd-str-2549</code> <code>evd-str-2562</code> <code>evd-str-3078</code> <code>evd-str-3099</code> <code>evd-str-3235</code> <code>evd-str-3236</code> <code>evd-str-3238</code> <code>evd-str-3239</code> <code>evd-str-3507</code> <code>evd-str-3508</code> <code>evd-str-3514</code> <code>evd-str-3515</code> <code>evd-str-3516</code> <code>evd-str-3521</code> <code>evd-str-3527</code> <code>evd-str-3528</code> <code>evd-str-3529</code> <code>evd-str-3530</code> <code>evd-str-3531</code> <code>evd-str-3532</code> <code>evd-str-3540</code> <code>evd-str-3541</code> <code>evd-str-3542</code> <code>evd-str-3543</code> <code>evd-str-3544</code> <code>evd-str-3623</code> <code>evd-str-3625</code> <code>evd-str-3628</code> <code>evd-str-3630</code> <code>evd-str-3632</code> <code>evd-str-3663</code> <code>evd-str-3684</code> <code>evd-str-3690</code> <code>evd-str-3694</code> <code>evd-str-3773</code> <code>evd-str-3856</code> <code>evd-str-3915</code></p>
+<div class="label">Related Responsibilities</div>
+<p><code>6d477158-908c-4b08-a14b-9c8cc4a6d302</code></p>
+</div>
+<h3>Investigation Sequence</h3>
+<p>Recommended order to resolve unresolved dependencies before replacement:</p>
+<ol><li>Document file layout and side effects</li><li>Document external process dependencies</li></ol>
+<h3>Artifacts to Recover from a Deployed Installation</h3>
+<ul><li>installed directory layout</li><li>configuration files</li><li>log files</li><li>data files</li><li>external executable dependencies</li><li>child process invocation documentation</li></ul>
+<h2>11. Limitations</h2>
+<ul><li><span class="limitation">The uploaded binary was NEVER executed. All conclusions are from static analysis only.</span></li><li><span class="limitation">Static analysis cannot establish the runtime behavior, safety, or trustworthiness of this binary.</span></li><li><span class="limitation">Decompiled pseudocode and function names (especially FUN_*) are approximations, not original source code.</span></li><li><span class="limitation">Missing debug symbols mean function names and types are partially or fully unknown.</span></li><li><span class="limitation">Confidence levels reflect signal strength in the static evidence, not runtime certainty.</span></li><li><span class="limitation">Inferences marked as HIGH confidence still require validation by dynamic analysis or source code review.</span></li><li><span class="limitation">Call graph edges may be incomplete due to indirect calls, virtual dispatch, or obfuscation.</span></li><li><span class="limitation">Packed, encrypted, or self-modifying code may hide capabilities not visible in static analysis.</span></li></ul>
+<h2>12. Evidence Index</h2>
+<p><strong>Total evidence items: 7642</strong></p>
+<table><tr><th>Kind</th><th style="text-align:right">Count</th></tr>
+<tr><td>binary-metadata</td><td style="text-align:right">1</td></tr>
+<tr><td>decompilation</td><td style="text-align:right">20</td></tr>
+<tr><td>function</td><td style="text-align:right">2694</td></tr>
+<tr><td>import</td><td style="text-align:right">1</td></tr>
+<tr><td>pe-section</td><td style="text-align:right">7</td></tr>
+<tr><td>string</td><td style="text-align:right">4919</td></tr>
+</table>
+<h3>Evidence Detail</h3>
+<table><tr><th>ID</th><th>Kind</th><th>Tool</th><th>Location</th><th>Summary</th></tr>
+<tr><td><code>evd-bin-0000</code></td><td>binary-metadata</td><td>pe-parser</td><td><code></code></td><td>PE binary: VeraCrypt.Setup.1.26.29.exe (PE32, x86)</td></tr>
+<tr><td><code>evd-pe--0001</code></td><td>pe-section</td><td>pe-parser</td><td><code>0x00001000</code></td><td>Section .text: VA=0x00001000 size=505418</td></tr>
+<tr><td><code>evd-pe--0002</code></td><td>pe-section</td><td>pe-parser</td><td><code>0x0007D000</code></td><td>Section .rdata: VA=0x0007D000 size=122542</td></tr>
+<tr><td><code>evd-pe--0003</code></td><td>pe-section</td><td>pe-parser</td><td><code>0x0009B000</code></td><td>Section .data: VA=0x0009B000 size=27476</td></tr>
+<tr><td><code>evd-pe--0004</code></td><td>pe-section</td><td>pe-parser</td><td><code>0x000A2000</code></td><td>Section .didat: VA=0x000A2000 size=792</td></tr>
+<tr><td><code>evd-pe--0005</code></td><td>pe-section</td><td>pe-parser</td><td><code>0x000A3000</code></td><td>Section .fptable: VA=0x000A3000 size=128</td></tr>
+<tr><td><code>evd-pe--0006</code></td><td>pe-section</td><td>pe-parser</td><td><code>0x000A4000</code></td><td>Section .rsrc: VA=0x000A4000 size=21033280</td></tr>
+<tr><td><code>evd-pe--0007</code></td><td>pe-section</td><td>pe-parser</td><td><code>0x014B4000</code></td><td>Section .reloc: VA=0x014B4000 size=23112</td></tr>
+<tr><td><code>evd-imp-0008</code></td><td>import</td><td>pe-parser</td><td><code></code></td><td>Import DLL: KERNEL32.dll (159 function(s))</td></tr>
+<tr><td><code>evd-str-0009</code></td><td>string</td><td>strings</td><td><code>+0x4d</code></td><td>String [error-message]: &quot;!This program cannot be run in DOS mode.&quot;</td></tr>
+<tr><td><code>evd-str-0010</code></td><td>string</td><td>strings</td><td><code>+0x100</code></td><td>String [other]: &quot;Rich&quot;</td></tr>
+<tr><td><code>evd-str-0011</code></td><td>string</td><td>strings</td><td><code>+0x218</code></td><td>String [other]: &quot;.text&quot;</td></tr>
+<tr><td><code>evd-str-0012</code></td><td>string</td><td>strings</td><td><code>+0x23f</code></td><td>String [other]: &quot;`.rdata&quot;</td></tr>
+<tr><td><code>evd-str-0013</code></td><td>string</td><td>strings</td><td><code>+0x267</code></td><td>String [other]: &quot;@.data&quot;</td></tr>
+<tr><td><code>evd-str-0014</code></td><td>string</td><td>strings</td><td><code>+0x290</code></td><td>String [other]: &quot;.didat&quot;</td></tr>
+<tr><td><code>evd-str-0015</code></td><td>string</td><td>strings</td><td><code>+0x2b8</code></td><td>String [other]: &quot;.fptable&quot;</td></tr>
+<tr><td><code>evd-str-0016</code></td><td>string</td><td>strings</td><td><code>+0x2e0</code></td><td>String [other]: &quot;.rsrc&quot;</td></tr>
+<tr><td><code>evd-str-0017</code></td><td>string</td><td>strings</td><td><code>+0x307</code></td><td>String [other]: &quot;@.reloc&quot;</td></tr>
+<tr><td><code>evd-str-0018</code></td><td>string</td><td>strings</td><td><code>+0x963</code></td><td>String [other]: &quot;Y_^[&quot;</td></tr>
+<tr><td><code>evd-str-0019</code></td><td>string</td><td>strings</td><td><code>+0x9b0</code></td><td>String [other]: &quot;PQVW&quot;</td></tr>
+<tr><td><code>evd-str-0020</code></td><td>string</td><td>strings</td><td><code>+0xa66</code></td><td>String [other]: &quot;SVWP&quot;</td></tr>
+<tr><td><code>evd-str-0021</code></td><td>string</td><td>strings</td><td><code>+0x115f</code></td><td>String [other]: &quot;hHcI&quot;</td></tr>
+<tr><td><code>evd-str-0022</code></td><td>string</td><td>strings</td><td><code>+0x127d</code></td><td>String [other]: &quot;[_^]&quot;</td></tr>
+<tr><td><code>evd-str-0023</code></td><td>string</td><td>strings</td><td><code>+0x162d</code></td><td>String [other]: &quot;f;0u?&quot;</td></tr>
+<tr><td><code>evd-str-0024</code></td><td>string</td><td>strings</td><td><code>+0x1646</code></td><td>String [other]: &quot;f;0t&quot;</td></tr>
+<tr><td><code>evd-str-0025</code></td><td>string</td><td>strings</td><td><code>+0x1772</code></td><td>String [other]: &quot;t%F;s&quot;</td></tr>
+<tr><td><code>evd-str-0026</code></td><td>string</td><td>strings</td><td><code>+0x1972</code></td><td>String [other]: &quot;QVVV&quot;</td></tr>
+<tr><td><code>evd-str-0027</code></td><td>string</td><td>strings</td><td><code>+0x19b8</code></td><td>String [other]: &quot;PVVV&quot;</td></tr>
+<tr><td><code>evd-str-0028</code></td><td>string</td><td>strings</td><td><code>+0x23f1</code></td><td>String [other]: &quot;?=u%&quot;</td></tr>
+<tr><td><code>evd-str-0029</code></td><td>string</td><td>strings</td><td><code>+0x249c</code></td><td>String [other]: &quot;93tKh&quot;</td></tr>
+<tr><td><code>evd-str-0030</code></td><td>string</td><td>strings</td><td><code>+0x25c9</code></td><td>String [other]: &quot;?{u\&quot;</td></tr>
+<tr><td><code>evd-str-0031</code></td><td>string</td><td>strings</td><td><code>+0x27dd</code></td><td>String [other]: &quot;?}t&lt;&quot;</td></tr>
+<tr><td><code>evd-str-0032</code></td><td>string</td><td>strings</td><td><code>+0x2880</code></td><td>String [other]: &quot;?=uFW&quot;</td></tr>
+<tr><td><code>evd-str-0033</code></td><td>string</td><td>strings</td><td><code>+0x2d20</code></td><td>String [other]: &quot;Juu3&quot;</td></tr>
+<tr><td><code>evd-str-0034</code></td><td>string</td><td>strings</td><td><code>+0x2d37</code></td><td>String [other]: &quot;Ju^3&quot;</td></tr>
+<tr><td><code>evd-str-0035</code></td><td>string</td><td>strings</td><td><code>+0x2d41</code></td><td>String [other]: &quot;Pj@j&quot;</td></tr>
+<tr><td><code>evd-str-0036</code></td><td>string</td><td>strings</td><td><code>+0x3186</code></td><td>String [other]: &quot;_^[]&quot;</td></tr>
+<tr><td><code>evd-str-0037</code></td><td>string</td><td>strings</td><td><code>+0x33a2</code></td><td>String [other]: &quot;t$Ph&quot;</td></tr>
+<tr><td><code>evd-str-0038</code></td><td>string</td><td>strings</td><td><code>+0x33e4</code></td><td>String [other]: &quot;:u=h&quot;</td></tr>
+<tr><td><code>evd-str-0039</code></td><td>string</td><td>strings</td><td><code>+0x37bc</code></td><td>String [other]: &quot;Vhpy@&quot;</td></tr>
+<tr><td><code>evd-str-0040</code></td><td>string</td><td>strings</td><td><code>+0x47c5</code></td><td>String [other]: &quot;_[^]&quot;</td></tr>
+<tr><td><code>evd-str-0041</code></td><td>string</td><td>strings</td><td><code>+0x491a</code></td><td>String [other]: &quot;u Ph4&quot;</td></tr>
+<tr><td><code>evd-str-0042</code></td><td>string</td><td>strings</td><td><code>+0x4c4f</code></td><td>String [other]: &quot;&gt;_^[&quot;</td></tr>
+<tr><td><code>evd-str-0043</code></td><td>string</td><td>strings</td><td><code>+0x4f9a</code></td><td>String [other]: &quot;PVVj&quot;</td></tr>
+<tr><td><code>evd-str-0044</code></td><td>string</td><td>strings</td><td><code>+0x589d</code></td><td>String [other]: &quot;w&#39;QR&quot;</td></tr>
+<tr><td><code>evd-str-0045</code></td><td>string</td><td>strings</td><td><code>+0x59aa</code></td><td>String [other]: &quot;PPPPPP&quot;</td></tr>
+<tr><td><code>evd-str-0046</code></td><td>string</td><td>strings</td><td><code>+0x5a1f</code></td><td>String [other]: &quot;u1SW&quot;</td></tr>
+<tr><td><code>evd-str-0047</code></td><td>string</td><td>strings</td><td><code>+0x5b52</code></td><td>String [other]: &quot;SPVG&quot;</td></tr>
+<tr><td><code>evd-str-0048</code></td><td>string</td><td>strings</td><td><code>+0x6272</code></td><td>String [other]: &quot;u&quot;RS&quot;</td></tr>
+<tr><td><code>evd-str-0049</code></td><td>string</td><td>strings</td><td><code>+0x6299</code></td><td>String [other]: &quot;u*h*&quot;</td></tr>
+<tr><td><code>evd-str-0050</code></td><td>string</td><td>strings</td><td><code>+0x66ee</code></td><td>String [other]: &quot;Vtrh,&quot;</td></tr>
+<tr><td><code>evd-str-0051</code></td><td>string</td><td>strings</td><td><code>+0x699c</code></td><td>String [other]: &quot;uahH&quot;</td></tr>
+<tr><td><code>evd-str-0052</code></td><td>string</td><td>strings</td><td><code>+0x6aee</code></td><td>String [other]: &quot;h&lt;iI&quot;</td></tr>
+<tr><td><code>evd-str-0053</code></td><td>string</td><td>strings</td><td><code>+0x6b5f</code></td><td>String [other]: &quot;HVRP&quot;</td></tr>
+<tr><td><code>evd-str-0054</code></td><td>string</td><td>strings</td><td><code>+0x6c1c</code></td><td>String [other]: &quot;SVWf&quot;</td></tr>
+<tr><td><code>evd-str-0055</code></td><td>string</td><td>strings</td><td><code>+0x6e4d</code></td><td>String [other]: &quot;hd &quot;&quot;</td></tr>
+<tr><td><code>evd-str-0056</code></td><td>string</td><td>strings</td><td><code>+0x702f</code></td><td>String [other]: &quot;t,Wh&quot;</td></tr>
+<tr><td><code>evd-str-0057</code></td><td>string</td><td>strings</td><td><code>+0x7265</code></td><td>String [other]: &quot;h( &quot;&quot;</td></tr>
+<tr><td><code>evd-str-0058</code></td><td>string</td><td>strings</td><td><code>+0x72f7</code></td><td>String [other]: &quot;Ph  &quot;&quot;</td></tr>
+<tr><td><code>evd-str-0059</code></td><td>string</td><td>strings</td><td><code>+0x7616</code></td><td>String [other]: &quot;Wuph&quot;</td></tr>
+<tr><td><code>evd-str-0060</code></td><td>string</td><td>strings</td><td><code>+0x7835</code></td><td>String [other]: &quot;0f;1u&quot;</td></tr>
+<tr><td><code>evd-str-0061</code></td><td>string</td><td>strings</td><td><code>+0x7b22</code></td><td>String [other]: &quot;Shpy@&quot;</td></tr>
+<tr><td><code>evd-str-0062</code></td><td>string</td><td>strings</td><td><code>+0x81e8</code></td><td>String [other]: &quot;u Ph&quot;</td></tr>
+<tr><td><code>evd-str-0063</code></td><td>string</td><td>strings</td><td><code>+0x861a</code></td><td>String [other]: &quot;PSh4&quot;</td></tr>
+<tr><td><code>evd-str-0064</code></td><td>string</td><td>strings</td><td><code>+0x86b4</code></td><td>String [other]: &quot;tHh`&quot;</td></tr>
+<tr><td><code>evd-str-0065</code></td><td>string</td><td>strings</td><td><code>+0x8cbc</code></td><td>String [other]: &quot;ukh &quot;</td></tr>
+<tr><td><code>evd-str-0066</code></td><td>string</td><td>strings</td><td><code>+0xa16a</code></td><td>String [other]: &quot;u Shl&quot;</td></tr>
+<tr><td><code>evd-str-0067</code></td><td>string</td><td>strings</td><td><code>+0xa1bb</code></td><td>String [other]: &quot;u-h &quot;</td></tr>
+<tr><td><code>evd-str-0068</code></td><td>string</td><td>strings</td><td><code>+0xa6e1</code></td><td>String [other]: &quot;uyWh&quot;</td></tr>
+<tr><td><code>evd-str-0069</code></td><td>string</td><td>strings</td><td><code>+0xaa62</code></td><td>String [other]: &quot;tRhT&quot;</td></tr>
+<tr><td><code>evd-str-0070</code></td><td>string</td><td>strings</td><td><code>+0xb734</code></td><td>String [other]: &quot;uoQP&quot;</td></tr>
+<tr><td><code>evd-str-0071</code></td><td>string</td><td>strings</td><td><code>+0xb842</code></td><td>String [other]: &quot;tff;&quot;</td></tr>
+<tr><td><code>evd-str-0072</code></td><td>string</td><td>strings</td><td><code>+0xb990</code></td><td>String [other]: &quot;;/uF&quot;</td></tr>
+<tr><td><code>evd-str-0073</code></td><td>string</td><td>strings</td><td><code>+0xb9f7</code></td><td>String [other]: &quot;t&#39;j$&quot;</td></tr>
+<tr><td><code>evd-str-0074</code></td><td>string</td><td>strings</td><td><code>+0xba32</code></td><td>String [other]: &quot;j\h(&quot;</td></tr>
+<tr><td><code>evd-str-0075</code></td><td>string</td><td>strings</td><td><code>+0xbafa</code></td><td>String [other]: &quot;RPh &quot;</td></tr>
+<tr><td><code>evd-str-0076</code></td><td>string</td><td>strings</td><td><code>+0xbc6c</code></td><td>String [other]: &quot;PVVh&quot;</td></tr>
+<tr><td><code>evd-str-0077</code></td><td>string</td><td>strings</td><td><code>+0xbcc0</code></td><td>String [other]: &quot;t$h\&quot;</td></tr>
+<tr><td><code>evd-str-0078</code></td><td>string</td><td>strings</td><td><code>+0xbd80</code></td><td>String [other]: &quot;jsW+&quot;</td></tr>
+<tr><td><code>evd-str-0079</code></td><td>string</td><td>strings</td><td><code>+0xc22f</code></td><td>String [other]: &quot;wVSVW&quot;</td></tr>
+<tr><td><code>evd-str-0080</code></td><td>string</td><td>strings</td><td><code>+0xc574</code></td><td>String [other]: &quot;t Vh&quot;</td></tr>
+<tr><td><code>evd-str-0081</code></td><td>string</td><td>strings</td><td><code>+0xc5da</code></td><td>String [other]: &quot;t3Vh0&quot;</td></tr>
+<tr><td><code>evd-str-0082</code></td><td>string</td><td>strings</td><td><code>+0xc6a5</code></td><td>String [other]: &quot;`t(j&quot;</td></tr>
+<tr><td><code>evd-str-0083</code></td><td>string</td><td>strings</td><td><code>+0xc742</code></td><td>String [other]: &quot;u0h@&quot;</td></tr>
+<tr><td><code>evd-str-0084</code></td><td>string</td><td>strings</td><td><code>+0xda75</code></td><td>String [other]: &quot;tNh &quot;</td></tr>
+<tr><td><code>evd-str-0085</code></td><td>string</td><td>strings</td><td><code>+0xe063</code></td><td>String [other]: &quot;h A@&quot;</td></tr>
+<tr><td><code>evd-str-0086</code></td><td>string</td><td>strings</td><td><code>+0xebd1</code></td><td>String [other]: &quot;&lt;&gt;tc&lt; t_j&lt;S&quot;</td></tr>
+<tr><td><code>evd-str-0087</code></td><td>string</td><td>strings</td><td><code>+0xebf7</code></td><td>String [other]: &quot;u$j&lt;P&quot;</td></tr>
+<tr><td><code>evd-str-0088</code></td><td>string</td><td>strings</td><td><code>+0xedeb</code></td><td>String [other]: &quot;wPj&quot;S&quot;</td></tr>
+<tr><td><code>evd-str-0089</code></td><td>string</td><td>strings</td><td><code>+0xee12</code></td><td>String [other]: &quot;t);u&quot;</td></tr>
+<tr><td><code>evd-str-0090</code></td><td>string</td><td>strings</td><td><code>+0xee1b</code></td><td>String [other]: &quot;x ;u&quot;</td></tr>
+<tr><td><code>evd-str-0091</code></td><td>string</td><td>strings</td><td><code>+0xee94</code></td><td>String [other]: &quot;@j&lt;Q&quot;</td></tr>
+<tr><td><code>evd-str-0092</code></td><td>string</td><td>strings</td><td><code>+0xf1f3</code></td><td>String [other]: &quot;@SVW&quot;</td></tr>
+<tr><td><code>evd-str-0093</code></td><td>string</td><td>strings</td><td><code>+0xf6b3</code></td><td>String [other]: &quot;uPjx&quot;</td></tr>
+<tr><td><code>evd-str-0094</code></td><td>string</td><td>strings</td><td><code>+0xff20</code></td><td>String [other]: &quot;PQVS&quot;</td></tr>
+<tr><td><code>evd-str-0095</code></td><td>string</td><td>strings</td><td><code>+0xff64</code></td><td>String [other]: &quot;wNQR&quot;</td></tr>
+<tr><td><code>evd-str-0096</code></td><td>string</td><td>strings</td><td><code>+0x1027b</code></td><td>String [other]: &quot;~@ f&quot;</td></tr>
+<tr><td><code>evd-str-0097</code></td><td>string</td><td>strings</td><td><code>+0x108f1</code></td><td>String [other]: &quot;w`;G&quot;</td></tr>
+<tr><td><code>evd-str-0098</code></td><td>string</td><td>strings</td><td><code>+0x10f1f</code></td><td>String [other]: &quot;h4~I&quot;</td></tr>
+<tr><td><code>evd-str-0099</code></td><td>string</td><td>strings</td><td><code>+0x10fe5</code></td><td>String [other]: &quot;4HVP&quot;</td></tr>
+<tr><td><code>evd-str-0100</code></td><td>string</td><td>strings</td><td><code>+0x111c6</code></td><td>String [other]: &quot;w@QR&quot;</td></tr>
+<tr><td><code>evd-str-0101</code></td><td>string</td><td>strings</td><td><code>+0x11b55</code></td><td>String [other]: &quot;wJQR&quot;</td></tr>
+<tr><td><code>evd-str-0102</code></td><td>string</td><td>strings</td><td><code>+0x11d8e</code></td><td>String [other]: &quot;w/QR&quot;</td></tr>
+<tr><td><code>evd-str-0103</code></td><td>string</td><td>strings</td><td><code>+0x11f6f</code></td><td>String [other]: &quot;t/VW&quot;</td></tr>
+<tr><td><code>evd-str-0104</code></td><td>string</td><td>strings</td><td><code>+0x12149</code></td><td>String [other]: &quot;t2VW&quot;</td></tr>
+<tr><td><code>evd-str-0105</code></td><td>string</td><td>strings</td><td><code>+0x12763</code></td><td>String [other]: &quot;8SVW&quot;</td></tr>
+<tr><td><code>evd-str-0106</code></td><td>string</td><td>strings</td><td><code>+0x1281f</code></td><td>String [other]: &quot;v$PQ&quot;</td></tr>
+<tr><td><code>evd-str-0107</code></td><td>string</td><td>strings</td><td><code>+0x13116</code></td><td>String [other]: &quot;wsQR&quot;</td></tr>
+<tr><td><code>evd-str-0108</code></td><td>string</td><td>strings</td><td><code>+0x133c3</code></td><td>String [other]: &quot;hP~I&quot;</td></tr>
+<tr><td><code>evd-str-0109</code></td><td>string</td><td>strings</td><td><code>+0x13d9d</code></td><td>String [other]: &quot;w^QR&quot;</td></tr>
+<tr><td><code>evd-str-0110</code></td><td>string</td><td>strings</td><td><code>+0x13ee6</code></td><td>String [other]: &quot;jbPVVhH &quot;&quot;</td></tr>
+<tr><td><code>evd-str-0111</code></td><td>string</td><td>strings</td><td><code>+0x13f2a</code></td><td>String [other]: &quot;PVVh` &quot;&quot;</td></tr>
+<tr><td><code>evd-str-0112</code></td><td>string</td><td>strings</td><td><code>+0x13f3d</code></td><td>String [other]: &quot;h$ H&quot;</td></tr>
+<tr><td><code>evd-str-0113</code></td><td>string</td><td>strings</td><td><code>+0x13f5a</code></td><td>String [other]: &quot;h( H&quot;</td></tr>
+<tr><td><code>evd-str-0114</code></td><td>string</td><td>strings</td><td><code>+0x13f77</code></td><td>String [other]: &quot;h4 H&quot;</td></tr>
+<tr><td><code>evd-str-0115</code></td><td>string</td><td>strings</td><td><code>+0x13f94</code></td><td>String [other]: &quot;h&lt; H&quot;</td></tr>
+<tr><td><code>evd-str-0116</code></td><td>string</td><td>strings</td><td><code>+0x13fb2</code></td><td>String [other]: &quot;hD H&quot;</td></tr>
+<tr><td><code>evd-str-0117</code></td><td>string</td><td>strings</td><td><code>+0x13fd2</code></td><td>String [other]: &quot;hL H&quot;</td></tr>
+<tr><td><code>evd-str-0118</code></td><td>string</td><td>strings</td><td><code>+0x13ff2</code></td><td>String [other]: &quot;hT H&quot;</td></tr>
+<tr><td><code>evd-str-0119</code></td><td>string</td><td>strings</td><td><code>+0x14012</code></td><td>String [other]: &quot;h` H&quot;</td></tr>
+<tr><td><code>evd-str-0120</code></td><td>string</td><td>strings</td><td><code>+0x14032</code></td><td>String [other]: &quot;hl H&quot;</td></tr>
+<tr><td><code>evd-str-0121</code></td><td>string</td><td>strings</td><td><code>+0x14052</code></td><td>String [other]: &quot;hx H&quot;</td></tr>
+<tr><td><code>evd-str-0122</code></td><td>string</td><td>strings</td><td><code>+0x140a1</code></td><td>String [other]: &quot;hX &quot;&quot;</td></tr>
+<tr><td><code>evd-str-0123</code></td><td>string</td><td>strings</td><td><code>+0x14283</code></td><td>String [other]: &quot;QPhp!H&quot;</td></tr>
+<tr><td><code>evd-str-0124</code></td><td>string</td><td>strings</td><td><code>+0x143c8</code></td><td>String [other]: &quot;hp!H&quot;</td></tr>
+<tr><td><code>evd-str-0125</code></td><td>string</td><td>strings</td><td><code>+0x1440b</code></td><td>String [other]: &quot;PVhp!H&quot;</td></tr>
+<tr><td><code>evd-str-0126</code></td><td>string</td><td>strings</td><td><code>+0x14567</code></td><td>String [other]: &quot;h4!H&quot;</td></tr>
+<tr><td><code>evd-str-0127</code></td><td>string</td><td>strings</td><td><code>+0x14588</code></td><td>String [other]: &quot;hh&quot;H&quot;</td></tr>
+<tr><td><code>evd-str-0128</code></td><td>string</td><td>strings</td><td><code>+0x145a9</code></td><td>String [other]: &quot;h,&quot;H&quot;</td></tr>
+<tr><td><code>evd-str-0129</code></td><td>string</td><td>strings</td><td><code>+0x145eb</code></td><td>String [other]: &quot;hx!H&quot;</td></tr>
+<tr><td><code>evd-str-0130</code></td><td>string</td><td>strings</td><td><code>+0x14ef1</code></td><td>String [other]: &quot;Ph8 &quot;&quot;</td></tr>
+<tr><td><code>evd-str-0131</code></td><td>string</td><td>strings</td><td><code>+0x15f8c</code></td><td>String [other]: &quot;wdRQ&quot;</td></tr>
+<tr><td><code>evd-str-0132</code></td><td>string</td><td>strings</td><td><code>+0x16017</code></td><td>String [other]: &quot;Wjbj&quot;</td></tr>
+<tr><td><code>evd-str-0133</code></td><td>string</td><td>strings</td><td><code>+0x16029</code></td><td>String [other]: &quot;jbVj&quot;</td></tr>
+<tr><td><code>evd-str-0134</code></td><td>string</td><td>strings</td><td><code>+0x16030</code></td><td>String [other]: &quot;hH &quot;&quot;</td></tr>
+<tr><td><code>evd-str-0135</code></td><td>string</td><td>strings</td><td><code>+0x16a19</code></td><td>String [other]: &quot;A 9y$&quot;</td></tr>
+<tr><td><code>evd-str-0136</code></td><td>string</td><td>strings</td><td><code>+0x16e44</code></td><td>String [other]: &quot;hP8H&quot;</td></tr>
+<tr><td><code>evd-str-0137</code></td><td>string</td><td>strings</td><td><code>+0x16eda</code></td><td>String [other]: &quot;h,0H&quot;</td></tr>
+<tr><td><code>evd-str-0138</code></td><td>string</td><td>strings</td><td><code>+0x16edf</code></td><td>String [other]: &quot;hH0H&quot;</td></tr>
+<tr><td><code>evd-str-0139</code></td><td>string</td><td>strings</td><td><code>+0x16f34</code></td><td>String [other]: &quot;tAh|0H&quot;</td></tr>
+<tr><td><code>evd-str-0140</code></td><td>string</td><td>strings</td><td><code>+0x170b1</code></td><td>String [other]: &quot;h\0H&quot;</td></tr>
+<tr><td><code>evd-str-0141</code></td><td>string</td><td>strings</td><td><code>+0x171b7</code></td><td>String [other]: &quot;6hp!H&quot;</td></tr>
+<tr><td><code>evd-str-0142</code></td><td>string</td><td>strings</td><td><code>+0x17315</code></td><td>String [other]: &quot;hx%H&quot;</td></tr>
+<tr><td><code>evd-str-0143</code></td><td>string</td><td>strings</td><td><code>+0x17348</code></td><td>String [other]: &quot;Phx%H&quot;</td></tr>
+<tr><td><code>evd-str-0144</code></td><td>string</td><td>strings</td><td><code>+0x17475</code></td><td>String [other]: &quot;WVhx%H&quot;</td></tr>
+<tr><td><code>evd-str-0145</code></td><td>string</td><td>strings</td><td><code>+0x1798f</code></td><td>String [other]: &quot;h`5H&quot;</td></tr>
+<tr><td><code>evd-str-0146</code></td><td>string</td><td>strings</td><td><code>+0x179b3</code></td><td>String [other]: &quot;Ph`5H&quot;</td></tr>
+<tr><td><code>evd-str-0147</code></td><td>string</td><td>strings</td><td><code>+0x17a07</code></td><td>String [other]: &quot;Bhx%H&quot;</td></tr>
+<tr><td><code>evd-str-0148</code></td><td>string</td><td>strings</td><td><code>+0x17ab1</code></td><td>String [other]: &quot;WVh`5H&quot;</td></tr>
+<tr><td><code>evd-str-0149</code></td><td>string</td><td>strings</td><td><code>+0x17b6a</code></td><td>String [other]: &quot;hp6H&quot;</td></tr>
+<tr><td><code>evd-str-0150</code></td><td>string</td><td>strings</td><td><code>+0x17e2b</code></td><td>String [other]: &quot;h 7H&quot;</td></tr>
+<tr><td><code>evd-str-0151</code></td><td>string</td><td>strings</td><td><code>+0x17e3a</code></td><td>String [other]: &quot;ht7H&quot;</td></tr>
+<tr><td><code>evd-str-0152</code></td><td>string</td><td>strings</td><td><code>+0x181a9</code></td><td>String [other]: &quot;u&gt;h0&quot;</td></tr>
+<tr><td><code>evd-str-0153</code></td><td>string</td><td>strings</td><td><code>+0x181c6</code></td><td>String [other]: &quot;u!hP&quot;</td></tr>
+<tr><td><code>evd-str-0154</code></td><td>string</td><td>strings</td><td><code>+0x18304</code></td><td>String [other]: &quot;h(-H&quot;</td></tr>
+<tr><td><code>evd-str-0155</code></td><td>string</td><td>strings</td><td><code>+0x18310</code></td><td>String [other]: &quot;h8-H&quot;</td></tr>
+<tr><td><code>evd-str-0156</code></td><td>string</td><td>strings</td><td><code>+0x1831c</code></td><td>String [other]: &quot;hH-H&quot;</td></tr>
+<tr><td><code>evd-str-0157</code></td><td>string</td><td>strings</td><td><code>+0x18328</code></td><td>String [other]: &quot;hd-H&quot;</td></tr>
+<tr><td><code>evd-str-0158</code></td><td>string</td><td>strings</td><td><code>+0x18334</code></td><td>String [other]: &quot;hp-H&quot;</td></tr>
+<tr><td><code>evd-str-0159</code></td><td>string</td><td>strings</td><td><code>+0x18370</code></td><td>String [other]: &quot;hP6H&quot;</td></tr>
+<tr><td><code>evd-str-0160</code></td><td>string</td><td>strings</td><td><code>+0x18489</code></td><td>String [other]: &quot;~@(f&quot;</td></tr>
+<tr><td><code>evd-str-0161</code></td><td>string</td><td>strings</td><td><code>+0x185ae</code></td><td>String [other]: &quot;hl &quot;&quot;</td></tr>
+<tr><td><code>evd-str-0162</code></td><td>string</td><td>strings</td><td><code>+0x18a58</code></td><td>String [other]: &quot;wHQR&quot;</td></tr>
+<tr><td><code>evd-str-0163</code></td><td>string</td><td>strings</td><td><code>+0x18d2f</code></td><td>String [other]: &quot;tBh $H&quot;</td></tr>
+<tr><td><code>evd-str-0164</code></td><td>string</td><td>strings</td><td><code>+0x18d36</code></td><td>String [other]: &quot;ht#H&quot;</td></tr>
+<tr><td><code>evd-str-0165</code></td><td>string</td><td>strings</td><td><code>+0x18d3b</code></td><td>String [other]: &quot;hx#H&quot;</td></tr>
+<tr><td><code>evd-str-0166</code></td><td>string</td><td>strings</td><td><code>+0x18dc3</code></td><td>String [other]: &quot;t9hH$H&quot;</td></tr>
+<tr><td><code>evd-str-0167</code></td><td>string</td><td>strings</td><td><code>+0x18e46</code></td><td>String [other]: &quot;hX$H&quot;</td></tr>
+<tr><td><code>evd-str-0168</code></td><td>string</td><td>strings</td><td><code>+0x18e53</code></td><td>String [other]: &quot;h`$H&quot;</td></tr>
+<tr><td><code>evd-str-0169</code></td><td>string</td><td>strings</td><td><code>+0x18e69</code></td><td>String [other]: &quot;t9hp$H&quot;</td></tr>
+<tr><td><code>evd-str-0170</code></td><td>string</td><td>strings</td><td><code>+0x18ef4</code></td><td>String [other]: &quot;hx$H&quot;</td></tr>
+<tr><td><code>evd-str-0171</code></td><td>string</td><td>strings</td><td><code>+0x18f01</code></td><td>String [other]: &quot;h|$H&quot;</td></tr>
+<tr><td><code>evd-str-0172</code></td><td>string</td><td>strings</td><td><code>+0x19519</code></td><td>String [other]: &quot;t4Qht#H&quot;</td></tr>
+<tr><td><code>evd-str-0173</code></td><td>string</td><td>strings</td><td><code>+0x199e9</code></td><td>String [other]: &quot;hT3H&quot;</td></tr>
+<tr><td><code>evd-str-0174</code></td><td>string</td><td>strings</td><td><code>+0x19a11</code></td><td>String [other]: &quot;hx3H&quot;</td></tr>
+<tr><td><code>evd-str-0175</code></td><td>string</td><td>strings</td><td><code>+0x19a9e</code></td><td>String [other]: &quot;hX3H&quot;</td></tr>
+<tr><td><code>evd-str-0176</code></td><td>string</td><td>strings</td><td><code>+0x19adc</code></td><td>String [other]: &quot;h(3H&quot;</td></tr>
+<tr><td><code>evd-str-0177</code></td><td>string</td><td>strings</td><td><code>+0x19dfd</code></td><td>String [other]: &quot;hH@H&quot;</td></tr>
+<tr><td><code>evd-str-0178</code></td><td>string</td><td>strings</td><td><code>+0x19ecc</code></td><td>String [other]: &quot;hX9H&quot;</td></tr>
+<tr><td><code>evd-str-0179</code></td><td>string</td><td>strings</td><td><code>+0x19edc</code></td><td>String [other]: &quot;hh9H&quot;</td></tr>
+<tr><td><code>evd-str-0180</code></td><td>string</td><td>strings</td><td><code>+0x19efa</code></td><td>String [other]: &quot;hx9H&quot;</td></tr>
+<tr><td><code>evd-str-0181</code></td><td>string</td><td>strings</td><td><code>+0x1a025</code></td><td>String [other]: &quot;h(9H&quot;</td></tr>
+<tr><td><code>evd-str-0182</code></td><td>string</td><td>strings</td><td><code>+0x1a079</code></td><td>String [other]: &quot;h4:H&quot;</td></tr>
+<tr><td><code>evd-str-0183</code></td><td>string</td><td>strings</td><td><code>+0x1a376</code></td><td>String [other]: &quot;t&amp;hd:H&quot;</td></tr>
+<tr><td><code>evd-str-0184</code></td><td>string</td><td>strings</td><td><code>+0x1a6eb</code></td><td>String [other]: &quot;u`Pj&quot;</td></tr>
+<tr><td><code>evd-str-0185</code></td><td>string</td><td>strings</td><td><code>+0x1ab6d</code></td><td>String [hostname]: &quot;t.PVW&quot;</td></tr>
+<tr><td><code>evd-str-0186</code></td><td>string</td><td>strings</td><td><code>+0x1abfd</code></td><td>String [other]: &quot;h&lt;;H&quot;</td></tr>
+<tr><td><code>evd-str-0187</code></td><td>string</td><td>strings</td><td><code>+0x1ac1e</code></td><td>String [other]: &quot;h|;H&quot;</td></tr>
+<tr><td><code>evd-str-0188</code></td><td>string</td><td>strings</td><td><code>+0x1ac4e</code></td><td>String [other]: &quot;h&lt;&lt;H&quot;</td></tr>
+<tr><td><code>evd-str-0189</code></td><td>string</td><td>strings</td><td><code>+0x1ac90</code></td><td>String [other]: &quot;h$?H&quot;</td></tr>
+<tr><td><code>evd-str-0190</code></td><td>string</td><td>strings</td><td><code>+0x1b1e1</code></td><td>String [other]: &quot;Wh$%H&quot;</td></tr>
+<tr><td><code>evd-str-0191</code></td><td>string</td><td>strings</td><td><code>+0x1b214</code></td><td>String [other]: &quot;Ph $H&quot;</td></tr>
+<tr><td><code>evd-str-0192</code></td><td>string</td><td>strings</td><td><code>+0x1b235</code></td><td>String [other]: &quot;PhH$H&quot;</td></tr>
+<tr><td><code>evd-str-0193</code></td><td>string</td><td>strings</td><td><code>+0x1b256</code></td><td>String [other]: &quot;PhH%H&quot;</td></tr>
+<tr><td><code>evd-str-0194</code></td><td>string</td><td>strings</td><td><code>+0x1b26a</code></td><td>String [other]: &quot;pLhX$H&quot;</td></tr>
+<tr><td><code>evd-str-0195</code></td><td>string</td><td>strings</td><td><code>+0x1b27f</code></td><td>String [other]: &quot;pPh`$H&quot;</td></tr>
+<tr><td><code>evd-str-0196</code></td><td>string</td><td>strings</td><td><code>+0x1b2a1</code></td><td>String [other]: &quot;Php$H&quot;</td></tr>
+<tr><td><code>evd-str-0197</code></td><td>string</td><td>strings</td><td><code>+0x1b2b5</code></td><td>String [other]: &quot;plhx$H&quot;</td></tr>
+<tr><td><code>evd-str-0198</code></td><td>string</td><td>strings</td><td><code>+0x1b2ca</code></td><td>String [other]: &quot;pph|$H&quot;</td></tr>
+<tr><td><code>evd-str-0199</code></td><td>string</td><td>strings</td><td><code>+0x1b395</code></td><td>String [other]: &quot;hP%H&quot;</td></tr>
+</table>
+<p><em>…7442 additional evidence items omitted. See canonical JSON for full detail.</em></p>
+<footer>Made with IBM Bob</footer>
+</body></html>
