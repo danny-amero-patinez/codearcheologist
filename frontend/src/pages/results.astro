@@ -310,8 +310,11 @@ import Background3D from '../components/Background3D.astro';
   const tagCls = (c) =>
     c === 'high' ? 'tag high-risk' : c === 'medium' ? 'tag medium-risk' : 'tag low-risk';
 
+  // Selection scores are absolute integers (e.g. 14), not 0-1 fractions.
+  // Cap at 20 for visual normalization; color by absolute value thresholds.
+  const scoreBarWidth = (s) => Math.min((s / 20) * 100, 100).toFixed(0) + '%';
   const scoreColor = (s) =>
-    s >= 0.7 ? '#ff4757' : s >= 0.4 ? '#ffa502' : '#00d8ff';
+    s >= 10 ? '#ff4757' : s >= 5 ? '#ffa502' : '#00d8ff';
 
   const fmt = (v) => (v === null || v === undefined ? '—' : String(v));
   const fmtBytes = (b) => {
@@ -320,6 +323,25 @@ import Background3D from '../components/Background3D.astro';
     if (b >= 1024)      return (b / 1024).toFixed(1) + ' KB';
     return b + ' B';
   };
+
+  // Human-readable labels for internal pipeline phase/status names.
+  const STATUS_LABELS = {
+    queued:        'Queued',
+    preparing:     'Preparing',
+    extracting:    'Extracting strings',
+    decompiling:   'Decompiling (Ghidra)',
+    correlating:   'Correlating evidence',
+    inferring:     'Running inference engine',
+    reconstructing:'Reconstructing responsibilities',
+    reporting:     'Generating reports',
+    completed:     'Completed',
+    partial:       'Partial (Ghidra unavailable)',
+    failed:        'Failed',
+    running:       'Running',
+    pending:       'Pending',
+    skipped:       'Skipped',
+  };
+  const friendlyStatus = (s) => STATUS_LABELS[s] ?? s;
 
   // ── Render ────────────────────────────────────────────────────────────────────
   function renderDashboard(r) {
@@ -335,7 +357,7 @@ import Background3D from '../components/Background3D.astro';
     const hdr = el('header');
     hdr.innerHTML = `
       <h1>ANALYSIS RESULTS</h1>
-      <div class="badge ${statusCls}">STATUS: ${a.status.toUpperCase()}</div>
+      <div class="badge ${statusCls}">STATUS: ${friendlyStatus(a.status).toUpperCase()}</div>
     `;
     frag.appendChild(hdr);
 
@@ -422,7 +444,7 @@ import Background3D from '../components/Background3D.astro';
         ${a.phases.map(p => `
           <div style="display:flex;justify-content:space-between;font-size:0.78rem;padding:0.25rem 0;color:#888">
             <span style="text-transform:capitalize">${p.phase}</span>
-            <span style="color:${phaseColors[p.status] || '#888'}">${p.status}</span>
+            <span style="color:${phaseColors[p.status] || '#888'}">${friendlyStatus(p.status)}</span>
           </div>`).join('')}
       </div>`;
     }
@@ -518,9 +540,9 @@ import Background3D from '../components/Background3D.astro';
           <td class="apis">${apis}<span style="color:#555">${apiExtra}</span></td>
           <td>
             <div class="score-bar">
-              <div class="score-fill" style="width:${(score*100).toFixed(0)}%;background:${scoreColor(score)}"></div>
+              <div class="score-fill" style="width:${scoreBarWidth(score)};background:${scoreColor(score)}"></div>
             </div>
-            <div style="font-size:0.75rem;color:#666;margin-top:0.2rem">${(score*100).toFixed(0)}%</div>
+            <div style="font-size:0.75rem;color:#666;margin-top:0.2rem">${score}</div>
           </td>`;
         tbody.appendChild(tr);
       });
@@ -644,51 +666,56 @@ import Background3D from '../components/Background3D.astro';
         <a href="/" style="color:#00d8ff;font-size:0.9rem">← Back to Upload</a>
       </div>`;
   } else {
-    fetch(`/api/v1/analyses/${id}/result`)
-      .then(async res => {
-        // 202 means the analysis is still running — backend returns
-        // { analysis: {...}, result: null, message: "Analysis in progress" }
-        if (res.status === 202) {
-          const body = await res.json().catch(() => ({}));
-          const status = body.analysis?.status ?? 'running';
-          throw new Error(`ANALYSIS_IN_PROGRESS:${status}`);
-        }
-        if (!res.ok) {
-          const body = await res.json().catch(() => ({}));
-          const msg = body.error?.message || `HTTP ${res.status}`;
-          throw new Error(msg);
-        }
-        return res.json();
-      })
-      .then(result => {
-        // When complete, backend returns the CanonicalResult directly (res.json(result))
-        const frag = renderDashboard(result);
-        container.innerHTML = '';
-        container.appendChild(frag);
-      })
-      .catch(err => {
-        // Special case: analysis still running — show a polling state instead of an error
-        if (err.message.startsWith('ANALYSIS_IN_PROGRESS:')) {
-          const status = err.message.split(':')[1];
+    // Auto-polling: retry every 3 s while the analysis is still running (202).
+    // Stops automatically when a terminal result arrives or on a hard error.
+    const POLL_INTERVAL_MS = 3000;
+    let pollTimer = null;
+
+    function showPollingState(status) {
+      container.innerHTML = `
+        <div class="loading-state">
+          <div class="neon-spinner"></div>
+          <p>Analysis in progress — <strong style="color:#00d8ff">${friendlyStatus(status)}</strong></p>
+          <p style="font-size:0.82rem;color:#555;margin-top:0.4rem">Checking automatically every 3 seconds…</p>
+        </div>`;
+    }
+
+    function poll() {
+      fetch(`/api/v1/analyses/${id}/result`)
+        .then(async res => {
+          if (res.status === 202) {
+            const body = await res.json().catch(() => ({}));
+            const status = body.analysis?.status ?? 'running';
+            showPollingState(status);
+            // Schedule next poll — will not fire if the page is unloaded
+            pollTimer = setTimeout(poll, POLL_INTERVAL_MS);
+            return null;
+          }
+          if (!res.ok) {
+            const body = await res.json().catch(() => ({}));
+            throw new Error(body.error?.message || `HTTP ${res.status}`);
+          }
+          return res.json();
+        })
+        .then(result => {
+          if (result === null) return; // still polling, already scheduled
+          // Terminal result received — render dashboard
+          const frag = renderDashboard(result);
+          container.innerHTML = '';
+          container.appendChild(frag);
+        })
+        .catch(err => {
+          clearTimeout(pollTimer);
           container.innerHTML = `
-            <div class="loading-state">
-              <div class="neon-spinner"></div>
-              <p>Analysis is still running — status: <strong style="color:#00d8ff">${status.toUpperCase()}</strong></p>
-              <p style="font-size:0.85rem;color:#666;margin-top:0.5rem">
-                This page will not auto-refresh.
-                <a href="/results?id=${id}" style="color:#00d8ff">Reload</a> to check again,
-                or <a href="/" style="color:#00d8ff">go back</a> to the upload page.
-              </p>
+            <div class="error-state">
+              <h2>FAILED TO LOAD RESULTS</h2>
+              <p>${err.message}</p>
+              <a href="/" style="color:#00d8ff;font-size:0.9rem">← Back to Upload</a>
             </div>`;
-          return;
-        }
-        container.innerHTML = `
-          <div class="error-state">
-            <h2>FAILED TO LOAD RESULTS</h2>
-            <p>${err.message}</p>
-            <a href="/" style="color:#00d8ff;font-size:0.9rem">← Back to Upload</a>
-          </div>`;
-      });
+        });
+    }
+
+    poll();
   }
 </script>
 </body>
